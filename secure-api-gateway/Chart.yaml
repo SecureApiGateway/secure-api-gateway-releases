@@ -1,0 +1,26 @@
+apiVersion: v2
+name: secure-api-gateway
+description: Environment helm chart for deploying the secure-api-gateway to k8 cluster
+type: application
+version: 1.0.0
+appVersion: 1.0.0
+
+dependencies:
+  - name: iam-secret-manager
+    version: 1.0.0
+    repository: "file://external-secrets"
+  - name: securebanking-openbanking-uk-rcs
+    version: 0.0.1
+    repository: "file://securebanking-openbanking-uk-rcs"
+  - name: securebanking-openbanking-uk-rs
+    version: 0.0.1
+    repository: "file://securebanking-openbanking-uk-rs"
+  - name: test-init
+    version: 1.0.0
+    repository: "file://test-init"
+  - name: securebanking-ui
+    version: 0.0.1
+    repository: "file://securebanking-ui"
+  - name: sslcertificate
+    version: 1.0.0
+    repository: "file://sslcert"

@@ -1,0 +1,30 @@
+apiVersion: admissionregistration.k8s.io/v1
+kind: MutatingWebhookConfiguration
+metadata:
+  name: ingress-mutator
+  annotations:
+    cert-manager.io/inject-ca-from: default/selfsigned-cert
+webhooks:
+  - name: ingress-mutator.default.svc
+    clientConfig:
+      caBundle: Cg==
+      service:
+        name: ingress-mutator
+        namespace: default
+        path: "/mutate"
+        port: 443
+    rules:
+      - operations: ["CREATE", "UPDATE"]
+        apiGroups: ["networking.k8s.io"]
+        apiVersions: ["v1"]
+        resources: ["ingresses"]
+    sideEffects: None
+    timeoutSeconds: 5
+    failurePolicy: Ignore
+    namespaceSelector:
+      matchExpressions:
+        - key: "name"
+          operator: "NotIn"
+          values:
+            - cdk
+    admissionReviewVersions: ["v1"]
