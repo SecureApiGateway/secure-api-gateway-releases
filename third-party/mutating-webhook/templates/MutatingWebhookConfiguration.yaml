@@ -3,14 +3,14 @@ kind: MutatingWebhookConfiguration
 metadata:
   name: ingress-mutator
   annotations:
-    cert-manager.io/inject-ca-from: default/selfsigned-cert
+    cert-manager.io/inject-ca-from: {{ .Values.selfSignedCert }}
 webhooks:
   - name: ingress-mutator.default.svc
     clientConfig:
       caBundle: Cg==
       service:
         name: ingress-mutator
-        namespace: default
+        namespace: {{ .Values.namespace }}
         path: "/mutate"
         port: 443
     rules:
