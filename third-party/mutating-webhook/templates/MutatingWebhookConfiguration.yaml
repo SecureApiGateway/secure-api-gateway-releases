@@ -3,7 +3,7 @@ kind: MutatingWebhookConfiguration
 metadata:
   name: ingress-mutator
   annotations:
-    cert-manager.io/inject-ca-from: default/selfsigned-cert
+    cert-manager.io/inject-ca-from: {{ .Values.selfSignedCert }}
 webhooks:
   - name: ingress-mutator.default.svc
     clientConfig:
