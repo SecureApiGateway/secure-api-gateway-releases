@@ -5,7 +5,7 @@ metadata:
 spec:  
   secretName: ingress-mutator-certs  
   dnsNames:  
-    - ingress-mutator.default.svc  
-    - ingress-mutator.default.svc.cluster.local  
+    - ingress-mutator.{{ .Values.namespace }}.svc  
+    - ingress-mutator.{{ .Values.namespace }}.svc.cluster.local  
   issuerRef:  
     name: selfsigned-issuer
