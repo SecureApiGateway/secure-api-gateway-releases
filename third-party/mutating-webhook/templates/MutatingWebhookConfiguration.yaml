@@ -10,7 +10,7 @@ webhooks:
       caBundle: Cg==
       service:
         name: ingress-mutator
-        namespace: default
+        namespace: {{ .Values.namespace }}
         path: "/mutate"
         port: 443
     rules:
