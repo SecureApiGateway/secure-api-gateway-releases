@@ -11,16 +11,16 @@ dependencies:
     repository: "file://external-secrets"
   - name: securebanking-openbanking-uk-rcs
     version: 0.9.0-rc.1
-    repository: "forgerock-helm/securebanking-openbanking-uk-rcs"
+    repository: "@forgerock-helm/secure-api-gateway/securebanking-openbanking-uk-rcs"
   - name: securebanking-openbanking-uk-rs
     version: 0.9.0-rc.1
-    repository: "forgerock-helm/securebanking-openbanking-uk-rs"
+    repository: "@forgerock-helm/secure-api-gateway/securebanking-openbanking-uk-rs"
   - name: test-init
     version: 0.9.0-rc.1
-    repository: "forgerock-helm/test-init"
+    repository: "@forgerock-helm/secure-api-gateway/test-init"
   - name: securebanking-ui
     version: 0.9.0-rc.1
-    repository: "forgerock-helm/securebanking-ui"
+    repository: "@forgerock-helm/secure-api-gateway/securebanking-ui"
   - name: sslcertificate
     version: 1.0.0
     repository: "file://sslcert"
