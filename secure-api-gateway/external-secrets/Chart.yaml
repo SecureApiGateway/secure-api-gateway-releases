@@ -1,6 +1,0 @@
-apiVersion: v2
-name: iam-secret-manager
-description: The helm chart to deploy the config for the cronjob that configures the Identity platform
-type: application
-version: 1.0.0
-appVersion: 1.0.0
