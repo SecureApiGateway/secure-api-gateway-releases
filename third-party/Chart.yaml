@@ -9,6 +9,9 @@ dependencies:
   - name: kubernetes-replicator
     version: 2.7.3
     repository: "https://helm.mittwald.de"
+  - name: external-secrets
+    version: 0.7.2
+    repository: https://charts.external-secrets.io
   - name: cert-manager
     version: 1.8.2
     repository: "https://charts.jetstack.io"
@@ -18,10 +21,4 @@ dependencies:
   - name: mongodb
     version: 13.6.1
     repository: "https://charts.bitnami.com/bitnami"
-  - name: ingress-mutator
-    version: 0.9.0
-    repository: "@forgerock-helm"
-  - name: external-secrets-gsm
-    version: 0.9.0
-    repository: "@forgerock-helm"
   
