@@ -41,25 +41,25 @@ data:
   RCS_CONSENT_RESPONSE_JWT_SIGNINGKEYID: rcs-jwt-signer
   # iss claim value set by RCS in Consent Response JWTs
   RCS_CONSENT_RESPONSE_JWT_ISSUER: secure-open-banking-rcs
-  # Directory to IG trust store
+  # Path to the IG truststore
   IG_TRUSTSTORE_PATH: /secrets/truststore/igtruststore
-  # Path to ig singing key
+  # Path to the Open Banking signing key used by IG
   IG_OB_ASPSP_SIGNING_KEYSTORE_PATH: /secrets/open-banking/ig-ob-signing-key.p12
-  # File type to be used
+  # Keystore file type of IG_OB_ASPSP_SIGNING_KEYSTORE_PATH
   IG_OB_ASPSP_SIGNING_KEYSTORE_TYPE: PKCS12
-  # Alias for the file
+  # Alias of the signing key within the IG_OB_ASPSP_SIGNING_KEYSTORE_PATH keystore
   IG_OB_ASPSP_SIGNING_KEYSTORE_ALIAS: jwtsigner
-  # Enable Test Directory
+  # Enable Test Trusted Directory
   IG_TEST_DIRECTORY_ENABLED: "true"
-  # Path to trusted dir keystore
+  # Path to Test Trusted Directory keystore containing the CA cert
   IG_TEST_DIRECTORY_CA_KEYSTORE_PATH: /secrets/test-trusted-directory/test-trusted-dir-keystore.p12
-  # File type to be used
+  # Keystore file type of IG_TEST_DIRECTORY_CA_KEYSTORE_PATH
   IG_TEST_DIRECTORY_CA_KEYSTORE_TYPE: PKCS12
-  # Alias for the file
+  # Alias of the Test Trusted Directory's CA cert within the IG_TEST_DIRECTORY_CA_KEYSTORE_PATH keystore
   IG_TEST_DIRECTORY_CA_KEYSTORE_ALIAS: ca
-  # Path to trusted signing keystore
+  # Path to Test Trusted Directory keystore containing the signing key
   IG_TEST_DIRECTORY_SIGNING_KEYSTORE_PATH: /secrets/test-trusted-directory/test-trusted-dir-keystore.p12
-  # File type to be used
+  # Keystore file type of IG_TEST_DIRECTORY_SIGNING_KEYSTORE_PATH
   IG_TEST_DIRECTORY_SIGNING_KEYSTORE_TYPE: PKCS12
-  # Alias for the file
+  # Alias of the Test Trusted Directory's signing cert within the IG_TEST_DIRECTORY_SIGNING_KEYSTORE_PATH keystore
   IG_TEST_DIRECTORY_SIGNING_KEYSTORE_ALIAS: jwt-signer
