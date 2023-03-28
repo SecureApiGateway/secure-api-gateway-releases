@@ -1,7 +1,7 @@
 name: release-publish-helm
 run-name: Release Helm Charts
 on:
-  workflow_call:
+  workflow_dispatch:
 jobs:
   package_and_publish_helm:
     name: Build and publish helm chart
@@ -36,5 +36,5 @@ jobs:
         run: |
           # Foreach tgz file in the dir which would have been created above
           for tgz in $(ls *.tgz) ; do
-            make publish_helm $tgz
+            make publish_helm name=$tgz
           done
