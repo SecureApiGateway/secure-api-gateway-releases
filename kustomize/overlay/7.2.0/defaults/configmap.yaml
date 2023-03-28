@@ -37,7 +37,9 @@ data:
   RS_API_URI: http://securebanking-openbanking-uk-rs:8080
   # Connection settings for the Consent Repo (hosted by IG)
   CONSENT_REPO_URI: http://ig:80
+  # kid of the key used by RCS to sign Consent Response JWTs
   RCS_CONSENT_RESPONSE_JWT_SIGNINGKEYID: rcs-jwt-signer
+  # iss claim value set by RCS in Consent Response JWTs
   RCS_CONSENT_RESPONSE_JWT_ISSUER: secure-open-banking-rcs
   # Directory to IG trust store
   IG_TRUSTSTORE_PATH: /secrets/truststore/igtruststore
