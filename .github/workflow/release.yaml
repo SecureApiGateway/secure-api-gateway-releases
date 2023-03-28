@@ -1,0 +1,40 @@
+name: release-publish-helm
+run-name: Release Helm Charts
+on:
+  workflow_dispatch:
+jobs:
+  package_and_publish_helm:
+    name: Build and publish helm chart
+    runs-on: ubuntu-22.04
+    steps:
+      # https://github.com/actions/checkout
+      - uses: actions/checkout@v3
+        name: Checkout Code
+      - uses: jfrog/setup-jfrog-cli@v3
+        id: setup_jf_cli
+        name: Setup jfrog CLI
+        env:
+          # JFrog platform url (for example: https://acme.jfrog.io) 
+          JF_URL: ${{ secrets.FR_HELM_REPO }}
+          # JFrog Platform access token
+          JF_ACCESS_TOKEN: ${{ secrets.FR_ARTIFACTORY_USER_ACCESS_TOKEN }}
+      - id: create_helm_packages
+        name: Create Helm Packages
+        run: |
+          # For each directory in root (multiple packages to be published)
+          for d in */ ; do
+            # Dont want Kustomize to run
+            if [ "$d" != "kustomize" ] ; then
+              # Get the verison value from Chart.yaml
+              version=$(docker run --rm -v ${PWD}:/workdir mikefarah/yq:3.4.1 yq r $d/Chart.yaml version)
+              # Make the package with the retrieved value
+              make package_helm name=$d version=$version
+            fi
+          done
+      - name: Publish Helm Package to repository
+        id: publish_helm_package_to_repo
+        run: |
+          # Foreach tgz file in the dir which would have been created above
+          for tgz in $(ls *.tgz) ; do
+            make publish_helm name=$tgz
+          done
