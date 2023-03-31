@@ -1,5 +1,5 @@
 apiVersion: v2
-name: cluster-wide
+name: cluster-sources
 description: Environment helm chart for deploying the cluster sources for the secure-api-gateway to k8 cluster
 type: application
 version: 0.9.0
