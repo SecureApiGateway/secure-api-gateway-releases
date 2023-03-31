@@ -21,14 +21,18 @@ jobs:
       - id: create_helm_packages
         name: Create Helm Packages
         run: |
+          # Auth to JFrog
+          helm repo add forgerock-helm https://maven.forgerock.org/artifactory/forgerock-helm-virtual/ --username ${{ secrets.FR_ARTIFACTORY_USER }} --password ${{ secrets.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD }}
           # For each directory in root (multiple packages to be published)
           for d in */ ; do
+            # Remove a trailing / if it exists
+            dir=$(printf "%s\n" "${d%/}")
             # Dont want Kustomize to run
-            if [ "$d" != "kustomize" ] ; then
+            if [ "$dir" != "kustomize" ]; then
               # Get the verison value from Chart.yaml
-              version=$(docker run --rm -v ${PWD}:/workdir mikefarah/yq:3.4.1 yq r $d/Chart.yaml version)
+              version=$(docker run --rm -v ${PWD}:/workdir mikefarah/yq:3.4.1 yq r $dir/Chart.yaml version)
               # Make the package with the retrieved value
-              make package_helm name=$d version=$version
+              make package_helm name=$dir version=$version
             fi
           done
       - name: Publish Helm Package to repository
