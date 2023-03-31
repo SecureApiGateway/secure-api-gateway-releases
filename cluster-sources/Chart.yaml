@@ -1,0 +1,19 @@
+apiVersion: v2
+name: cluster-wide
+description: Environment helm chart for deploying the cluster sources for the secure-api-gateway to k8 cluster
+type: application
+version: 0.9.0
+appVersion: 0.9.0 
+dependencies:
+  - name: kubernetes-replicator
+    version: 2.7.3
+    repository: "https://helm.mittwald.de"
+  - name: external-secrets
+    version: 0.7.2
+    repository: https://charts.external-secrets.io
+  - name: cert-manager
+    version: 1.8.2
+    repository: "https://charts.jetstack.io"
+  - name: ingress-nginx
+    version: 4.2.0
+    repository: "https://kubernetes.github.io/ingress-nginx"
