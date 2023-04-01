@@ -47,6 +47,12 @@ jobs:
           JF_URL: ${{ secrets.FR_HELM_REPO }}
           # JFrog Platform access token
           JF_ACCESS_TOKEN: ${{ secrets.FR_ARTIFACTORY_USER_ACCESS_TOKEN }}
+          
+      - name: add helm repo to resolve dependencies
+        id: add_helm_repo
+        run: |
+          # Auth to JFrog
+          helm repo add forgerock-helm https://maven.forgerock.org/artifactory/forgerock-helm-virtual/ --username ${{ secrets.FR_ARTIFACTORY_USER }} --password ${{ secrets.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD }}
 
       - id: create_helm_packages
         name: Create Helm Packages
