@@ -53,8 +53,10 @@ jobs:
         run: |
           # For each directory in root (multiple packages to be published)
           for d in */ ; do
+            echo "Directory: $d"
             # Dont want Kustomize to run
             if [ "$d" != "kustomize" ] ; then
+              echo "Directory 2: $d"
               # Get the version value from Chart.yaml
               version=$(docker run --rm -v ${PWD}:/workdir mikefarah/yq:3.4.1 yq r $d/Chart.yaml version)
               # Make the package with the retrieved value
