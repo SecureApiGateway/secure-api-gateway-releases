@@ -1,15 +1,44 @@
-name: release-publish-helm
-run-name: Release Helm Charts
+name: create-release
+run-name: Create release '${{ inputs.release_version_number }}'
+# What it does:
+# - Call release-prepare-no-maven
+# - package_and_publish_helm
+# - Call release-publish-draft-and-pr: create pr false
 on:
   workflow_dispatch:
+    inputs:
+      notes:
+        description: "Release notes"
+        required: false
+        type: string
+        default: ''
+      release_version_number:
+        description: "Provide release version number"
+        required: true
+        type: string
+
 jobs:
+
+  release_prepare_no_maven: # prepare for a release in scm, creates the tag and release branch with the proper release versions
+    name: Call release prepare
+    uses: SecureApiGateway/secure-api-gateway-parent/.github/workflows/release-prepare-no-maven.yml@master
+    with:
+      release_version_number: ${{ inputs.release_version_number }}
+    secrets:
+      GIT_COMMIT_USERNAME_BOT: ${{ secrets.GIT_COMMIT_USERNAME_BOT }}
+      GIT_COMMIT_AUTHOR_EMAIL_BOT: ${{ secrets.GIT_COMMIT_AUTHOR_EMAIL_BOT }}
+
   package_and_publish_helm:
     name: Build and publish helm chart
+    needs: [ release_prepare_no_maven ]
     runs-on: ubuntu-22.04
     steps:
       # https://github.com/actions/checkout
       - uses: actions/checkout@v3
-        name: Checkout Code
+        name: Checkout release tag
+        with:
+          ref: ${{ needs.release_prepare_no_maven.outputs.release_tag_ref }}
+
       - uses: jfrog/setup-jfrog-cli@v3
         id: setup_jf_cli
         name: Setup jfrog CLI
@@ -18,6 +47,13 @@ jobs:
           JF_URL: ${{ secrets.FR_HELM_REPO }}
           # JFrog Platform access token
           JF_ACCESS_TOKEN: ${{ secrets.FR_ARTIFACTORY_USER_ACCESS_TOKEN }}
+          
+      - name: add helm repo to resolve dependencies
+        id: add_helm_repo
+        run: |
+          # Auth to JFrog
+          helm repo add forgerock-helm https://maven.forgerock.org/artifactory/forgerock-helm-virtual/ --username ${{ secrets.FR_ARTIFACTORY_USER }} --password ${{ secrets.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD }}
+
       - id: create_helm_packages
         name: Create Helm Packages
         run: |
@@ -26,15 +62,17 @@ jobs:
           # For each directory in root (multiple packages to be published)
           for d in */ ; do
             # Remove a trailing / if it exists
-            dir=$(printf "%s\n" "${d%/}")
+            dir=${d%/}
+            echo "directory: $dir"
             # Dont want Kustomize to run
-            if [ "$dir" != "kustomize" ]; then
-              # Get the verison value from Chart.yaml
+            if [ "$dir" != "kustomize" ] ; then
+              # Get the version value from Chart.yaml
               version=$(docker run --rm -v ${PWD}:/workdir mikefarah/yq:3.4.1 yq r $dir/Chart.yaml version)
               # Make the package with the retrieved value
               make package_helm name=$dir version=$version
             fi
           done
+
       - name: Publish Helm Package to repository
         id: publish_helm_package_to_repo
         run: |
@@ -42,3 +80,14 @@ jobs:
           for tgz in $(ls *.tgz) ; do
             make publish_helm name=$tgz
           done
+
+  release_draft:
+    name: Call publish release draft
+    needs: [ release_prepare_no_maven, package_and_publish_helm ]
+    uses: SecureApiGateway/secure-api-gateway-parent/.github/workflows/release-publish-draft-and-pr.yml@master
+    with:
+      release_version_number: ${{ inputs.release_version_number }}
+      release_branch_ref: ${{ needs.release_prepare_no_maven.outputs.release_branch_ref }}
+      release_tag_ref: ${{ needs.release_prepare_no_maven.outputs.release_tag_ref }}
+      release_notes: ${{ inputs.notes }}
+      create_pr: false # skip create the pull request
