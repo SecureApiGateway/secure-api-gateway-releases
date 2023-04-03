@@ -57,8 +57,6 @@ jobs:
       - id: create_helm_packages
         name: Create Helm Packages
         run: |
-          # Auth to JFrog
-          helm repo add forgerock-helm https://maven.forgerock.org/artifactory/forgerock-helm-virtual/ --username ${{ secrets.FR_ARTIFACTORY_USER }} --password ${{ secrets.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD }}
           # For each directory in root (multiple packages to be published)
           for d in */ ; do
             # Remove a trailing / if it exists
