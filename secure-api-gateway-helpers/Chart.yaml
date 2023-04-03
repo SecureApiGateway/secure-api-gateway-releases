@@ -1,14 +1,11 @@
 apiVersion: v2
-name: third-party
+name: secure-api-gateway-helpers
 description: Environment helm chart for deploying the third party sources for the secure-api-gateway-helpers to k8 cluster
 type: application
 version: 0.9.0
 appVersion: 0.9.0
 
 dependencies:
-  - name: ingress-mutator
-    version: 0.9.0
-    repository: "@forgerock-helm"
   - name: external-secrets-gsm
     version: 0.9.0
     repository: "@forgerock-helm"
