@@ -7,7 +7,7 @@ configurations:
 
 
 configMapGenerator:
-- name: securebanking-platform-config
+- name: deployment-config
   # The env vars below can be passed into a pod using the envFrom pod spec.
   # These global variables can be used to parameterize your deployments.
   # The FQDN and URLs here should match your ingress or istio gateway definitions
@@ -28,40 +28,40 @@ vars:
   objref:
     apiVersion: v1
     kind: ConfigMap
-    name: securebanking-platform-config
+    name: deployment-config
 - name: MTLS_FQDN
   fieldref:
     fieldpath: data.MTLS_FQDN
   objref:
     apiVersion: v1
     kind: ConfigMap
-    name: securebanking-platform-config
+    name: deployment-config
 - name: IDENTITY_PLATFORM_FQDN
   fieldref:
     fieldpath: data.IDENTITY_PLATFORM_FQDN
   objref:
     apiVersion: v1
     kind: ConfigMap
-    name: securebanking-platform-config
+    name: deployment-config
 - name: INGRESS_IP
   fieldref:
     fieldpath: data.INGRESS_IP
   objref:
     apiVersion: v1
     kind: ConfigMap
-    name: securebanking-platform-config
+    name: deployment-config
 - name: CERT_ISSUER
   fieldref:
     fieldpath: data.CERT_ISSUER
   objref:
     apiVersion: v1
     kind: ConfigMap
-    name: securebanking-platform-config
+    name: deployment-config
 # TODO: Deprecate the use of $(NAMESPACE) in kustomize configurations
 - name: NAMESPACE
   objref:
     apiVersion: v1
     kind: ConfigMap
-    name: securebanking-platform-config
+    name: deployment-config
   fieldref:
     fieldpath: metadata.namespace
