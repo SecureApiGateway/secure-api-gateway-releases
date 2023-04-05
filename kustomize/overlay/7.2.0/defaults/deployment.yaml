@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: secure-api-gateway
+  name: ig
 spec:
   template:
     spec:
@@ -29,7 +29,7 @@ spec:
             - name: IG_PEM_TRUSTSTORE
               value: "/var/run/secrets/truststore/ig-truststore.pem"
       containers:
-      - name: secure-api-gateway
+      - name: ig
         envFrom:
         - secretRef:
             name: openig-secrets-env
