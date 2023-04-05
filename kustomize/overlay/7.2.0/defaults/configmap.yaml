@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: securebanking-platform-config
+  name: deployment-config
 data:
 
   # Commented out section below needs to be overwritten in kustomize overlay 
@@ -26,15 +26,15 @@ data:
   # FIDC value: FIDC (Forgerock Identity Cloud) identity cloud platform
   ENVIRONMENT_TYPE: FIDC
   # Name of the RS Service
-  RS_INTERNAL_SVC: securebanking-openbanking-uk-rs
+  RS_INTERNAL_SVC: test-facility-bank
   # Name of the IG Service
-  IG_INTERNAL_SVC: ig
+  IG_INTERNAL_SVC: 
   # Name of the RCS Service
-  RCS_API_INTERNAL_SVC: securebanking-openbanking-uk-rcs
+  RCS_API_INTERNAL_SVC: remote-consent-service
   # Name of the RCS UI Service
-  RCS_UI_INTERNAL_SVC: securebanking-ui-rcs-ui
+  RCS_UI_INTERNAL_SVC: remote-consent-service-user-interface
   # RCS connection settings for the RS API
-  RS_API_URI: http://securebanking-openbanking-uk-rs:8080
+  RS_API_URI: http://test-facility-bank:8080
   # Connection settings for the Consent Repo (hosted by IG)
   CONSENT_REPO_URI: http://ig:80
   # kid of the key used by RCS to sign Consent Response JWTs

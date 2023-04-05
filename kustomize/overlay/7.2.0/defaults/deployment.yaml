@@ -34,7 +34,7 @@ spec:
         - secretRef:
             name: openig-secrets-env
         - configMapRef:
-            name: securebanking-platform-config
+            name: deployment-config
         imagePullPolicy: Always
         volumeMounts:
           - name: new-truststore
