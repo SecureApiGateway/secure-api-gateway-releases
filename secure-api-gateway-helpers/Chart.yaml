@@ -2,8 +2,8 @@ apiVersion: v2
 name: secure-api-gateway-helpers
 description: Environment helm chart for deploying the third party sources for the secure-api-gateway-helpers to k8 cluster
 type: application
-version: 0.9.0
-appVersion: 0.9.0
+version: 0.9.1
+appVersion: 0.9.1
 
 dependencies:
   - name: external-secrets-gsm
