@@ -10,7 +10,6 @@ patchesStrategicMerge:
   - configmap.yaml
   - deployment.yaml
   - secret.yaml
-  - service.yaml
 
 images:
 - name: ig
