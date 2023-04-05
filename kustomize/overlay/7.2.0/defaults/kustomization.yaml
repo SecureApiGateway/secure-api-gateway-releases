@@ -13,9 +13,9 @@ patchesStrategicMerge:
 
 images:
 - name: ig
-  newName: eu.gcr.io/sbat-gcr-develop/securebanking/gate/ig
+  newName: eu.gcr.io/sbat-gcr-release/securebanking/gate/ig
   # Will need changing
-  newTag: latest
+  newTag: 0.9.1
   
   
   
