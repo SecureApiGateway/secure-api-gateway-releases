@@ -2,8 +2,8 @@ apiVersion: v2
 name: third-party
 description: Environment helm chart for deploying the third party sources for the secure-api-gateway to k8 cluster
 type: application
-version: 0.9.0
-appVersion: 0.9.0
+version: 0.9.1
+appVersion: 0.9.1
 
 dependencies:
   - name: mongodb
