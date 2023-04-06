@@ -14,4 +14,4 @@ publish_helm:
 ifndef name
 	$(error A name must be supplied, Eg. make package_helm name=external-secrets-gsm-0.9.0.tgz)
 endif
-	jf rt upload  ./${name} ${helm_repo}
+	jf rt upload  ./${name} ${helm_repo} || echo "Error uploading ${name}"
