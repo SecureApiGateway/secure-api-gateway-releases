@@ -14,3 +14,6 @@
 - op: replace
   path: /spec/template/metadata/labels/app
   value: secure-api-gateway
+- op: replace
+  path: /spec/template/spec/containers/0/name
+  value: secure-api-gateway

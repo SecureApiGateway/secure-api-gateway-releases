@@ -30,10 +30,3 @@ patchesJson6902:
       kind: Deployment
       name: ig
     path: patches/igDeploymentPatch.yaml
-
-patches:
-- path: patches/igContainerPatch.yaml
-  target:
-    kind: Deployment
-  options:
-    allowNameChange: true
