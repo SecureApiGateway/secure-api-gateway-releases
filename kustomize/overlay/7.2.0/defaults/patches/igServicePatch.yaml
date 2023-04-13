@@ -3,9 +3,9 @@
 - op: replace
   path: /metadata/name
   value: secure-api-gateway
-- op: replace
-  path: /metadata/labels/app
-  value: secure-api-gateway
+#- op: replace
+#  path: /metadata/labels/app
+#  value: secure-api-gateway
 
 # Service Spec
 #- op: replace
