@@ -6,10 +6,14 @@ metadata:
   name: "forgerock-01"
   labels:
     app.kubernetes.io/name: "forgerock"
+    app.kubernetes.io/component: secure-api-gateway
+    app.kubernetes.io/instance: secure-api-gateway
 spec:
   selector:
     matchLabels:
-     app.kubernetes.io/name: "forgerock"
+      app.kubernetes.io/name: "forgerock"
+      app.kubernetes.io/component: secure-api-gateway
+      app.kubernetes.io/instance: secure-api-gateway
   componentKinds:
     - group: v1
       kind: Service
