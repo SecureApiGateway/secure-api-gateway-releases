@@ -1,0 +1,19 @@
+---
+# Deployment Metadata
+- op: replace
+  path: /metadata/name
+  value: secure-api-gateway
+- op: replace
+  path: /metadata/labels/app
+  value: secure-api-gateway
+
+# Deployment Spec
+- op: replace
+  path: /spec/selector/matchLabels/app
+  value: secure-api-gateway
+- op: replace
+  path: /spec/template/metadata/labels/app
+  value: secure-api-gateway
+- op: replace
+  path: /spec/template/spec/containers/name
+  value: secure-api-gateway
