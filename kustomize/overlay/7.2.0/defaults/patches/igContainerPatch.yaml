@@ -1,0 +1,9 @@
+kind: Deployment
+apiVersion: apps/v1
+spec:   
+  template:
+    spec:
+      containers:
+        - env:
+              # ..here are few variables
+            name: secure-api-gateway
