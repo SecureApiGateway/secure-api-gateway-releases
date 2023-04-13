@@ -8,9 +8,9 @@
   value: secure-api-gateway
 
 # Service Spec
-- op: replace
-  path: /spec/ports/0/name
-  value: secure-api-gateway
+#- op: replace
+#  path: /spec/ports/0/name
+#  value: secure-api-gateway
 - op: replace
   path: /spec/selector/app
   value: secure-api-gateway
