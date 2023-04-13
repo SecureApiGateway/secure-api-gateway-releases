@@ -2,7 +2,14 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: ig
+  labels:
+    app.kubernetes.io/component: secure-api-gateway
+    app.kubernetes.io/instance: secure-api-gateway
 spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/component: secure-api-gateway
+      app.kubernetes.io/instance: secure-api-gateway
   template:
     spec:
       initContainers:
