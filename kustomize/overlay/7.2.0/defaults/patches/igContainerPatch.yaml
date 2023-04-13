@@ -5,5 +5,4 @@ spec:
     spec:
       containers:
         - env:
-              # ..here are few variables
             name: secure-api-gateway

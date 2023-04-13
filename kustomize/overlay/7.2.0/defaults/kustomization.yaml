@@ -24,3 +24,14 @@ patchesJson6902:
       kind: Deployment
       name: ig
     path: patches/igDeploymentPatch.yaml
+  - target:
+      group: apps
+      version: v1
+      kind: Deployment
+      name: ig
+    path: patches/igDeploymentPatch.yaml
+
+patches:
+  - target:
+      kind: Deployment
+    path: patches/igContainerPatch.yaml
