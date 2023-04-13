@@ -25,6 +25,7 @@ patchesJson6902:
       name: ig
     path: patches/igDeploymentPatch.yaml
   - target:
+      group: container.googleapis.com
       version: v1
       kind: Service
       name: ig
