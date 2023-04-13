@@ -25,8 +25,7 @@ patchesJson6902:
       name: ig
     path: patches/igDeploymentPatch.yaml
   - target:
-      group: core
       version: v1
       kind: Service
       name: ig
-    path: patches/igDeploymentPatch.yaml
+    path: patches/igServicePatch.yaml
