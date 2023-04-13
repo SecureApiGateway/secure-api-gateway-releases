@@ -17,5 +17,9 @@ images:
   # Will need changing
   newTag: 1.0.0
   
-  
-  
+patchesJson6902:
+  - target:
+      version: apps/v1
+      kind: Deployment
+      name: ig
+    path: igNamePatch.yaml
