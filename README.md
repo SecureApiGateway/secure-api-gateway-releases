@@ -32,7 +32,7 @@ It is assumed that all infrastructure has been created, including deploying the 
 ## Installation Guide
 
 ### Assumptions
-As mentioned above, as this point all infrastructure has been installed, a cloud instance has been created and configured, secrets have been created and deployed to kubernetes cluster and the softwares have been built with docker images deployed to a container registry. 
+At this point all infrastructure has been installed, a cloud instance has been created and configured, secrets have been created and deployed to kubernetes cluster and the softwares have been built with docker images deployed to a container registry. 
 
 These steps can be performed manually or via a pipeline (within the instructions below it is assumed that these are being performed manually)
 
