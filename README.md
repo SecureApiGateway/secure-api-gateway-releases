@@ -29,6 +29,24 @@ It is assumed that all infrastructure has been created, including deploying the 
 - [Secrets](https://github.com/SecureApiGateway/secure-api-gateway-releases-helpers/tree/master/external-secrets-gsm) 
   NOTE: GSM has been used but is not manditory, other secrets managers can be used.
 
+## Deployment Guide [Internal]
+
+The charts in this repo can create helm package to be pushed to the [forgerock helm artifactory](https://maven.forgerock.org). 
+To publish a new version of the secure-api-gateway to the artifactory perform the following steps
+
+- Go to [Github Actions](https://github.com/SecureApiGateway/secure-api-gateway-releases/actions/workflows/release.yaml)
+- Click `Run Workflow`
+  - Keep Branch as `master`
+  - Add 'Release [VERSION]' as the description (optional)
+  - Add [VERSION] to 'Provide release version number'
+  - Click `Run Workflow`
+
+Once the workflow has completed, a new tag and release will have been created within secure-api-gateway-release repo, and new helm packages will have been pushed to the atrifactory.
+
+| Key | Description | Example |
+|-----|-------------|---------|
+| `VERSION` | Version of the charts to publish, must be unique and not already be in use | 1.0.0 |
+
 ## Installation Guide
 
 ### Assumptions
@@ -60,7 +78,6 @@ secure-api-gateway-deployments
     values.yaml
 ```
 ### Steps
-
 - Ensure you are connected to your kubernetes cluster
 - Ensure deployment repo is cloned to local machine and cd into
 - cd into kustomize/overlay/7.2.0 folder where the `kustomization.yaml` is
@@ -81,8 +98,6 @@ secure-api-gateway-deployments
 | `DEPLOYMENTNAME` | Helm name for the deployment, must be unique | secure-api-gateway-v1 |
 | `PACKAGE_VERSION` | Version of the Charts to install | 1.0.0 |
 | `NAMESPACE` | Namespace to deploy too | v1 |
-
-
 
 ## Support
 
