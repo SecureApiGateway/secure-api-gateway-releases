@@ -26,7 +26,8 @@ It is assumed that, either a deployments repo has been created containing the sp
 It is assumed that all infrastructure has been created, including deploying the Cloud Instance, and that the following prerequisits have been deployed to the cluster
 - [Nginx](https://kubernetes.github.io/ingress-nginx/deploy/)
 - [MongoDB](https://github.com/SecureApiGateway/secure-api-gateway-releases/blob/master/third-party/Chart.yaml)
-- [Secrets](https://github.com/SecureApiGateway/secure-api-gateway-releases-helpers/tree/master/external-secrets-gsm) NOTE: GSM has been used but is not manditory, other secrets managers can be used.
+- [Secrets](https://github.com/SecureApiGateway/secure-api-gateway-releases-helpers/tree/master/external-secrets-gsm) 
+  NOTE: GSM has been used but is not manditory, other secrets managers can be used.
 
 ## Helm Charts
 ### Deployment
