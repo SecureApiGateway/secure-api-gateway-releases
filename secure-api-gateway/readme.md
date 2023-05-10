@@ -32,7 +32,7 @@ It is assumed that all infrastructure has been created, including deploying the 
 ## Helm Charts
 ### Deployment
 
-This umbarella Chart will install the core components that make up the Secure-API-Gateway. There is no `values.yaml` file within this repo, any values will come from the individual charts themselves, and there is a `values.yaml` within the deployment repo. 
+This umbrella Chart will install the core components that make up the Secure-API-Gateway. There is no `values.yaml` file within this repo, any values will come from the individual charts themselves, and there is a `values.yaml` within the deployment repo. 
 
 As this chart has been published to the forgerock-helm repository you can install this chart by running
 

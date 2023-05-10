@@ -12,7 +12,7 @@ The secure-api-gateway involves a number of components which are installed via [
 
 The issue that this repository is trying to tackle is that the components are all in individual repositories, within the repositories are the infrastructure objects files. Customers previously would have to deploy from the individual repositories, ensuring that the values.yaml files are modified for their deployment. This would be difficult if mutliple versions of the secure-api-gateway are being managed as the values.yaml file would need modifying each time. 
 
-With this repository we are providing a versioned version of the secure api gateway, meaning that a customer can deploy numerous verisons of V1.0.0, V1.0.1, V2.0.0 ect. A benefit of this is that the custoemer no longer needs to figure out which components are compatible with each other. 
+With this repository we are providing a set of versions of the secure api gateway, meaning that a customer can deploy numerous verisons of V1.0.0, V1.0.1, V2.0.0 ect. A benefit of this is that the custoemer no longer needs to figure out which components are compatible with each other. 
 How this is achieved is by deploying the umbarella charts which are uploaded to the [forgerock helm artifactory](https://maven.forgerock.org). Within the umbrella charts are the versioned components that make up the secure-api-gateway, for example V1.0.1 of the secure-api-gateway may contain;
 - [V1.0.0 Remote Consent Service](https://github.com/SecureApiGateway/secure-api-gateway-ob-uk-rcs)
 - [V1.0.1 Remote Consent Service User Interface](https://github.com/SecureApiGateway/secure-api-gateway-ob-uk-ui)
