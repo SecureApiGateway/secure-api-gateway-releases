@@ -2,8 +2,8 @@ apiVersion: v2
 name: third-party
 description: Helm chart for deploying the third party sources required for the secure-api-gateway to kubernetes cluster
 type: application
-version: 1.0.0
-appVersion: 1.0.0
+version: 1.0.1
+appVersion: 1.0.1
 
 dependencies:
   - name: mongodb
