@@ -11,7 +11,7 @@ The ForgeRock Secure API Gateway for Open Banking is an open-source solution tha
 > These are the release notes for `Secure API Gateway` version `v1.0.1` named `Aerosmith`
 
 ### Previous version
-- `v1.0.1`
+- `v1.0.0`
 
 ### Component Helm chart versions used by this release
 | component                                                                                             | Helm chart version | Full changelog                                                                                                       |
