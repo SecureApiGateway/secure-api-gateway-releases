@@ -8,7 +8,7 @@
 
 The ForgeRock Secure API Gateway for Open Banking is an open-source solution that helps financial services organizations deliver both test and production Open Banking and custom APIs from one framework, enforced by the ForgeRock Identity Platform.
 
-> These are the release notes for `Secure API Gateway` version `${release-version}` named `${release-name}`
+These are the release notes for `Secure API Gateway` version `${release-version}` named `${release-name}`
 
 ### Previous version
 - ${last-release-version}

@@ -8,7 +8,7 @@
 
 The ForgeRock Secure API Gateway for Open Banking is an open-source solution that helps financial services organizations deliver both test and production Open Banking and custom APIs from one framework, enforced by the ForgeRock Identity Platform.
 
-> These are the release notes for `Secure API Gateway` version `v1.0.1` named `Aerosmith`
+These are the release notes for `Secure API Gateway` version `v1.0.1` named `Aerosmith`
 
 ### Previous version
 - `v1.0.0`
@@ -30,9 +30,8 @@ The ForgeRock Secure API Gateway for Open Banking is an open-source solution tha
 [n/a]
 
 ### New Features
-#### Addressed Issues
 
-| Issue                                                                  | Description                                                                        | 
+| Addressed Issues                                                       | Description                                                                        | 
 |------------------------------------------------------------------------|------------------------------------------------------------------------------------|
 | [945](https://github.com/secureapigateway/secureapigateway/issues/945) | IG Test Trusted Directory needs api to obtain Signing Pem/Key pair                 |
 | [947](https://github.com/secureapigateway/secureapigateway/issues/947) | Display debtor account preselected when is provided and update the decision object |
