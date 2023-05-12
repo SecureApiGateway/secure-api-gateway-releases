@@ -54,7 +54,7 @@ identification details for the PSU.
 
 When the PISP knows the account identification, the debtor account is provided in the consent.
 
-Now the Resource Consent Service user App, displays the consent details with a preselected
+Now the Remote Consent Service UI, displays the consent details with a preselected
 account that match with the debtor account provided in the consent, otherwise the app will display the
 user accounts to be selected.
 
