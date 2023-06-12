@@ -39,3 +39,14 @@ depending on the SAPI-G platform version to be tested.
 | SAPI-G platform release | SAPI-G postman collection                                                     | SAPI-G postman environment                        |
 |-------------------------|-------------------------------------------------------------------------------|---------------------------------------------------|
 | `v1.0`                  | `Secure API Gateway v1.0 - Open Banking UK TPP Flows.postman_collection.json` | `v1.0.0 release cluster.postman_environment.json` |
+
+#### How to import
+- _Option 1_: Drop the files anywhere in the postman application to import the collection and environment files
+- _Option 2_: Use the `import` button at the left top bar to import the collection and environment files
+- ![Import collection](img/import-button.png)
+- Select the collection from the collection left bar
+- Select the imported environment to be used by the collection
+- ![select environment](img/select-environment.png)
+- Read the documentation https://postman.ob-sandbox-v1.forgerock.financial/#intro
+
+> Postman now is ready!
