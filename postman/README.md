@@ -36,9 +36,9 @@ depending on the SAPI-G platform version to be tested.
 
 **Table Versions**
 
-| SAPI-G platform release | SAPI-G postman collection                                                     | SAPI-G postman environment                        |
-|-------------------------|-------------------------------------------------------------------------------|---------------------------------------------------|
-| `v1.0`                  | `Secure API Gateway v1.0 - Open Banking UK TPP Flows.postman_collection.json` | `v1.0.0 release cluster.postman_environment.json` |
+| SAPI-G platform release | FQDN environment | SAPI-G postman collection                                                     | SAPI-G postman environment                        |
+|-------------------------|------------------|-------------------------------------------------------------------------------|---------------------------------------------------|
+| `v1.0`                  | ob-sandbox-v1    | `Secure API Gateway v1.0 - Open Banking UK TPP Flows.postman_collection.json` | `v1.0.0 release cluster.postman_environment.json` |
 
 #### How to import
 - _Option 1_: Drop the files anywhere in the postman application to import the collection and environment files
