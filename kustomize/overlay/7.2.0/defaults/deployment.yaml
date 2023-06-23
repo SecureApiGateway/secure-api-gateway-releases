@@ -3,6 +3,7 @@ kind: Deployment
 metadata:
   name: ig
 spec:
+  replicas: 3
   template:
     spec:
       initContainers:
