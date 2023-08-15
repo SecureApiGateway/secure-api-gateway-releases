@@ -33,6 +33,8 @@ data:
   RCS_API_INTERNAL_SVC: remote-consent-service
   # Name of the RCS UI Service
   RCS_UI_INTERNAL_SVC: remote-consent-service-user-interface
+  # Connection Setting for the Remote Consent Service
+  RCS_CONSENT_STORE_URI: http://remote-consent-service:8080/consent/store
   # RCS connection settings for the RS API
   RS_API_URI: http://test-facility-bank:8080
   # Connection settings for the Consent Repo (hosted by IG)
