@@ -37,8 +37,8 @@ data:
   RCS_CONSENT_STORE_URI: http://remote-consent-service:8080/consent/store
   # RCS connection settings for the RS API
   RS_API_URI: http://test-facility-bank:8080
-  # Connection settings for the Consent Repo (hosted by IG)
-  CONSENT_REPO_URI: http://ig:80
+  # Connection settings for the IG hosted data repo
+  GATEWAY_DATA_REPO_URI: http://ig:80
   # kid of the key used by RCS to sign Consent Response JWTs
   RCS_CONSENT_RESPONSE_JWT_SIGNINGKEYID: rcs-jwt-signer
   # iss claim value set by RCS in Consent Response JWTs
