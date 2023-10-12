@@ -11,7 +11,9 @@ patchesStrategicMerge:
   - deployment.yaml
   - secret.yaml
 
-images:
-- name: ig
-  newName: eu.gcr.io/sbat-gcr-release/securebanking/gate/ig
-  newTag: 2.1.0
+# Commented out section below needs to be overwritten in kustomize overlay 
+
+#images:
+#- name: ig
+#  newName: repo location
+#  newTag: tag name
