@@ -121,3 +121,22 @@ client_jws_helpers.createAuthorizeRequestUrl = function (scope, consentId) {
     console.log("link is " + link)
     return link;
 }
+
+client_jws_helpers.setClientCredentialRequestHeaders = function (token_endpoint_auth_method){
+    if(token_endpoint_auth_method === "tls_client_auth"){
+        var client_id = pm.environment.get("client_id")
+        console.log("Obtaining OAuth2 token with a client_credential grant type, using tls_client_auth as the Token Endpoint Auth Method. setting 'client_id' header to " + client_id)
+        pm.request.body.urlencoded.add({key: "client_id", value: client_id});
+    } else if (token_endpoint_auth_method === "private_key_jwt"){
+        console.log("Obtaining OAuth2 token with a client_credential grant type, using the private_key_jwt as the Token Endpoint Auth Method.")
+        console.log("Setting 'client_assertion_type' header to 'urn:ietf:params:oauth:client-assertion-type:jwt-bearer'.")
+        pm.request.body.urlencoded.add({ key: "client_assertion_type", value: "urn:ietf:params:oauth:client-assertion-type:jwt-bearer"});
+        var signedToken = client_jws_helpers.getClientCredentialJwt();
+        console.log("Setting 'client_assertion' header to: " + signedToken);
+        pm.request.body.urlencoded.add({ key: "client_assertion", value: signedToken});
+    } else {
+        var errorString = "Unrecognised token_endpoint_auth_method. Please set an environment variable called TOKEN_ENDPOINT_AUTH_METHOD giving it the value of either tls_client_auth, or private_key_jwt";
+        console.error(errorString);
+        throw Error("Unrecognised token_endpoint_auth_method. Please set an environment variable called TOKEN_ENDPOINT_AUTH_METHOD giving it the value of either tls_client_auth, or private_key_jwt");
+    }
+}
