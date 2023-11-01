@@ -79,6 +79,7 @@ client_jws_helpers.createAuthorizeRequestUrl = function (scope, consentId) {
     console.log("audience is " +audience)
     
     var exp = (new Date().getTime() / 1000) + 60*5;
+    var nbf = (new Date().getTime() / 1000);
     var header = {
         'typ': 'JWT',
         'kid': kid,
@@ -90,6 +91,7 @@ client_jws_helpers.createAuthorizeRequestUrl = function (scope, consentId) {
           "scope": scope,
           "iss": pm.environment.get("client_id"),
           "exp": exp,
+          "nbf": nbf,
           "claims": {
             "id_token": {
               "acr": {
@@ -115,7 +117,7 @@ client_jws_helpers.createAuthorizeRequestUrl = function (scope, consentId) {
     var link = pm.environment.get("as_authorization_endpoint") + 
         "?client_id=" + pm.environment.get("client_id") + 
         "&response_type=code id_token&redirect_uri=" + pm.environment.get("client_redirect_uri") + 
-        "&scope=openid payments&state=10d260bf-a7d9-444a-92d9-7b7a5f088208&nonce=10d260bf-a7d9-444a-92d9-7b7a5f088208&request=" + 
+        "&scope=" + scope + "&state=10d260bf-a7d9-444a-92d9-7b7a5f088208&nonce=10d260bf-a7d9-444a-92d9-7b7a5f088208&request=" + 
         signedToken;
     
     console.log("link is " + link)
@@ -139,4 +141,16 @@ client_jws_helpers.setClientCredentialRequestHeaders = function (token_endpoint_
         console.error(errorString);
         throw Error("Unrecognised token_endpoint_auth_method. Please set an environment variable called TOKEN_ENDPOINT_AUTH_METHOD giving it the value of either tls_client_auth, or private_key_jwt");
     }
+}
+
+client_jws_helpers.getPaymentConsentId = function (){
+    var consentType = pm.environment.get("consent_type");
+    if ( typeof consentType === 'undefined'){
+        throw Error("Environment variable consent_type is not set. Please set it in the 'test' scripts after the consent has been created");
+    }
+    var consentIdEnvironmentVariableName = consentType + "_payment_consent_id";
+    console.log("Getting ConsentId from environment variable '" + consentIdEnvironmentVariableName + "'");
+    var consent_id = pm.environment.get(consentIdEnvironmentVariableName);
+    console.log("Consent Id is " + consent_id)
+    return consent_id;
 }
