@@ -71,7 +71,8 @@ client_jws_helpers.createDetatchedSignatureForm = function (compactSerializedJws
 client_jws_helpers.createAuthorizeRequestUrl = function (scope, consentId) {
     console.log("in createAuthorizeRequestUrl(\"" + scope + "\", " + consentId + ")");
 
-    var signedToken = client_jws_helpers.createAuthorizeJwt(scope, consentId);    
+    var signedToken = client_jws_helpers.createAuthorizeJwt(scope, consentId);
+    console.log("signedToken is " + signedToken)    
     var link = pm.environment.get("as_authorization_endpoint") + 
         "?client_id=" + pm.environment.get("client_id") + 
         "&response_type=code id_token&redirect_uri=" + pm.environment.get("client_redirect_uri") + 
