@@ -70,6 +70,20 @@ client_jws_helpers.createDetatchedSignatureForm = function (compactSerializedJws
 
 client_jws_helpers.createAuthorizeRequestUrl = function (scope, consentId) {
     console.log("in createAuthorizeRequestUrl(\"" + scope + "\", " + consentId + ")");
+
+    var signedToken = client_jws_helpers.createAuthorizeJwt(scope, consentId);    
+    var link = pm.environment.get("as_authorization_endpoint") + 
+        "?client_id=" + pm.environment.get("client_id") + 
+        "&response_type=code id_token&redirect_uri=" + pm.environment.get("client_redirect_uri") + 
+        "&scope=" + scope + "&state=10d260bf-a7d9-444a-92d9-7b7a5f088208&nonce=10d260bf-a7d9-444a-92d9-7b7a5f088208&request=" + 
+        signedToken;
+    
+    console.log("link is " + link)
+    return link;
+}
+
+client_jws_helpers.createAuthorizeJwt = function(scope, consentId){
+    console.log("in createAuthorizeJwt(\"" + scope + "\", " + consentId + ")");
     var jwtSecret = pm.environment.get('OB-SEAL-PRIVATE-KEY') || ''
     console.log("jwtSecret is " + jwtSecret)
     var kid = pm.environment.get('OB-SIGNING-KEY-ID')
@@ -110,18 +124,10 @@ client_jws_helpers.createAuthorizeRequestUrl = function (scope, consentId) {
         "nonce": "10d260bf-a7d9-444a-92d9-7b7a5f088208",
         "client_id": pm.environment.get("client_id")
     }
-    
-    // sign token
+
+       // sign token
     var signedToken =  KJUR.jws.JWS.sign(null, header, data, jwtSecret);
-    
-    var link = pm.environment.get("as_authorization_endpoint") + 
-        "?client_id=" + pm.environment.get("client_id") + 
-        "&response_type=code id_token&redirect_uri=" + pm.environment.get("client_redirect_uri") + 
-        "&scope=" + scope + "&state=10d260bf-a7d9-444a-92d9-7b7a5f088208&nonce=10d260bf-a7d9-444a-92d9-7b7a5f088208&request=" + 
-        signedToken;
-    
-    console.log("link is " + link)
-    return link;
+    return signedToken
 }
 
 client_jws_helpers.setClientCredentialRequestHeaders = function (token_endpoint_auth_method){
