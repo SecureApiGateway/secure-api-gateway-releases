@@ -108,7 +108,8 @@ client_jws_helpers.createAuthorizeRequestUrl = function (scope, consentId) {
         "redirect_uri": pm.environment.get("client_redirect_uri"),
         "state": "10d260bf-a7d9-444a-92d9-7b7a5f088208",
         "nonce": "10d260bf-a7d9-444a-92d9-7b7a5f088208",
-        "client_id": pm.environment.get("client_id")
+        "client_id": pm.environment.get("client_id"),
+        "response_mode": "jwt"
     }
     
     // sign token
