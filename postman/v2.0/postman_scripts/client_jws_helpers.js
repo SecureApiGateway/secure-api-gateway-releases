@@ -68,12 +68,15 @@ client_jws_helpers.createDetatchedSignatureForm = function (compactSerializedJws
     return detached_signature;
 }
 
-client_jws_helpers.createAuthorizeRequestUrl = function (scope, consentId) {
-    console.log("in createAuthorizeRequestUrl(\"" + scope + "\", " + consentId + ")");
+client_jws_helpers.createAuthorizeRequestUrl = function (scope, consentId, forceJarm) {
+    console.log("in createAuthorizeRequestUrl(\"" + scope + "\", " + consentId + ", " + forceJarm + ")");
     var jwtSecret = pm.environment.get('OB-SEAL-PRIVATE-KEY') || ''
     console.log("jwtSecret is " + jwtSecret)
     var kid = pm.environment.get('OB-SIGNING-KEY-ID')
     console.log("kid is " + kid)
+    if(typeof forceJarm === undefined){
+        forceJarm = false
+    }
     // Set headers for JWT
     var audience = pm.environment.get('as_issuer_id')
     console.log("audience is " +audience)
@@ -108,8 +111,12 @@ client_jws_helpers.createAuthorizeRequestUrl = function (scope, consentId) {
         "redirect_uri": pm.environment.get("client_redirect_uri"),
         "state": "10d260bf-a7d9-444a-92d9-7b7a5f088208",
         "nonce": "10d260bf-a7d9-444a-92d9-7b7a5f088208",
-        "client_id": pm.environment.get("client_id"),
-        "response_mode": "jwt"
+        "client_id": pm.environment.get("client_id")
+    }
+
+    if(forceJarm){
+        console.log("Using JWT Secured Authorization Response Mode (JARM)")
+        data.response_mode = "jwt"
     }
     
     // sign token
