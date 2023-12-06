@@ -1,17 +1,8 @@
 client_jws_helpers = {};
 
 client_jws_helpers.getClientCredentialJwt = function() {    
-    console.log("in getClientCredentialsJwt");
-    var jwtSecret = pm.environment.get('OB-SEAL-PRIVATE-KEY') || ''
-    // Set headers for JWT
-    var header = {
-        'typ': 'JWT',
-        'kid': pm.environment.get('OB-SIGNING-KEY-ID'),
-        'alg': 'PS256'
-    };
-    console.info("kid is " + pm.environment.get('OB-SIGNING-KEY-ID'))
+    console.log("getClientCredentialsJwt()");
     var exp = (new Date().getTime() / 1000) + 60*5;
-    
     var data = {
             "exp": exp,
             "iss": pm.environment.get("client_id"),
@@ -21,22 +12,13 @@ client_jws_helpers.getClientCredentialJwt = function() {
     }
 
     console.log("data in client credentials jwt: " + JSON.stringify(data))
-    // sign token
-    // console.log("call: " + JSON.stringify({jwtSecret: jwtSecret, data: data, header: header}) );
-    //var signedToken = pmlib.jwtSign(jwtSecret, data, header, exp = 600, alg = "PS256")
-    var signedToken =  KJUR.jws.JWS.sign(null, header, data, jwtSecret);
-    return signedToken;
+    return client_jws_helpers.createSignedJwt(data);
 };
 
 client_jws_helpers.createCompactSerializedJws = function() {
-    var privateKey = pm.environment.get('OB-SEAL-PRIVATE-KEY');
-
     var currentTimestamp = Math.floor(Date.now() / 1000 - 1000)
-
-    var header = {
+    var headers = {
         'typ': 'JOSE',
-        'alg': 'PS256',
-        "kid": pm.environment.get('OB-SIGNING-KEY-ID') || '',
         'http://openbanking.org.uk/iat': currentTimestamp,
         'http://openbanking.org.uk/iss': pm.environment.get('OB-ORGANIZATION-ID') + '/' + pm.environment.get('OB-SOFTWARE-ID'),
         'http://openbanking.org.uk/tan': 'openbanking.org.uk',
@@ -54,11 +36,7 @@ client_jws_helpers.createCompactSerializedJws = function() {
         throw new Error("data must not be null")
     }
     console.log("data: " + data)
-    //console.log(`header: ${ JSON.stringify(header)}`);
-
-    var jwt =  KJUR.jws.JWS.sign(null, header, data, privateKey);
-    console.log("JWT:" + jwt);
-    return jwt
+    return client_jws_helpers.createSignedJwt(data, headers)
 };
 
 client_jws_helpers.createDetatchedSignatureForm = function (compactSerializedJws){
@@ -70,22 +48,52 @@ client_jws_helpers.createDetatchedSignatureForm = function (compactSerializedJws
 
 client_jws_helpers.createAuthorizeRequestUrl = function (scope, consentId) {
     console.log("in createAuthorizeRequestUrl(\"" + scope + "\", " + consentId + ")");
-    var jwtSecret = pm.environment.get('OB-SEAL-PRIVATE-KEY') || ''
-    console.log("jwtSecret is " + jwtSecret)
-    var kid = pm.environment.get('OB-SIGNING-KEY-ID')
-    console.log("kid is " + kid)
-    // Set headers for JWT
+
+    var signedToken = client_jws_helpers.createAuthorizeJwt(scope, consentId);
+    console.log("signedToken is " + signedToken)    
+    var link = pm.environment.get("as_authorization_endpoint") + 
+        "?client_id=" + pm.environment.get("client_id") + 
+        "&response_type=code id_token&redirect_uri=" + pm.environment.get("client_redirect_uri") + 
+        "&scope=" + scope + "&state=10d260bf-a7d9-444a-92d9-7b7a5f088208&nonce=10d260bf-a7d9-444a-92d9-7b7a5f088208&request=" + 
+        signedToken;
+    
+    console.log("link is " + link)
+    return link;
+}
+
+client_jws_helpers.createAuthorizeRequestUrlForPar = function(scope) {
+    var link = pm.environment.get("as_authorization_endpoint") + 
+        "?client_id=" + pm.environment.get("client_id") + 
+        "&response_type=code id_token" +
+        "&redirect_uri=" + pm.environment.get("client_redirect_uri") + 
+        "&scope=" + scope + "&state=10d260bf-a7d9-444a-92d9-7b7a5f088208&nonce=10d260bf-a7d9-444a-92d9-7b7a5f088208" + 
+        "&request_uri=" + pm.environment.get("par_request_uri")
+
+    console.log("link is " + link)
+    return link
+}
+
+client_jws_helpers.createAuthorizeJwt = function(scope, consentId){
+    console.log("in createAuthorizeJwt(\"" + scope + "\", " + consentId + ")");
+    return client_jws_helpers.createSignedJwt(client_jws_helpers.createAuthorizeJwtData(scope, consentId))
+}
+
+client_jws_helpers.createAuthorizeJwtWithPkce = function(scope, consentId){
+    console.log("in createAuthorizeJwtWithPkce(\"" + scope + "\", " + consentId + ")");
+    client_jws_helpers.createPkceChallengeData()
+    var data = client_jws_helpers.createAuthorizeJwtData(scope, consentId)
+    data.code_challenge = pm.environment.get("pkce_challenge")
+    data.code_challenge_method = pm.environment.get("pkce_challenge_method")
+    return client_jws_helpers.createSignedJwt(data)
+}
+
+client_jws_helpers.createAuthorizeJwtData = function(scope, consentId) {
     var audience = pm.environment.get('as_issuer_id')
     console.log("audience is " +audience)
-    
-    var exp = (new Date().getTime() / 1000) + 60*5;
+   
     var nbf = (new Date().getTime() / 1000);
-    var header = {
-        'typ': 'JWT',
-        'kid': kid,
-        'alg': 'PS256'
-    };
-    
+    var exp = nbf + 60*5;
+
     var data = {
           "aud": audience,
           "scope": scope,
@@ -110,18 +118,25 @@ client_jws_helpers.createAuthorizeRequestUrl = function (scope, consentId) {
         "nonce": "10d260bf-a7d9-444a-92d9-7b7a5f088208",
         "client_id": pm.environment.get("client_id")
     }
-    
-    // sign token
-    var signedToken =  KJUR.jws.JWS.sign(null, header, data, jwtSecret);
-    
-    var link = pm.environment.get("as_authorization_endpoint") + 
-        "?client_id=" + pm.environment.get("client_id") + 
-        "&response_type=code id_token&redirect_uri=" + pm.environment.get("client_redirect_uri") + 
-        "&scope=" + scope + "&state=10d260bf-a7d9-444a-92d9-7b7a5f088208&nonce=10d260bf-a7d9-444a-92d9-7b7a5f088208&request=" + 
-        signedToken;
-    
-    console.log("link is " + link)
-    return link;
+
+    return data
+}
+
+client_jws_helpers.createSignedJwt = function(data, additional_headers = {}) {
+    var kid = pm.environment.get('OB-SIGNING-KEY-ID')
+    console.log("kid is " + kid)
+    var headers = {
+        'typ': 'JWT',
+        'kid': kid,
+        'alg': 'PS256'
+    };
+    headers = {
+        ...headers,
+        ...additional_headers
+    }
+    console.log("JWT headers: " + headers)
+    var jwtSecret = pm.environment.get('OB-SEAL-PRIVATE-KEY') || ''
+    return KJUR.jws.JWS.sign(null, headers, data, jwtSecret);
 }
 
 client_jws_helpers.setClientCredentialRequestHeaders = function (token_endpoint_auth_method){
@@ -143,6 +158,11 @@ client_jws_helpers.setClientCredentialRequestHeaders = function (token_endpoint_
     }
 }
 
+client_jws_helpers.setPkceVerifierInRequestBody = function() {
+    console.log("Adding PKCE code_verifier to request body")
+    pm.request.body.urlencoded.add({key: "code_verifier", value: pm.environment.get("pkce_verifier")})
+}
+
 client_jws_helpers.getPaymentConsentId = function (){
     var consentType = pm.environment.get("consent_type");
     if ( typeof consentType === 'undefined'){
@@ -153,4 +173,27 @@ client_jws_helpers.getPaymentConsentId = function (){
     var consent_id = pm.environment.get(consentIdEnvironmentVariableName);
     console.log("Consent Id is " + consent_id)
     return consent_id;
+}
+
+/*
+* Function that generates PKCE challenge data.
+*
+* Sets the following postman environment variables:
+* - pkce_verifier - base64URLEncoded randomly generated string
+* - pkce_challenge - base64URLEncoded SHA256 hash of the pkce_verifier
+* - pkce_challenge_method - S256
+*/
+client_jws_helpers.createPkceChallengeData = function(){
+    console.log("Generating PKCE data and setting environment variables")
+    function base64URLEncode(words) {
+        return CryptoJS.enc.Base64.stringify(words)
+                                  .replace(/\+/g, '-')
+                                  .replace(/\//g, '_')
+                                  .replace(/=/g, '');
+    }
+    var verifier = base64URLEncode(CryptoJS.lib.WordArray.random(50));
+    var challenge = base64URLEncode(CryptoJS.SHA256(verifier));
+    postman.setEnvironmentVariable("pkce_verifier", verifier)
+    postman.setEnvironmentVariable("pkce_challenge", challenge)
+    postman.setEnvironmentVariable("pkce_challenge_method", "S256")
 }
