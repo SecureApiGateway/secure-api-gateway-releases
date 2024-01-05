@@ -47,47 +47,79 @@ client_jws_helpers.createDetatchedSignatureForm = function (compactSerializedJws
 }
 
 client_jws_helpers.createAuthorizeRequestUrl = function (scope, consentId) {
-    console.log("in createAuthorizeRequestUrl(\"" + scope + "\", " + consentId + ")");
+    return client_jws_helpers.createAuthorizeRequestUrlInternal(scope, consentId, false)
+}
 
-    var signedToken = client_jws_helpers.createAuthorizeJwt(scope, consentId);
-    console.log("signedToken is " + signedToken)    
+client_jws_helpers.createAuthorizeRequestUrlWithJarm = function (scope, consentId) {
+    return client_jws_helpers.createAuthorizeRequestUrlInternal(scope, consentId, true)
+}
+
+client_jws_helpers.createAuthorizeRequestUrlInternal = function (scope, consentId, jarm) {
+    console.log("in createAuthorizeRequestUrl(\"" + scope + "\", " + consentId + ", " + jarm + ")");
+
+    var signedToken = client_jws_helpers.createAuthorizeJwt(scope, consentId, jarm);
+    console.log("signedToken is " + signedToken)
+    
+    if (jarm) {
+        var responseType = "code"
+        var responseMode = "jwt"
+    } else {
+        var responseType = "code id_token"
+    }
+
     var link = pm.environment.get("as_authorization_endpoint") + 
         "?client_id=" + pm.environment.get("client_id") + 
-        "&response_type=code id_token&redirect_uri=" + pm.environment.get("client_redirect_uri") + 
+        "&response_type=" + responseType + "&redirect_uri=" + pm.environment.get("client_redirect_uri") + 
         "&scope=" + scope + "&state=10d260bf-a7d9-444a-92d9-7b7a5f088208&nonce=10d260bf-a7d9-444a-92d9-7b7a5f088208&request=" + 
         signedToken;
+
+    if (responseMode) {
+        link = link + "&response_mode=" + responseMode
+    }
     
     console.log("link is " + link)
     return link;
 }
 
-client_jws_helpers.createAuthorizeRequestUrlForPar = function(scope) {
+client_jws_helpers.createAuthorizeRequestUrlForPar = function(scope, jarm) {
+
+    if (jarm) {
+        var responseType = "code"
+        var responseMode = "jwt"
+    } else {
+        var responseType = "code id_token"
+    }
+
     var link = pm.environment.get("as_authorization_endpoint") + 
         "?client_id=" + pm.environment.get("client_id") + 
-        "&response_type=code id_token" +
+        "&response_type=" + responseType +
         "&redirect_uri=" + pm.environment.get("client_redirect_uri") + 
         "&scope=" + scope + "&state=10d260bf-a7d9-444a-92d9-7b7a5f088208&nonce=10d260bf-a7d9-444a-92d9-7b7a5f088208" + 
         "&request_uri=" + pm.environment.get("par_request_uri")
+
+    if (responseMode) {
+        link = link + "&response_mode=" + responseMode
+    }
 
     console.log("link is " + link)
     return link
 }
 
-client_jws_helpers.createAuthorizeJwt = function(scope, consentId){
+client_jws_helpers.createAuthorizeJwt = function(scope, consentId, jarm){
     console.log("in createAuthorizeJwt(\"" + scope + "\", " + consentId + ")");
-    return client_jws_helpers.createSignedJwt(client_jws_helpers.createAuthorizeJwtData(scope, consentId))
+    return client_jws_helpers.createSignedJwt(client_jws_helpers.createAuthorizeJwtData(scope, consentId, jarm))
 }
 
-client_jws_helpers.createAuthorizeJwtWithPkce = function(scope, consentId){
+client_jws_helpers.createAuthorizeJwtWithPkce = function(scope, consentId, jarm){
     console.log("in createAuthorizeJwtWithPkce(\"" + scope + "\", " + consentId + ")");
     client_jws_helpers.createPkceChallengeData()
-    var data = client_jws_helpers.createAuthorizeJwtData(scope, consentId)
+    var data = client_jws_helpers.createAuthorizeJwtData(scope, consentId, jarm)
     data.code_challenge = pm.environment.get("pkce_challenge")
     data.code_challenge_method = pm.environment.get("pkce_challenge_method")
     return client_jws_helpers.createSignedJwt(data)
 }
 
-client_jws_helpers.createAuthorizeJwtData = function(scope, consentId) {
+client_jws_helpers.createAuthorizeJwtData = function(scope, consentId, jarm) {
     var audience = pm.environment.get('as_issuer_id')
     console.log("audience is " +audience)
    
@@ -117,6 +149,11 @@ client_jws_helpers.createAuthorizeJwtData = function(scope, consentId) {
         "state": "10d260bf-a7d9-444a-92d9-7b7a5f088208",
         "nonce": "10d260bf-a7d9-444a-92d9-7b7a5f088208",
         "client_id": pm.environment.get("client_id")
+    }
+
+    if (jarm) {
+        data.response_type = "code"
+        data.response_mode = "jwt"
     }
 
     return data
