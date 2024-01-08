@@ -61,7 +61,7 @@ client_jws_helpers.createAuthorizeRequestUrlInternal = function (scope, consentI
     console.log("signedToken is " + signedToken)
     
     if (jarm) {
-        var responseType = "code"
+        var responseType = "code id_token"
         var responseMode = "jwt"
     } else {
         var responseType = "code id_token"
