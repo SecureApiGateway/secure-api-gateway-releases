@@ -84,7 +84,7 @@ client_jws_helpers.createAuthorizeRequestUrlInternal = function (scope, consentI
 client_jws_helpers.createAuthorizeRequestUrlForPar = function(scope, jarm) {
 
     if (jarm) {
-        var responseType = "code"
+        var responseType = "code id_token"
         var responseMode = "jwt"
     } else {
         var responseType = "code id_token"
@@ -152,7 +152,7 @@ client_jws_helpers.createAuthorizeJwtData = function(scope, consentId, jarm) {
     }
 
     if (jarm) {
-        data.response_type = "code"
+        data.response_type = "code id_token"
         data.response_mode = "jwt"
     }
 
