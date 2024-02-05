@@ -28,4 +28,4 @@ jobs:
       release_notes: ${{ inputs.notes }}
       create_pr: true
     secrets:
-      github_token: ${{ secrets.RELEASE_PAT }}
+      release_github_token: ${{ secrets.RELEASE_PAT }}
