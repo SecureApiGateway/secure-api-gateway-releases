@@ -27,4 +27,5 @@ jobs:
       release_tag_ref: ${{ needs.release_prepare_no_maven.outputs.release_tag_ref }}
       release_notes: ${{ inputs.notes }}
       create_pr: true
+    secrets:
       github_token: ${{ secrets.RELEASE_PAT }}
