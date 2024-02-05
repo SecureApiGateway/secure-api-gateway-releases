@@ -20,7 +20,7 @@ on:
 jobs:
   release_draft:
     name: Call publish release draft
-    uses: SecureApiGateway/secure-api-gateway-parent/.github/workflows/release-publish-draft-and-pr.yml@master
+    uses: SecureApiGateway/secure-api-gateway-parent/.github/workflows/release-publish-draft-and-pr.yml@1260-release-pr-workflows
     with:
       release_version_number: ${{ inputs.release_version_number }}
       release_branch_ref: ${{ needs.release_prepare_no_maven.outputs.release_branch_ref }}
