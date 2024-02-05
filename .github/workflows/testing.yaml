@@ -18,8 +18,18 @@ on:
         type: string
 
 jobs:
+  release_prepare_no_maven: # prepare for a release in scm, creates the tag and release branch with the proper release versions
+    name: Call release prepare
+    uses: SecureApiGateway/secure-api-gateway-parent/.github/workflows/release-prepare-no-maven.yml@master
+    with:
+      release_version_number: ${{ inputs.release_version_number }}
+    secrets:
+      GIT_COMMIT_USERNAME_BOT: ${{ secrets.GIT_COMMIT_USERNAME_BOT }}
+      GIT_COMMIT_AUTHOR_EMAIL_BOT: ${{ secrets.GIT_COMMIT_AUTHOR_EMAIL_BOT }}
+
   release_draft:
     name: Call publish release draft
+    needs: release_prepare_no_maven
     uses: SecureApiGateway/secure-api-gateway-parent/.github/workflows/release-publish-draft-and-pr.yml@1260-release-pr-workflows
     with:
       release_version_number: ${{ inputs.release_version_number }}
