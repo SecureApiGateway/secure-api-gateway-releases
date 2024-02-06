@@ -3,7 +3,7 @@ run-name: Create release '${{ inputs.release_version_number }}'
 # What it does:
 # - Call release-prepare-no-maven
 # - package_and_publish_helm
-# - Call release-publish-draft-and-pr: create pr false
+# - Call release-publish
 on:
   workflow_dispatch:
     inputs:
@@ -79,13 +79,13 @@ jobs:
             make publish_helm name=$tgz
           done
 
-  release_draft:
-    name: Call publish release draft
+  release_create:
+    name: Call publish release
     needs: [ release_prepare_no_maven, package_and_publish_helm ]
-    uses: SecureApiGateway/secure-api-gateway-parent/.github/workflows/release-publish-draft-and-pr.yml@master
+    uses: SecureApiGateway/secure-api-gateway-parent/.github/workflows/release-publish.yml@master
     with:
       release_version_number: ${{ inputs.release_version_number }}
-      release_branch_ref: ${{ needs.release_prepare_no_maven.outputs.release_branch_ref }}
       release_tag_ref: ${{ needs.release_prepare_no_maven.outputs.release_tag_ref }}
       release_notes: ${{ inputs.notes }}
-      create_pr: false # skip create the pull request
+    secrets:
+      release_github_token: ${{ secrets.RELEASE_PAT }}
