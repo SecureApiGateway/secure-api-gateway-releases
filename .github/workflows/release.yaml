@@ -27,6 +27,7 @@ jobs:
     secrets:
       GIT_COMMIT_USERNAME_BOT: ${{ secrets.GIT_COMMIT_USERNAME_BOT }}
       GIT_COMMIT_AUTHOR_EMAIL_BOT: ${{ secrets.GIT_COMMIT_AUTHOR_EMAIL_BOT }}
+      release_github_token: ${{ secrets.RELEASE_PAT }}
 
   package_and_publish_helm:
     name: Build and publish helm chart
