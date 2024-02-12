@@ -1,7 +1,7 @@
 name: create-release
 run-name: Create release '${{ inputs.release_version_number }}'
 # What it does:
-# - Call release-prepare-no-maven
+# - Call release-prepare
 # - package_and_publish_helm
 # - Call release-publish
 on:
@@ -19,11 +19,12 @@ on:
 
 jobs:
 
-  release_prepare_no_maven: # prepare for a release in scm, creates the tag and release branch with the proper release versions
+  release_prepare: # prepare for a release in scm, creates the tag and release branch with the proper release versions
     name: Call release prepare
-    uses: SecureApiGateway/secure-api-gateway-parent/.github/workflows/release-prepare-no-maven.yml@master
+    uses: SecureApiGateway/secure-api-gateway-parent/.github/workflows/release-prepare.yml@master
     with:
       release_version_number: ${{ inputs.release_version_number }}
+      require_maven: false
     secrets:
       GIT_COMMIT_USERNAME_BOT: ${{ secrets.GIT_COMMIT_USERNAME_BOT }}
       GIT_COMMIT_AUTHOR_EMAIL_BOT: ${{ secrets.GIT_COMMIT_AUTHOR_EMAIL_BOT }}
@@ -31,14 +32,14 @@ jobs:
 
   package_and_publish_helm:
     name: Build and publish helm chart
-    needs: [ release_prepare_no_maven ]
+    needs: [ release_prepare ]
     runs-on: ubuntu-22.04
     steps:
       # https://github.com/actions/checkout
       - uses: actions/checkout@v4
         name: Checkout release tag
         with:
-          ref: ${{ needs.release_prepare_no_maven.outputs.release_tag_ref }}
+          ref: ${{ needs.release_prepare.outputs.release_tag_ref }}
 
       - uses: jfrog/setup-jfrog-cli@v3
         id: setup_jf_cli
@@ -82,11 +83,11 @@ jobs:
 
   release_create:
     name: Call publish release
-    needs: [ release_prepare_no_maven, package_and_publish_helm ]
+    needs: [ release_prepare, package_and_publish_helm ]
     uses: SecureApiGateway/secure-api-gateway-parent/.github/workflows/release-publish.yml@master
     with:
       release_version_number: ${{ inputs.release_version_number }}
-      release_tag_ref: ${{ needs.release_prepare_no_maven.outputs.release_tag_ref }}
+      release_tag_ref: ${{ needs.release_prepare.outputs.release_tag_ref }}
       release_notes: ${{ inputs.notes }}
     secrets:
       release_github_token: ${{ secrets.RELEASE_PAT }}
