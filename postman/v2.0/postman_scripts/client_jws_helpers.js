@@ -126,6 +126,9 @@ client_jws_helpers.createAuthorizeJwtData = function(scope, consentId, jarm) {
     var nbf = (new Date().getTime() / 1000);
     var exp = nbf + 60*5;
 
+    // The acr value to request in the id_token, default to urn:openbanking:psd2:ca if not configured
+    let acr = pm.environment.has("AUTHORIZE_REQUEST_ACR") ? pm.environment.get("AUTHORIZE_REQUEST_ACR") : "urn:openbanking:psd2:ca"
+
     var data = {
           "aud": audience,
           "scope": scope,
@@ -135,7 +138,7 @@ client_jws_helpers.createAuthorizeJwtData = function(scope, consentId, jarm) {
           "claims": {
             "id_token": {
               "acr": {
-              "value": "urn:openbanking:psd2:ca",
+              "value": acr,
               "essential": true
             },
             "openbanking_intent_id": {
