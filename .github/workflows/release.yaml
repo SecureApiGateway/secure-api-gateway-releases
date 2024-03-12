@@ -15,14 +15,6 @@ on:
         type: string
         required: true
         description: "Provide release version number"
-      release_sapig_type:
-        type: choice
-        required: true
-        default: OB
-        description: What Type Of SAPIG to Deploy
-        options: 
-        - Core
-        - OB
 
 jobs:
   release_prepare_no_maven: # prepare for a release in scm, creates the tag and release branch with the proper release versions
