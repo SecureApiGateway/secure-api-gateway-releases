@@ -8,17 +8,23 @@ on:
   workflow_dispatch:
     inputs:
       notes:
-        description: "Release notes"
+        type: string
         required: false
-        type: string
-        default: ''
+        description: "Release notes"
       release_version_number:
-        description: "Provide release version number"
-        required: true
         type: string
+        required: true
+        description: "Provide release version number"
+      release_sapig_type:
+        type: choice
+        required: true
+        default: OB
+        description: What Type Of SAPIG to Deploy
+        options: 
+        - Core
+        - OB
 
 jobs:
-
   release_prepare_no_maven: # prepare for a release in scm, creates the tag and release branch with the proper release versions
     name: Call release prepare
     uses: SecureApiGateway/secure-api-gateway-parent/.github/workflows/release-prepare-no-maven.yml@master
@@ -58,17 +64,35 @@ jobs:
       - id: create_helm_packages
         name: Create Helm Packages
         run: |
-          # For each directory in root (multiple packages to be published)
+          makePackage()
+          {
+            if test -f $1/Chart.yaml; then
+              version=$(docker run --rm -v ${PWD}:/workdir mikefarah/yq:3.4.1 yq r $1/Chart.yaml version)
+              make package_helm name=$1 version=$version
+            else
+              echo "No Chart.yaml file in $1"
+            fi
+          }
+          
           for d in */ ; do
             # Remove a trailing / if it exists
             dir=${d%/}
-            echo "directory: $dir"
             # Dont want Kustomize to run
-            if [ "$dir" != "kustomize" ] && [ "$dir" != "postman" ] ; then
-              # Get the version value from Chart.yaml
-              version=$(docker run --rm -v ${PWD}:/workdir mikefarah/yq:3.4.1 yq r $dir/Chart.yaml version)
-              # Make the package with the retrieved value
-              make package_helm name=$dir version=$version
+            if [ "$dir" != "postman" ]; then
+              if [ "$dir" == "ob" ] || [ "$dir" == "core" ]; then
+                cd $dir
+                for d in */ ; do
+                  # Remove a trailing / if it exists
+                  subdir=${d%/}
+                  if [ "$subdir" != "kustomize" ]; then
+                    helmFile=$subdir
+                  fi
+                done
+                cd ../
+                makePackage "$dir/$helmFile"
+              else
+                makePackage $dir
+              fi
             fi
           done
 
