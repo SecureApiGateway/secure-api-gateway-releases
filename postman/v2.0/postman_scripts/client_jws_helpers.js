@@ -130,6 +130,7 @@ client_jws_helpers.createAuthorizeJwtData = function(scope, consentId, jarm) {
     let acr = pm.environment.has("AUTHORIZE_REQUEST_ACR") ? pm.environment.get("AUTHORIZE_REQUEST_ACR") : "urn:openbanking:psd2:ca"
 
     var data = {
+          "sub": consentId,
           "aud": audience,
           "scope": scope,
           "iss": pm.environment.get("client_id"),
