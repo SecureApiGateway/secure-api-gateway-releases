@@ -135,7 +135,6 @@ client_jws_helpers.createAuthorizeJwtData = function(scope, consentId, jarm) {
           "scope": scope,
           "iss": pm.environment.get("client_id"),
           "exp": exp,
-          "nbf": nbf,
           "claims": {
             "id_token": {
               "acr": {
