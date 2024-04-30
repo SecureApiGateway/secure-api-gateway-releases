@@ -1,0 +1,3 @@
+- op: replace 
+  path: /data/SAPIG_TYPE
+  value: ob

@@ -1,4 +1,4 @@
-namespace: dev
+namespace: sandbox
 commonLabels:
   app.kubernetes.io/name: "forgerock"
 resources:
@@ -7,11 +7,9 @@ resources:
 - ingress.yaml
 
 patchesStrategicMerge:
+  - secret.yaml
   - configmap.yaml
   - deployment.yaml
-  - secret.yaml
-
-# Commented out section below needs to be overwritten in kustomize overlay 
 
 #images:
 #- name: ig
