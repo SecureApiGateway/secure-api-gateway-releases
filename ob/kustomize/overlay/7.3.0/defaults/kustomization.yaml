@@ -12,7 +12,7 @@ generatorOptions:
   disableNameSuffixHash: true
 
 resources:
-  - https://github.com/SecureApiGateway/secure-api-gateway-releases/core/kustomize/overlay/7.3.0/defaults?ref=master
+  - https://github.com/SecureApiGateway/secure-api-gateway-releases/core/kustomize/overlay/7.3.0/defaults?ref=1403-update-core-kustomize
 
 patchesStrategicMerge:
   - configmap.yaml
