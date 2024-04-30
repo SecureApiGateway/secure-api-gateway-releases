@@ -1,22 +1,23 @@
+---
 # Ingress for routes requiring MTLS with Open Banking Directory issued certs
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   annotations:
     kubernetes.io/ingress.class: nginx
-    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
-    nginx.ingress.kubernetes.io/ssl-passthrough: "true"
-    nginx.ingress.kubernetes.io/backend-protocol: “HTTPS"
     nginx.ingress.kubernetes.io/auth-tls-pass-certificate-to-upstream: "true"
     nginx.ingress.kubernetes.io/auth-tls-secret: $(NAMESPACE)/obri-ca
     nginx.ingress.kubernetes.io/auth-tls-verify-client: optional_no_ca
+    nginx.ingress.kubernetes.io/backend-protocol: “HTTPS"
+    nginx.ingress.kubernetes.io/error-log-level: "debug"
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
     nginx.ingress.kubernetes.io/large-client-header-buffers: "4 128k"
     nginx.ingress.kubernetes.io/proxy-body-size: 64m
     nginx.ingress.kubernetes.io/proxy-buffer-size: 128k
     nginx.ingress.kubernetes.io/proxy-buffering: "on"
     nginx.ingress.kubernetes.io/proxy-buffers: 4 256k
     nginx.ingress.kubernetes.io/proxy-busy-buffers_size: 256k
-    nginx.ingress.kubernetes.io/error-log-level: "debug"
+    nginx.ingress.kubernetes.io/ssl-passthrough: "true"
   name: mtls
 spec:
   rules:
@@ -63,15 +64,15 @@ metadata:
   annotations:
     kubernetes.io/ingress.class: nginx
     nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
-    nginx.ingress.kubernetes.io/ssl-passthrough: "true"
     nginx.ingress.kubernetes.io/backend-protocol: “HTTPS"
+    nginx.ingress.kubernetes.io/error-log-level: "debug"
     nginx.ingress.kubernetes.io/large-client-header-buffers: "4 128k"
     nginx.ingress.kubernetes.io/proxy-body-size: 64m
     nginx.ingress.kubernetes.io/proxy-buffer-size: 128k
     nginx.ingress.kubernetes.io/proxy-buffering: "on"
     nginx.ingress.kubernetes.io/proxy-buffers: 4 256k
     nginx.ingress.kubernetes.io/proxy-busy-buffers_size: 256k
-    nginx.ingress.kubernetes.io/error-log-level: "debug"
+    nginx.ingress.kubernetes.io/ssl-passthrough: "true"
   name: forgerock
 spec:
   rules:
@@ -96,19 +97,19 @@ kind: Ingress
 metadata:
   annotations:
     kubernetes.io/ingress.class: nginx
-    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
-    nginx.ingress.kubernetes.io/ssl-passthrough: "true"
-    nginx.ingress.kubernetes.io/backend-protocol: “HTTPS"
     nginx.ingress.kubernetes.io/auth-tls-pass-certificate-to-upstream: "true"
     nginx.ingress.kubernetes.io/auth-tls-secret: $(NAMESPACE)/obri-ca
     nginx.ingress.kubernetes.io/auth-tls-verify-client: optional_no_ca
+    nginx.ingress.kubernetes.io/backend-protocol: “HTTPS"
+    nginx.ingress.kubernetes.io/error-log-level: "debug"
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
     nginx.ingress.kubernetes.io/large-client-header-buffers: "4 128k"
     nginx.ingress.kubernetes.io/proxy-body-size: 64m
     nginx.ingress.kubernetes.io/proxy-buffer-size: 128k
     nginx.ingress.kubernetes.io/proxy-buffering: "on"
     nginx.ingress.kubernetes.io/proxy-buffers: 4 256k
     nginx.ingress.kubernetes.io/proxy-busy-buffers_size: 256k
-    nginx.ingress.kubernetes.io/error-log-level: "debug"
+    nginx.ingress.kubernetes.io/ssl-passthrough: "true"
   name: test-trusted-directory
 spec:
   rules:

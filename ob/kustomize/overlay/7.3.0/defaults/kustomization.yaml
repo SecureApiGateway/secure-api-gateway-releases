@@ -1,28 +1,14 @@
-namespace: sandbox
 commonLabels:
   app.kubernetes.io/name: "forgerock"
-
 configMapGenerator:
   - name: ob-deployment-config
-
-secretGenerator:
-  - name: ob-secrets
-
 generatorOptions:
   disableNameSuffixHash: true
-
-resources:
-  - https://github.com/SecureApiGateway/secure-api-gateway-releases/core/kustomize/overlay/7.3.0/defaults?ref=1403-update-core-kustomize
-
-patchesStrategicMerge:
-  - configmap.yaml
-  - secret.yaml
-
 #images:
 #  - name: europe-west4-docker.pkg.dev/sbat-gcr-develop/sapig-docker-artifact/securebanking/sapig-core
 #    newName: europe-west4-docker.pkg.dev/sbat-gcr-develop/sapig-docker-artifact/securebanking/ig
 #    newTag: latest
-
+namespace: sandbox
 patches:
   - target:
       group: networking.k8s.io
@@ -47,3 +33,10 @@ patches:
       kind: Secret
       metadata:
         name: openig-secrets-env
+patchesStrategicMerge:
+  - configmap.yaml
+  - secret.yaml
+resources:
+  - https://github.com/SecureApiGateway/secure-api-gateway-releases/core/kustomize/overlay/7.3.0/defaults?ref=1403-update-core-kustomize
+secretGenerator:
+  - name: ob-secrets
