@@ -2,10 +2,10 @@ namespace: sandbox
 commonLabels:
   app.kubernetes.io/name: "forgerock"
 resources:
-# May need a nicer way of doing the release verison in future
+# May need a nicer way of doing the release version in future
 - https://github.com/ForgeRock/forgeops/kustomize/base/ig?ref=release/7.5-20240402
 
 secretGenerator:
-- name: core-secrets
+  - name: core-secrets
 generatorOptions:
   disableNameSuffixHash: true
