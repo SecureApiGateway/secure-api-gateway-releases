@@ -1,67 +1,60 @@
+---
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: deployment-config
+  name: core-deployment-config
 data:
+  # Core configmap values that are independent for each deployment.
+  # Commented out section below needs to be overwritten in kustomize overlay
+  # Values of keys further down may differ from deployment, if so comment out here and add in deployments repo
 
-  # Commented out section below needs to be overwritten in kustomize overlay 
-
+  # AM_REALM: value_in_overlay
   # BASE_FQDN: value_in_overlay
-  # IG_FQDN: value_in_overlay
-  # MTLS_FQDN: value_in_overlay
-  # IDENTITY_PLATFORM_FQDN: value_in_overlay
-  # USER_OBJECT: value_in_overlay
+  # CERT_ISSUER: value_in_overlay
   # IDENTITY_DEFAULT_USER_AUTHENTICATION_SERVICE: value_in_overlay
   # IDENTITY_GOOGLE_SECRET_STORE_NAME: value_in_overlay
   # IDENTITY_GOOGLE_SECRET_STORE_OAUTH2_CA_CERTS_SECRET_NAME: value_in_overlay
-  # IG_OB_ASPSP_SIGNING_KID: value_in_overlay
-  # AM_REALM: value_in_overlay
-  # CERT_ISSUER: value_in_overlay
+  # IDENTITY_PLATFORM_FQDN: value_in_overlay
+  # IG_FQDN: value_in_overlay
+  # MTLS_FQDN: value_in_overlay
   # OB_ASPSP_ORG_ID: value_in_overlay
+  # USER_OBJECT: value_in_overlay
 
   # End of kustomize overlay
 
+
+  # Environment Settings for SAPIG & Cloud Platform that do not change from deployment to deployment
+
+  # Cloud
   # CDK value: (Cloud Developer's Kit) development identity platform
   # CDM value: CDM (Cloud Deployment Model)
   # FIDC value: FIDC (Forgerock Identity Cloud) identity cloud platform
-  ENVIRONMENT_TYPE: FIDC
-  # Name of the RS Service
-  RS_INTERNAL_SVC: test-facility-bank
-  # Name of the IG Service
-  IG_INTERNAL_SVC: 
-  # Name of the RCS Service
-  RCS_API_INTERNAL_SVC: remote-consent-service
-  # Name of the RCS UI Service
-  RCS_UI_INTERNAL_SVC: remote-consent-service-user-interface
-  # Connection Setting for the Remote Consent Service
-  RCS_CONSENT_STORE_URI: http://remote-consent-service:8080/consent/store
-  # RCS connection settings for the RS API
-  RS_API_URI: http://test-facility-bank:8080
+  CLOUD_TYPE: "FIDC"
   # Connection settings for the IG hosted data repo
-  GATEWAY_DATA_REPO_URI: http://ig:80
-  # kid of the key used by RCS to sign Consent Response JWTs
-  RCS_CONSENT_RESPONSE_JWT_SIGNINGKEYID: rcs-jwt-signer
-  # iss claim value set by RCS in Consent Response JWTs
-  RCS_CONSENT_RESPONSE_JWT_ISSUER: secure-open-banking-rcs
-  # Path to the IG truststore
-  IG_TRUSTSTORE_PATH: /secrets/truststore/igtruststore
-  # Path to the Open Banking signing key used by IG
-  IG_OB_ASPSP_SIGNING_KEYSTORE_PATH: /secrets/open-banking/ig-ob-signing-key.p12
-  # Keystore file type of IG_OB_ASPSP_SIGNING_KEYSTORE_PATH
-  IG_OB_ASPSP_SIGNING_KEYSTORE_TYPE: PKCS12
+  GATEWAY_DATA_REPO_URI: "http://ig:80"
+  # Name of the IG Service
+  IG_INTERNAL_SVC: "ig"
   # Alias of the signing key within the IG_OB_ASPSP_SIGNING_KEYSTORE_PATH keystore
-  IG_OB_ASPSP_SIGNING_KEYSTORE_ALIAS: jwtsigner
+  IG_OB_ASPSP_SIGNING_KEYSTORE_ALIAS: "jwtsigner"
+  # Keystore file type of IG_OB_ASPSP_SIGNING_KEYSTORE_PATH
+  IG_OB_ASPSP_SIGNING_KEYSTORE_TYPE: "PKCS12"
+  # Path to Test Trusted Directory keystore containing the CA cert
+  IG_TEST_DIRECTORY_CA_KEYSTORE_PATH: "/secrets/test-trusted-directory/test-trusted-dir-keystore.p12"
+  # Keystore file type of IG_TEST_DIRECTORY_CA_KEYSTORE_PATH
+  IG_TEST_DIRECTORY_CA_KEYSTORE_TYPE: "PKCS12"
+  # Alias of the Test Trusted Directory's CA cert within the IG_TEST_DIRECTORY_CA_KEYSTORE_PATH keystore
+  IG_TEST_DIRECTORY_CA_KEYSTORE_ALIAS: "ca"
   # Enable Test Trusted Directory
   IG_TEST_DIRECTORY_ENABLED: "true"
-  # Path to Test Trusted Directory keystore containing the CA cert
-  IG_TEST_DIRECTORY_CA_KEYSTORE_PATH: /secrets/test-trusted-directory/test-trusted-dir-keystore.p12
-  # Keystore file type of IG_TEST_DIRECTORY_CA_KEYSTORE_PATH
-  IG_TEST_DIRECTORY_CA_KEYSTORE_TYPE: PKCS12
-  # Alias of the Test Trusted Directory's CA cert within the IG_TEST_DIRECTORY_CA_KEYSTORE_PATH keystore
-  IG_TEST_DIRECTORY_CA_KEYSTORE_ALIAS: ca
-  # Path to Test Trusted Directory keystore containing the signing key
-  IG_TEST_DIRECTORY_SIGNING_KEYSTORE_PATH: /secrets/test-trusted-directory/test-trusted-dir-keystore.p12
-  # Keystore file type of IG_TEST_DIRECTORY_SIGNING_KEYSTORE_PATH
-  IG_TEST_DIRECTORY_SIGNING_KEYSTORE_TYPE: PKCS12
   # Alias of the Test Trusted Directory's signing cert within the IG_TEST_DIRECTORY_SIGNING_KEYSTORE_PATH keystore
-  IG_TEST_DIRECTORY_SIGNING_KEYSTORE_ALIAS: jwt-signer
+  IG_TEST_DIRECTORY_SIGNING_KEYSTORE_ALIAS: "jwt-signer"
+  # Path to Test Trusted Directory keystore containing the signing key
+  IG_TEST_DIRECTORY_SIGNING_KEYSTORE_PATH: "/secrets/test-trusted-directory/test-trusted-dir-keystore.p12"
+  # Keystore file type of IG_TEST_DIRECTORY_SIGNING_KEYSTORE_PATH
+  IG_TEST_DIRECTORY_SIGNING_KEYSTORE_TYPE: "PKCS12"
+  # Path to the IG truststore
+  IG_TRUSTSTORE_PATH: "/secrets/truststore/igtruststore"
+  # SAPIG
+  # core: base sapig
+  # ob: Open Banking specification of sapig
+  SAPIG_TYPE: "core"
