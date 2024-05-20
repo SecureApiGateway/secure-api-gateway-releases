@@ -19,7 +19,6 @@ on:
 jobs:
   package_and_publish_helm:
     name: Build and publish helm chart
-    needs: [ release_prepare_no_maven ]
     runs-on: ubuntu-22.04
     steps:
       # https://github.com/actions/checkout
