@@ -17,19 +17,8 @@ on:
         description: "Provide release version number"
 
 jobs:
-  release_prepare_no_maven: # prepare for a release in scm, creates the tag and release branch with the proper release versions
-    name: Call release prepare
-    uses: SecureApiGateway/secure-api-gateway-parent/.github/workflows/release-prepare-no-maven.yml@master
-    with:
-      release_version_number: ${{ inputs.release_version_number }}
-    secrets:
-      GIT_COMMIT_USERNAME_BOT: ${{ secrets.GIT_COMMIT_USERNAME_BOT }}
-      GIT_COMMIT_AUTHOR_EMAIL_BOT: ${{ secrets.GIT_COMMIT_AUTHOR_EMAIL_BOT }}
-      release_github_token: ${{ secrets.RELEASE_PAT }}
-
   package_and_publish_helm:
     name: Build and publish helm chart
-    needs: [ release_prepare_no_maven ]
     runs-on: ubuntu-22.04
     steps:
       # https://github.com/actions/checkout
@@ -96,13 +85,3 @@ jobs:
             make publish_helm name=$tgz
           done
 
-  release_create:
-    name: Call publish release
-    needs: [ release_prepare_no_maven, package_and_publish_helm ]
-    uses: SecureApiGateway/secure-api-gateway-parent/.github/workflows/release-publish.yml@master
-    with:
-      release_version_number: ${{ inputs.release_version_number }}
-      release_tag_ref: ${{ needs.release_prepare_no_maven.outputs.release_tag_ref }}
-      release_notes: ${{ inputs.notes }}
-    secrets:
-      release_github_token: ${{ secrets.RELEASE_PAT }}
