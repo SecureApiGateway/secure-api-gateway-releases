@@ -37,6 +37,6 @@ patchesStrategicMerge:
   - configmap.yaml
   - secret.yaml
 resources:
-  - https://github.com/SecureApiGateway/secure-api-gateway-releases/core/kustomize/overlay/7.3.0/defaults?ref=1403-update-core-kustomize
+  - https://github.com/SecureApiGateway/secure-api-gateway-releases/core/kustomize/overlay/7.3.0/defaults?ref=v3.0.0
 secretGenerator:
   - name: ob-secrets
