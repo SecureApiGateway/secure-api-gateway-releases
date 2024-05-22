@@ -34,10 +34,6 @@ data:
   GATEWAY_DATA_REPO_URI: "http://ig:80"
   # Name of the IG Service
   IG_INTERNAL_SVC: "ig"
-  # Alias of the signing key within the IG_OB_ASPSP_SIGNING_KEYSTORE_PATH keystore
-  IG_OB_ASPSP_SIGNING_KEYSTORE_ALIAS: "jwtsigner"
-  # Keystore file type of IG_OB_ASPSP_SIGNING_KEYSTORE_PATH
-  IG_OB_ASPSP_SIGNING_KEYSTORE_TYPE: "PKCS12"
   # Path to Test Trusted Directory keystore containing the CA cert
   IG_TEST_DIRECTORY_CA_KEYSTORE_PATH: "/secrets/test-trusted-directory/test-trusted-dir-keystore.p12"
   # Keystore file type of IG_TEST_DIRECTORY_CA_KEYSTORE_PATH
