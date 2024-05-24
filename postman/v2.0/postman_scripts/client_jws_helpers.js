@@ -140,10 +140,6 @@ client_jws_helpers.createAuthorizeJwtData = function(scope, consentId, jarm) {
               "acr": {
               "value": acr,
               "essential": true
-            },
-            "openbanking_intent_id": {
-              "value": consentId,
-              "essential": true
             }
           }
         },
@@ -152,6 +148,13 @@ client_jws_helpers.createAuthorizeJwtData = function(scope, consentId, jarm) {
         "state": "10d260bf-a7d9-444a-92d9-7b7a5f088208",
         "nonce": "10d260bf-a7d9-444a-92d9-7b7a5f088208",
         "client_id": pm.environment.get("client_id")
+    }
+
+    if (acr.includes("openbanking")) {
+        data.claims["openbanking_intent_id"] = {
+            "value": consentId,
+            "essential": true
+        }
     }
 
     if (jarm) {
