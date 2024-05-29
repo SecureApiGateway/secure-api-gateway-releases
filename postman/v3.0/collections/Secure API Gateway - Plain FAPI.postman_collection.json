@@ -1,0 +1,1862 @@
+{
+	"info": {
+		"_postman_id": "c0da72a9-01f7-4326-bdc9-9528ef4be246",
+		"name": "Secure API Gateway v3.x.x - Plain FAPI",
+		"description": "# Welcome to the Postman Collection for the Secure API Gateway, Plain FAPI Edition.\n\nThis collection can be used to try out the [Secure API Gateway](https://github.com/SecureApiGateway) Plain FAPI API. This API is used in order to achieve OIDF FAPI conformance, and serves as a demonstration of how to protect an API using SAPI-G.\n\nThe Secure API Gateway is an Open Source project inititated by ForgeRock. It uses ForgeRock's Identity Gateway and Identity Cloud to provide FAPI level **Identity and Access Management for your APIs**. It is intended to be used by ForgeRock customers wishing to develop highly secure APIs that are protected by;\n\n- Dynamic Client Registration - Use API endpoints to securely register a client to use the protected API. The client must have both TLS certificates and a Software Statment Assertion issued by a trusted directory\n- Mutual Auth TLS (MTLS) - client certs issued by a trusted directory are used to identify both client and server in the TLS transport layer encryption\n- Software Statement bound Access Tokens. Checks are made during API access to ensure that the MTLS certificate presented by the Api Client and the presented access_token are associated with the same software statement in the trusted directory\n    \n\n## Environment variables:\n\n- This is meant to be run with the environment **v2.x release cluster**\n    \n\n#### Variables Types:\n\nThere are two kind of variables used across this collection:\n\n- The upper case with dash variables (_**VAR-NAME**_) are used as constants dynamically in the requests and they need to be initialise with the proper values before run any collection request.\n- The lower case with underscore variables (_**dynamic_var_name**_) are created dynamically when a request is running and are used across the next requests, these variables are updated with the proper value depending of the request step. These variables can be deleted to reset the environment variables.\n    \n\n## Initialise the collection\n\nTo start sending request to **SAPI-G Open Banking edition**, make sure that you have set the **CURRENT VALUE** of below environment variables first:\n\n| **Variable** | **Description** | **INITIAL VALUE** |\n| --- | --- | --- |\n| ENVIRONMENT | Environment to send the request, this value will be replace in the FQDN variables defined. | dev |\n| IG-FQDN | Identity Gateway Host name | obdemo.{ENVIRONMENT}.forgerock.financial |\n| IDENTITY-PLATFORM-FQDN | Identity platform Host name | iam.{ENVIRONMENT}.forgerock.financial |\n| REALM | Identity access management realm name | alpha |\n| OB-SIGNING-KEY-ID | OB Directory Signing key Id | add kid to Current Value column -> |\n| TOKEN_ENDPOINT_AUTH_METHOD | The token_endpoint_auth_method to request during Dynamic Client Registration. To be FAPI compliant this must be tls_client_auth or private_key_jwt | tls_client_auth |\n| OB-SEAL-PRIVATE-KEY | OB Seal private key | add pem to Current Value column -> |\n| OB-SOFTWARE-ID | OB Directory Software Statement Client Id |  |\n| OB-SCOPES | Scopes expected by OB directory to obtain the access token from OB Authorisation server | ASPSPReadAccess TPPReadAccess AuthoritiesReadAccess |\n| OB-AUDIENCE | Auth resource identifier | [https://matls-sso.openbankingtest.org.uk/as/token.oauth2](https://matls-sso.openbankingtest.org.uk/as/token.oauth2) |\n| OB-TOKEN-URL | OB directory Access token endpoint | [https://matls-sso.openbankingtest.org.uk/as/token.oauth2](https://matls-sso.openbankingtest.org.uk/as/token.oauth2) |\n| OB-SSA-URL | OB directory endpoint to retrieve an SSA | [https://matls-dirapi.openbankingtest.org.uk](https://matls-dirapi.openbankingtest.org.uk) |\n| OB-ORGANIZATION-ID | OB directory Organisation ID | add Open Banking TPP Organization Id here to Current Value column -> |\n\n> After set these variables you need initialise the collection running the",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "29272036"
+	},
+	"item": [
+		{
+			"name": "1: Setup your environment",
+			"item": [
+				{
+					"name": "Load JSRASign library",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code should be 200\", function () {",
+									"    pm.response.to.have.status(200)",
+									"    pm.environment.set('jsrsasign_js', responseBody);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://kjur.github.io/jsrsasign/jsrsasign-latest-all-min.js",
+							"protocol": "http",
+							"host": [
+								"kjur",
+								"github",
+								"io"
+							],
+							"path": [
+								"jsrsasign",
+								"jsrsasign-latest-all-min.js"
+							]
+						},
+						"description": "This request loads a library that is used by postman requests in this collection. This request must be run once in order for later requests to succeed."
+					},
+					"response": []
+				},
+				{
+					"name": "LoadJwsHelpers",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code should be 200\", function () {",
+									"    pm.response.to.have.status(200)",
+									"    pm.environment.set('client_jws_helpers', responseBody);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Cache-Control",
+								"value": "no-cache",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "https://raw.githubusercontent.com/SecureApiGateway/secure-api-gateway-releases/v3.0.1/postman/v3.0/postman_scripts/client_jws_helpers.js",
+							"protocol": "https",
+							"host": [
+								"raw",
+								"githubusercontent",
+								"com"
+							],
+							"path": [
+								"SecureApiGateway",
+								"secure-api-gateway-releases",
+								"master",
+								"postman",
+								"v2.0",
+								"postman_scripts",
+								"client_jws_helpers.js"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Openid Connect well known endpoint",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"response must be valid and have a json body\", function () {",
+									"    pm.response.to.have.status(200);",
+									"    pm.response.to.be.withBody;",
+									"    pm.response.to.be.json;",
+									"});",
+									"",
+									"var data = JSON.parse(responseBody);",
+									"",
+									"postman.setEnvironmentVariable(\"as_issuer_id\", data.issuer);",
+									"postman.setEnvironmentVariable(\"as_introspection_endpoint\", data.introspection_endpoint);",
+									"postman.setEnvironmentVariable(\"as_userinfo_endpoint\", data.userinfo_endpoint);",
+									"postman.setEnvironmentVariable(\"as_authorization_endpoint\", data.authorization_endpoint);",
+									"// build auth endpoint, of the form: /am/json/realms/root/realms/alpha/authenticate",
+									"postman.setEnvironmentVariable(\"as_authentication_endpoint\", data.authorization_endpoint.replace(\"/am/oauth2/\", \"/am/json/\").replace(\"/authorize\", \"/authenticate\"));",
+									"postman.setEnvironmentVariable(\"as_token_endpoint\", data.token_endpoint);",
+									"postman.setEnvironmentVariable(\"aspsp_registration_endpoint\", data.registration_endpoint);",
+									"if (typeof data.require_pushed_authorization_requests !== 'undefined' && data.require_pushed_authorization_requests === true) {",
+									"    console.log(\"Clients of this API MUST use Pushed Authorization Requests. Using Pushed Authorization Requests\")",
+									"    pm.setEnvironmentVariable(\"use_pushed_authorization_request\", true)",
+									"    postman.setEnvironmentVariable(\"pushed_authorization_request_endpoint\", data.pushed_authorization_request_endpoint);",
+									"} else {",
+									"    if (pm.environment.get(\"USE_PUSHED_AUTHORIZATION_REQUESTS\")) {",
+									"        console.log(\"Using Pushed Authorization Requests\")",
+									"        postman.setEnvironmentVariable(\"use_pushed_authorization_request\", true)",
+									"        postman.setEnvironmentVariable(\"pushed_authorization_request_endpoint\", data.pushed_authorization_request_endpoint);",
+									"    } else {",
+									"        postman.setEnvironmentVariable(\"use_pushed_authorization_request\", false)",
+									"    }",
+									"}",
+									"",
+									"console.log(pm.environment.get(\"as_authorization_endpoint\"))",
+									"console.log(pm.environment.get(\"as_authentication_endpoint\"))",
+									"",
+									"// variable to store the psu_auth_code manually when the hibrid flow is used",
+									"pm.environment.set(\"psu_auth_code\", \"\")"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {
+							"accept-encoding": true
+						}
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://{{IG-FQDN}}/am/oauth2/realms/root/realms/{{AM_REALM}}/.well-known/openid-configuration",
+							"protocol": "https",
+							"host": [
+								"{{IG-FQDN}}"
+							],
+							"path": [
+								"am",
+								"oauth2",
+								"realms",
+								"root",
+								"realms",
+								"{{AM_REALM}}",
+								".well-known",
+								"openid-configuration"
+							]
+						},
+						"description": "Get the AS discovery endpoints. This will load all the AS endpoints and constants into your postman environment."
+					},
+					"response": []
+				}
+			],
+			"description": "The Secure API Gateway offers a number of endpoints that can be used to help client applications manage authentication and authorization as well as manipulate resources. Before we can register to use the APIsthe Api Client will need to obtain information from one of these endpoints.\n\n## The Openid Connect well-known endpoint.\n\nThis endpoint is covered by the following RFC specifcations document;\n\n[https://openid.net/specs/openid-connect-discovery-1_0.html](https://openid.net/specs/openid-connect-discovery-1_0.html)\n\nThis endpoint can be used to obtain the URLs to be used for authorization and authentication as well as the OAuth2/OIDC settings supported by the authorization server. A client of the APIs should use the links specified in this document rather than hard coding the URLs in the client application.",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "2: Perform Dynamic Client Registration (DCR)",
+			"item": [
+				{
+					"name": "2.1a Create Registration Request JWT using Secure API Gateway issued test Software Statement",
+					"item": [
+						{
+							"name": "2.1a.1 Get test certificates JWKS from Secure API Gateway",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"postman.setEnvironmentVariable(\"ApiClientJWKs\", responseBody);",
+											"",
+											"var data = JSON.parse(responseBody);",
+											"for(let i = 0; i < data.keys.length; i++) {",
+											"    let obj = data.keys[i];",
+											"    if (obj.use === \"sig\") {",
+											"        postman.setEnvironmentVariable(\"OB-SIGNING-KEY-ID\", obj.kid)",
+											"        break;",
+											"    }",
+											"}"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"org_id\": \"PSDGB-FFA-5f563e89742b2800145c7da1\",\n    \"org_name\": \"Acme Fintech\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://{{IG-FQDN}}/jwkms/apiclient/issuecert",
+									"protocol": "https",
+									"host": [
+										"{{IG-FQDN}}"
+									],
+									"path": [
+										"jwkms",
+										"apiclient",
+										"issuecert"
+									]
+								},
+								"description": "This request returns a [JWK](https://datatracker.ietf.org/doc/html/rfc7517) containing a private and public key that may be used as a transport key for creating a TLS connection with the ASPSP's APIs.\n\nThe returned JWK is stored in an environment variable '_ApiClientJWKs'_ for use by the following two APIs that will return PEM format private key/public key pairs."
+							},
+							"response": []
+						},
+						{
+							"name": "2.1a.2 Get TLS cert key/pem from JWKS",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{{ApiClientJWKs}}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://{{IG-FQDN}}/jwkms/apiclient/gettlscert",
+									"protocol": "https",
+									"host": [
+										"{{IG-FQDN}}"
+									],
+									"path": [
+										"jwkms",
+										"apiclient",
+										"gettlscert"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "2.1a.3 Get SIG cert key/pem from JWKS",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"postman.setEnvironmentVariable(\"OB-SEAL-PRIVATE-KEY\", responseBody.substring(responseBody.indexOf(\"-----BEGIN RSA PRIVATE KEY-----\")).trim())"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{{ApiClientJWKs}}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://{{IG-FQDN}}/jwkms/apiclient/getsigcert",
+									"protocol": "https",
+									"host": [
+										"{{IG-FQDN}}"
+									],
+									"path": [
+										"jwkms",
+										"apiclient",
+										"getsigcert"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "2.1a.4 Generate SSA",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"postman.setEnvironmentVariable(\"ssa_jwt\", responseBody);"
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"var uuid = require('uuid');",
+											"var software_id = uuid.v4();",
+											"console.log(\"software_id is \" + software_id);",
+											"postman.setEnvironmentVariable('generated_software_id', software_id);"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"software_id\": \"{{generated_software_id}}\",\n    \"software_client_name\": \"Secure API Gateway test generated client\",\n    \"software_client_id\": \"{{generated_software_id}}\",\n    \"software_tos_uri\": \"https://github.com/SecureApiGateway\",\n    \"software_client_description\": \"Open Banking UK TPP Flows Postman Client\",\n    \"software_redirect_uris\": [\"https://postman-echo.com/get\", \"https://www.certification.openid.net/test/a/forgerock-plain-fapi/callback\", \"https://www.certification.openid.net/test/a/forgerock-plain-fapi/callback?dummy1=lorem&dummy2=ipsum\"],\n    \"software_policy_uri\": \"https://github.com/SecureApiGateway\",\n    \"software_logo_uri\": \"https://avatars.githubusercontent.com/u/74596995?s=96&v=4\",\n    \"software_roles\": [    \n        \"DATA\",\n        \"AISP\",\n        \"CBPII\",\n        \"PISP\"],\n    \"software_jwks\": {{ApiClientJWKs}}\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://{{IG-FQDN}}/jwkms/apiclient/getssa",
+									"protocol": "https",
+									"host": [
+										"{{IG-FQDN}}"
+									],
+									"path": [
+										"jwkms",
+										"apiclient",
+										"getssa"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"description": "In these steps we will use the Secure API Gateway's built in Trusted Directory to obtain the transport and signing keys and the software statement assertion that we will need to perform Dynamic Client Registration. If you haven't already done so, now would be a great time to have a read of [this article](https://github.com/SecureApiGateway/SecureApiGateway/wiki/Dynamic-Client-Registration) that will give you an overview of the Dynamic Client Registration process.\n\nIf you have already registered with the Open Banking test Directory, you should use that trusted directory to perform dynamic client registration by following the steps in section 2.1b.\n\n> **NOTE**: The Secure API Gateway's Trusted Directory is not intended for use in production systems or in systems where access to the APIs must be restricted to a trusted ecosystem. \n  \n\nIf you have not registered with the Open Banking Test Directory, then it is possible to peform Dynamic Client Registration (DCR) using the Secure API Gateway's own Trusted Directory by following the steps in this section.\n\nYou can read more about this trusted directory [here](https://github.com/SecureApiGateway/SecureApiGateway/wiki/SAPI-G's-Trusted-Directory).\n\nThe steps required to obtain everything needed to onboard via the Secure API Gateway are;\n\n1. Get Test Certificates JWKS Secure API Gateway\n2. Get TLS cert key/pem from JWKS\n3. Get SIG cert key/pem from JWKS\n4. Generate SSA\n5. Generate registration request JWT\n    \n\nNote: Postman will need to be configured to use the TLS and SIG certs obtained from the Secure API Gateway's Trusted Directory API. How to do this will be explained in 2.1a.2 and 2.1a.3."
+				},
+				{
+					"name": "2.1b Create Registration Request JWT using the Open Banking Test Directory",
+					"item": [
+						{
+							"name": "Step 2.1: Acquire access Token from OB Test Directory",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"var navigator = {}; //fake a navigator object for the lib",
+											"var window = {}; //fake a window object for the lib",
+											"eval(pm.environment.get(\"jsrsasign_js\"));",
+											"",
+											"var jwtSecret = pm.environment.get('OB-SEAL-PRIVATE-KEY') || ''",
+											"console.log(\"signing key: \" + jwtSecret)",
+											"// Set headers for JWT",
+											"var header = {",
+											"\t'typ': 'JWT',",
+											"    'kid': pm.environment.get('OB-SIGNING-KEY-ID') || '',",
+											"\t'alg': 'RS256'",
+											"};",
+											"",
+											"// Prepare timestamp in seconds",
+											"var currentTimestamp = Math.floor(Date.now() / 1000)",
+											"",
+											"var data = {",
+											"\t'iss': pm.environment.get('OB-SOFTWARE-ID') || '',",
+											"\t'sub': pm.environment.get('OB-SOFTWARE-ID') || '',",
+											"\t'scope': pm.environment.get('OB-SCOPES') || '',",
+											"\t'exp': currentTimestamp + 180,",
+											"\t'aud': pm.environment.get('OB-AUDIENCE') || '',",
+											"    \"jti\": pm.variables.replaceIn('{{$guid}}')",
+											"}",
+											"",
+											"// sign token, default alg = RS256",
+											"//var signedToken = pmlib.jwtSign(jwtSecret, data, header, exp = 600, alg = pmlib.DEFAULT_ALG)",
+											"var signedToken =  KJUR.jws.JWS.sign(null, header, data, jwtSecret);",
+											"console.log(signedToken)",
+											"pm.environment.set('ob_jwt_signed', signedToken)",
+											"console.log('Signed and encoded JWT', signedToken)"
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"response must be valid and have a json body\", function () {",
+											"    pm.response.to.have.status(200);",
+											"    pm.response.to.be.withBody;",
+											"    pm.response.to.be.json;",
+											"});",
+											"",
+											"var data = JSON.parse(responseBody);",
+											"",
+											"pm.test(\"To have access_token\", function () {",
+											"    pm.expect(data.access_token).to.not.be.null;",
+											"});",
+											"",
+											"postman.setEnvironmentVariable(\"ob_access_token\", data.access_token);"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "client_assertion_type",
+											"value": "urn:ietf:params:oauth:client-assertion-type:jwt-bearer",
+											"type": "text"
+										},
+										{
+											"key": "grant_type",
+											"value": "client_credentials",
+											"type": "text"
+										},
+										{
+											"key": "client_id",
+											"value": "{{OB-SOFTWARE-ID}}",
+											"type": "text"
+										},
+										{
+											"key": "client_assertion",
+											"value": "{{ob_jwt_signed}}",
+											"type": "text"
+										},
+										{
+											"key": "scope",
+											"value": "{{OB-SCOPES}}",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{OB-TOKEN-URL}}",
+									"host": [
+										"{{OB-TOKEN-URL}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Step 2.2: get SSA associated with Transport Cert",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Response must be a string and status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"    pm.response.to.be.withBody;",
+											"});",
+											"",
+											"var data = pm.response.text()",
+											"console.log(\"software statement: \" + data)",
+											"",
+											"postman.setEnvironmentVariable(\"ssa_jwt\", data);",
+											"var software_id = pm.environment.get(\"OB-SOFTWARE-ID\")",
+											"postman.setEnvironmentVariable(\"generated_software_id\", software_id)",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{ob_access_token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/jws+json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{OB-SSA-URL}}/organisation/tpp/{{OB-ORGANIZATION-ID}}/software-statement/{{OB-SOFTWARE-ID}}/software-statement-assertion",
+									"host": [
+										"{{OB-SSA-URL}}"
+									],
+									"path": [
+										"organisation",
+										"tpp",
+										"{{OB-ORGANIZATION-ID}}",
+										"software-statement",
+										"{{OB-SOFTWARE-ID}}",
+										"software-statement-assertion"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"description": "## The Open Banking Test/Sandbox Directory\n\nIn these steps we will use the Open Banking Test/Sandbox Directory to obtain the transport and signing keys and the software statement assertion that we will need to perform Dynamic Client Registration. If you haven't already done so, now would be a great time to have a read of [this article](https://github.com/SecureApiGateway/SecureApiGateway/wiki/Dynamic-Client-Registration) that will give you an overview of the Dynamic Client Registration process.\n\nThis directory is run and operated by the Open Banking Implementation Entity (OBIE). You can sign up to use the directory, or login if you are already signed up [here](https://directory.openbanking.org.uk/s/login/). This is the Directory in which TPPs will need to manage software statements in order to register with real financial institution's Open Banking Test facilities.\n\nThe signup process can take a significant amount of time. Financial institutions looking to implement a protected API will find that providing developers with Open Banking Software Statements and certificates becomes afor use when building the system to be an overhead. For that reason the Secure API Gateway can be configured to act as a Trusted Directory.\n\nIf you have access to the Open Banking Test directory and have a Software Statement in that directory that you would like to use to register and use this API you can follow the steps in this section. If you don't have access to the Open Banking Test Directory you can follow the steps in section 2.1.a an use the Secure API Gateway trusted directory."
+				},
+				{
+					"name": "2.2: Perform Dynamic Client Registration",
+					"item": [
+						{
+							"name": "3.1: TPP performs registration using registration request jwt",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"// The jsrasign-js library has been loaded when initilise the collection `load JSRASign library` request",
+											"var navigator = {}; //fake a navigator object for the lib",
+											"var window = {}; //fake a window object for the lib",
+											"eval(pm.environment.get(\"jsrsasign_js\"));",
+											"",
+											"var privateKey = pm.environment.get('OB-SEAL-PRIVATE-KEY') ;",
+											"console.log(privateKey)",
+											"var currentTimestamp = Math.floor(Date.now() / 1000)",
+											"",
+											"var header = {",
+											"\t'typ': 'JWT',",
+											"\t'alg': 'PS256',",
+											"    \"kid\": pm.environment.get('OB-SIGNING-KEY-ID') || ''",
+											"};",
+											"",
+											"/**",
+											" * Notes:",
+											" * - redirect_uris for FAPI conformance suite: \"https://www.certification.openid.net/test/a/forgerock-plain-fapi/callback\", \"https://www.certification.openid.net/test/a/forgerock-plain-fapi/callback?dummy1=lorem&dummy2=ipsum\"",
+											" * When we use these URIs we need to remove the postman-echo URI, otherwise we run into issues requesting the openid scope due to the pairwise_subject type and using difference domains for redirect uris.",
+											" */",
+											"var data = {",
+											"    'iss': pm.environment.get('generated_software_id'),",
+											"    'exp': currentTimestamp + 180,",
+											"    'scope': \"openid accounts payments eventpolling fundsconfirmations\",",
+											"    'response_types': [\"code id_token\", \"code\"],",
+											"    'redirect_uris': [\"https://postman-echo.com/get\"],",
+											"    'application_type': \"web\",",
+											"    'grant_types': [\"authorization_code\", \"refresh_token\", \"client_credentials\"],",
+											"    'software_statement': pm.environment.get('ssa_jwt'),",
+											"    'token_endpoint_auth_signing_alg': \"PS256\",",
+											"    'id_token_signed_response_alg': \"PS256\",",
+											"    'request_object_signing_alg': \"PS256\",",
+											"    'authorization_signing_response_alg': \"PS256\",",
+											"    'request_object_encryption_alg': \"RSA-OAEP-256\",",
+											"    'request_object_encryption_enc': \"A128CBC-HS256\",",
+											"    'subject_type' : 'pairwise'",
+											"}",
+											"",
+											"var token_endpoint_auth_method_requested = pm.environment.get(\"TOKEN_ENDPOINT_AUTH_METHOD\");",
+											"",
+											"data.token_endpoint_auth_method = token_endpoint_auth_method_requested;",
+											"console.info(\"Requesting token_endpoint_auth_method of \" + data.token_endpoint_auth_method);",
+											"if(token_endpoint_auth_method_requested === \"tls_client_auth\"){",
+											"    data.tls_client_auth_subject_dn = pm.environment.get(\"OB-TLS-CERT-DN\");",
+											"}",
+											"console.log(\"Client Dynamic Registration request jwt claims: \" + JSON.stringify(data));",
+											"var jwt =  KJUR.jws.JWS.sign(\"PS256\", header, data, privateKey);",
+											"pm.environment.set('dynamic_registration_request', jwt)",
+											"pm.environment.set('dynamic_registration_request_raw_data', JSON.stringify(data))"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"response must be 201 and have a json body\", function () {",
+											"    pm.response.to.have.status(201);",
+											"    pm.response.to.be.withBody;",
+											"    pm.response.to.be.json;",
+											"});",
+											"",
+											"if (pm.expect(responseBody).not.eql(undefined)){",
+											"    var data = JSON.parse(responseBody);",
+											"    if (data.client_id !== null){",
+											"        pm.environment.set(\"client_id\", data.client_id);",
+											"        pm.environment.set(\"client_secret\", data.client_secret);",
+											"        console.log(\"Redirect uris found: \" + data.redirect_uris);",
+											"        if(data.redirect_uris.length > 1) {",
+											"            console.log(\"setting the first redirect_uri found: \" + data.redirect_uris[0]);",
+											"            pm.environment.set(\"client_redirect_uri\", data.redirect_uris[0]);",
+											"        } else {",
+											"            pm.environment.set(\"client_redirect_uri\", data.redirect_uris[0]);",
+											"        }",
+											"        pm.environment.set(\"registration_access_token\", data.registration_access_token)",
+											"    }",
+											"}",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/jwt",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{{dynamic_registration_request}}"
+								},
+								"url": {
+									"raw": "{{aspsp_registration_endpoint}}",
+									"host": [
+										"{{aspsp_registration_endpoint}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "3.2: Get TPP Dynamic Registration",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{registration_access_token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/jwt",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{aspsp_registration_endpoint}}/{{client_id}}",
+									"host": [
+										"{{aspsp_registration_endpoint}}"
+									],
+									"path": [
+										"{{client_id}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "3.3: Update TPP Dynamic Registration",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"// The jsrasign-js library has been loaded when initilise the collection `load JSRASign library` request",
+											"var navigator = {}; //fake a navigator object for the lib",
+											"var window = {}; //fake a window object for the lib",
+											"eval(pm.environment.get(\"jsrsasign_js\"));",
+											"",
+											"var privateKey = pm.environment.get('OB-SEAL-PRIVATE-KEY') ;",
+											"console.log(privateKey)",
+											"var currentTimestamp = Math.floor(Date.now() / 1000)",
+											"",
+											"// Set headers for JWT",
+											"var header = {",
+											"\t'typ': 'JWT',",
+											"    'kid': pm.environment.get('OB-SIGNING-KEY-ID') || '',",
+											"\t'alg': 'PS256'",
+											"};",
+											"",
+											"// Prepare timestamp in seconds",
+											"var currentTimestamp = Math.floor(Date.now() / 1000)",
+											"",
+											"// Update the original dcr",
+											"var data = JSON.parse(pm.environment.get('dynamic_registration_request_raw_data'))",
+											"",
+											"data.client_id = pm.environment.get('client_id')",
+											"data.exp = currentTimestamp + 180",
+											"data.redirect_uris = [pm.environment.get('client_redirect_uri')]",
+											"data.software_statement = pm.environment.get('ssa_jwt')",
+											"",
+											"console.log(\"data\", data)",
+											"// sign token",
+											"var dynamic_registration_jws =  KJUR.jws.JWS.sign(\"PS256\", header, data, privateKey);",
+											"pm.environment.set('dynamic_registration_request_updated', dynamic_registration_jws)",
+											"console.log('Signed dynamic_registration_request', dynamic_registration_jws)"
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"response must be 200 and have a json body\", function () {",
+											"    pm.response.to.have.status(200);",
+											"    pm.response.to.be.withBody;",
+											"    pm.response.to.be.json;",
+											"});",
+											"",
+											"if (pm.expect(responseBody).not.eql(undefined)){",
+											"    var data = JSON.parse(responseBody);",
+											"    if (data.client_id !== null){",
+											"        pm.environment.set(\"client_id\", data.client_id);",
+											"        pm.environment.set(\"client_secret\", data.client_secret);",
+											"        console.log(\"Redirect uris found: \" + data.redirect_uris);",
+											"        if(data.redirect_uris.length > 1) {",
+											"            console.log(\"setting the first redirect_uri found: \" + data.redirect_uris[0]);",
+											"            pm.environment.set(\"client_redirect_uri\", data.redirect_uris[0]);",
+											"        } else {",
+											"            pm.environment.set(\"client_redirect_uri\", data.redirect_uris[0]);",
+											"        }",
+											"        pm.environment.set(\"registration_access_token\", data.registration_access_token)",
+											"    }",
+											"}",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{registration_access_token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/jwt",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{{dynamic_registration_request_updated}}"
+								},
+								"url": {
+									"raw": "{{aspsp_registration_endpoint}}/{{client_id}}",
+									"host": [
+										"{{aspsp_registration_endpoint}}"
+									],
+									"path": [
+										"{{client_id}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "3.3 Delete Dynamic Registration",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"response must be 204 and no content\", function () {",
+											"    pm.response.to.have.status(204);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{registration_access_token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/jwt",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{aspsp_registration_endpoint}}/{{client_id}}",
+									"host": [
+										"{{aspsp_registration_endpoint}}"
+									],
+									"path": [
+										"{{client_id}}"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			],
+			"description": "Before an Api Client can use the protected API they must register. Registration is the process whereby the API Client identifies itself to the API Provider and the API Provider creates an OAuth2 client definition for the Api Client. The Api Provider will return details to the Api Client to allow them to access the APIs.\n\nTo understand this process is will be helpful to read [this article](https://github.com/SecureAPIGateway/SecureApiGateway/wiki/About-Dynamic-Client-Registration). It explains the approach that the Secure API Gateway takes to Dynamic Client Registration and the actors and resources involved in this process. Dynamic Client Registration is a fairly complex topic and a good understanding of the bigger picture will be necessary to understand the choices we can make and the individual steps that we will take to register to use the Open Banking Test Facility APIs.\n\nThe API that we will be testing has been configured to trust two _Trusted Directories_;  \n\\- The Secure API Gateway Trusted Directory  \n\\- The Open Banking Test/Sandbox Directory\n\n**Note:** The Open Banking directory is being supported to serve as an example of how an external trusted directory can be used with SAPI-G."
+		},
+		{
+			"name": "3: Access the Test API",
+			"item": [
+				{
+					"name": "3.1: PSU gives consent",
+					"item": [
+						{
+							"name": "4.1.2a: Authorize with default method",
+							"item": [
+								{
+									"name": "4.1.2a.1: PSU gives consent",
+									"event": [
+										{
+											"listen": "prerequest",
+											"script": {
+												"exec": [
+													"var navigator = {}; //fake a navigator object for the lib",
+													"var window = {}; //fake a window object for the lib",
+													"eval(pm.environment.get(\"jsrsasign_js\"));",
+													"eval(pm.environment.get(\"client_jws_helpers\"));",
+													"var consent_id = pm.environment.get(\"account_intent_id\")",
+													"console.log(\"Creating authorize request with 'openid accounts' scope and consent_id '\" + consent_id + \"'\")",
+													"var link = client_jws_helpers.createAuthorizeRequestUrl(\"openid accounts\", consent_id)",
+													"",
+													"postman.setEnvironmentVariable(\"authorize_url\", link);",
+													"",
+													"pm.visualizer.set(\"<a>\" + link + \"</a>\");"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{authorize_url}}",
+											"host": [
+												"{{authorize_url}}"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "4.1.2a.2: Obtain access_token with authorization_code grant",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"var data = JSON.parse(responseBody);",
+													"",
+													"postman.setEnvironmentVariable(\"access_token_with_account_access_consent\", data.access_token);",
+													"postman.setEnvironmentVariable(\"refresh_token_with_account_access_consent\", data.refresh_token);",
+													"postman.setEnvironmentVariable(\"id_token\", data.id_token);"
+												],
+												"type": "text/javascript"
+											}
+										},
+										{
+											"listen": "prerequest",
+											"script": {
+												"exec": [
+													"var navigator = {}; //fake a navigator object for the lib",
+													"var window = {}; //fake a window object for the lib",
+													"",
+													"eval(pm.environment.get(\"jsrsasign_js\"));",
+													"eval(pm.environment.get(\"client_jws_helpers\"));",
+													"",
+													"var token_endpoint_auth_method = pm.environment.get(\"TOKEN_ENDPOINT_AUTH_METHOD\");",
+													"client_jws_helpers.setClientCredentialRequestHeaders(token_endpoint_auth_method);"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"protocolProfileBehavior": {
+										"disableCookies": true
+									},
+									"request": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/x-www-form-urlencoded"
+											}
+										],
+										"body": {
+											"mode": "urlencoded",
+											"urlencoded": [
+												{
+													"key": "grant_type",
+													"value": "authorization_code",
+													"type": "text"
+												},
+												{
+													"key": "code",
+													"value": "PASTE AUTH CODE HERE",
+													"type": "text"
+												},
+												{
+													"key": "redirect_uri",
+													"value": "{{client_redirect_uri}}",
+													"description": "The redirect URI for the client",
+													"type": "text"
+												},
+												{
+													"key": "client_assertion_type ",
+													"value": "urn:ietf:params:oauth:client-assertion-type:jwt-bearer",
+													"description": "When using private_key_jwt, the www-form-urlencoded body must contain the key client_assertion_type with a value of urn:ietf:params:oauth:client-assertion-type:jwt-bearer. See rfc7523 for further details. So that this collection can work with clients that use both private_key_jwt and tls_client_auth as the token_endpoint_auth_method, this key/value pair is added by the pre-request script if required.",
+													"type": "text",
+													"disabled": true
+												},
+												{
+													"key": "client_assertion",
+													"value": "{{client_credential_jwt}}",
+													"description": "When using private_key_jwt, the www-form-urlencoded body must contain the a client_assertion in the form of a client crendential JWT. See rfc7523 for further details. So that this collection can work with clients that use both private_key_jwt and tls_client_auth as the token_endpoint_auth_method, this key/value pair is added by the pre-request script if required.",
+													"type": "text",
+													"disabled": true
+												},
+												{
+													"key": "client_id",
+													"value": "{{client_id}}",
+													"description": "When a client has registerd to use tls_client_auth, the www-form-urlencoded body must contain the OAuth2 client_id as returned from the Dynamic Client Registration request. So that this collection can work with clients that use both private_key_jwt and tls_client_auth as the token_endpoint_auth_method, this key/value pair is added by the pre-request script if required.",
+													"type": "text",
+													"disabled": true
+												}
+											]
+										},
+										"url": {
+											"raw": "{{as_token_endpoint}}",
+											"host": [
+												"{{as_token_endpoint}}"
+											]
+										},
+										"description": "This flow uses the authentication code obtained from the Hybrid flow to obtain an access_token with an authorization_code grant type.  \n  \nThe authentication_code obtained during the hybrid flow needs to be copied from the redirect URL parameters and pasted into the body's 'code' value.\n\n  \nThe 'test' scripts for this request will set the following environment variables, so that the access token may be used to access the resources.\n\n\"access_token_with_account_access_consent\" - will hold the access token.  \n\"refresh_token_with_account_access_consent\" - will hold the refresh token."
+									},
+									"response": []
+								}
+							],
+							"description": "Authorizes the Consent using the OAuth2.0 /authorize endpoint."
+						},
+						{
+							"name": "4.1.2b: Authorize with PAR",
+							"item": [
+								{
+									"name": "4.1.2b.1: Create PAR Authorize Request",
+									"event": [
+										{
+											"listen": "prerequest",
+											"script": {
+												"exec": [
+													"var navigator = {}; //fake a navigator object for the lib",
+													"var window = {}; //fake a window object for the lib",
+													"eval(pm.environment.get(\"jsrsasign_js\"));",
+													"eval(pm.environment.get(\"client_jws_helpers\"));",
+													"var consent_id = pm.environment.get(\"account_intent_id\")",
+													"console.log(\"Creating authorize request with 'openid accounts' scope and consent_id '\" + consent_id + \"'\")",
+													"var scope = \"openid accounts\"",
+													"var signedToken = client_jws_helpers.createAuthorizeJwtWithPkce(scope, consent_id, false)",
+													"",
+													"var token_endpoint_auth_method = pm.environment.get(\"TOKEN_ENDPOINT_AUTH_METHOD\");",
+													"client_jws_helpers.setClientCredentialRequestHeaders(token_endpoint_auth_method);",
+													"postman.setEnvironmentVariable(\"par_accounts_auth_request_jwt\", signedToken)"
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										},
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"response must be valid and have a json body\", function () {",
+													"    pm.response.to.have.status(200);",
+													"    pm.response.to.be.withBody;",
+													"    pm.response.to.be.json;",
+													"});",
+													"",
+													"var data = JSON.parse(responseBody);",
+													"",
+													"postman.setEnvironmentVariable(\"par_request_uri\", data.request_uri);"
+												],
+												"type": "text/javascript",
+												"packages": {}
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "noauth"
+										},
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "urlencoded",
+											"urlencoded": [
+												{
+													"key": "request",
+													"value": "{{par_accounts_auth_request_jwt}}",
+													"description": "request JWT containing authorization parameters as per: https://www.rfc-editor.org/rfc/rfc9126.html#name-the-request-request-paramet",
+													"type": "text"
+												},
+												{
+													"key": "client_id",
+													"value": "{{client_id}}",
+													"description": "When a client has registerd to use tls_client_auth, the www-form-urlencoded body must contain the OAuth2 client_id as returned from the Dynamic Client Registration request. So that this collection can work with clients that use both private_key_jwt and tls_client_auth as the token_endpoint_auth_method, this key/value pair is added by the pre-request script if required.",
+													"type": "text",
+													"disabled": true
+												},
+												{
+													"key": "client_assertion_type",
+													"value": "urn:ietf:params:oauth:client-assertion-type:jwt-bearer",
+													"description": "When using private_key_jwt, the www-form-urlencoded body must contain the key client_assertion_type with a value of urn:ietf:params:oauth:client-assertion-type:jwt-bearer. See rfc7523 for further details. So that this collection can work with clients that use both private_key_jwt and tls_client_auth as the token_endpoint_auth_method, this key/value pair is added by the pre-request script if required.\n",
+													"type": "text",
+													"disabled": true
+												},
+												{
+													"key": "client_assertion",
+													"value": "{{client_credential_jwt}}",
+													"description": "When using private_key_jwt, the www-form-urlencoded body must contain the a client_assertion in the form of a client crendential JWT. See rfc7523 for further details. So that this collection can work with clients that use both private_key_jwt and tls_client_auth as the token_endpoint_auth_method, this key/value pair is added by the pre-request script if required.",
+													"type": "text",
+													"disabled": true
+												}
+											]
+										},
+										"url": {
+											"raw": "{{pushed_authorization_request_endpoint}}",
+											"host": [
+												"{{pushed_authorization_request_endpoint}}"
+											]
+										},
+										"description": "Submits a PAR authorization request as per spec:  \n[https://www.rfc-editor.org/rfc/rfc9126.html#name-pushed-authorization-reques](https://www.rfc-editor.org/rfc/rfc9126.html#name-pushed-authorization-reques)"
+									},
+									"response": []
+								},
+								{
+									"name": "4.1.2b.2: PSU gives consent",
+									"event": [
+										{
+											"listen": "prerequest",
+											"script": {
+												"exec": [
+													"var navigator = {}; //fake a navigator object for the lib",
+													"var window = {}; //fake a window object for the lib",
+													"eval(pm.environment.get(\"jsrsasign_js\"));",
+													"eval(pm.environment.get(\"client_jws_helpers\"));",
+													"",
+													"var link = client_jws_helpers.createAuthorizeRequestUrlForPar(\"openid accounts\", false)",
+													"postman.setEnvironmentVariable(\"authorize_url\", link);",
+													"",
+													"pm.visualizer.set(\"<a>\" + link + \"</a>\");"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{authorize_url}}",
+											"host": [
+												"{{authorize_url}}"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "4.1.2b.3: Obtain access_token with authorization_code grant",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"var data = JSON.parse(responseBody);",
+													"",
+													"postman.setEnvironmentVariable(\"access_token_with_account_access_consent\", data.access_token);",
+													"postman.setEnvironmentVariable(\"refresh_token_with_account_access_consent\", data.refresh_token);",
+													"postman.setEnvironmentVariable(\"id_token\", data.id_token);"
+												],
+												"type": "text/javascript"
+											}
+										},
+										{
+											"listen": "prerequest",
+											"script": {
+												"exec": [
+													"var navigator = {}; //fake a navigator object for the lib",
+													"var window = {}; //fake a window object for the lib",
+													"",
+													"eval(pm.environment.get(\"jsrsasign_js\"));",
+													"eval(pm.environment.get(\"client_jws_helpers\"));",
+													"",
+													"var token_endpoint_auth_method = pm.environment.get(\"TOKEN_ENDPOINT_AUTH_METHOD\");",
+													"client_jws_helpers.setClientCredentialRequestHeaders(token_endpoint_auth_method);",
+													"client_jws_helpers.setPkceVerifierInRequestBody()"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"protocolProfileBehavior": {
+										"disableCookies": true
+									},
+									"request": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/x-www-form-urlencoded"
+											}
+										],
+										"body": {
+											"mode": "urlencoded",
+											"urlencoded": [
+												{
+													"key": "grant_type",
+													"value": "authorization_code",
+													"type": "text"
+												},
+												{
+													"key": "code",
+													"value": "PASTE AUTH CODE HERE",
+													"type": "text"
+												},
+												{
+													"key": "redirect_uri",
+													"value": "{{client_redirect_uri}}",
+													"description": "The redirect URI for the client",
+													"type": "text"
+												},
+												{
+													"key": "code_verifier",
+													"value": "{{pkce_verifier}}",
+													"description": "The code_verifier is the value which was hashed to create the code_challenge value which was submitted in the request JWT to the /par endpoint",
+													"type": "text"
+												},
+												{
+													"key": "client_assertion_type",
+													"value": "urn:ietf:params:oauth:client-assertion-type:jwt-bearer",
+													"description": "When using private_key_jwt, the www-form-urlencoded body must contain the key client_assertion_type with a value of urn:ietf:params:oauth:client-assertion-type:jwt-bearer. See rfc7523 for further details. So that this collection can work with clients that use both private_key_jwt and tls_client_auth as the token_endpoint_auth_method, this key/value pair is added by the pre-request script if required.",
+													"type": "text",
+													"disabled": true
+												},
+												{
+													"key": "client_assertion",
+													"value": "{{client_credential_jwt}}",
+													"description": "When using private_key_jwt, the www-form-urlencoded body must contain the a client_assertion in the form of a client crendential JWT. See rfc7523 for further details. So that this collection can work with clients that use both private_key_jwt and tls_client_auth as the token_endpoint_auth_method, this key/value pair is added by the pre-request script if required.",
+													"type": "text",
+													"disabled": true
+												},
+												{
+													"key": "client_id",
+													"value": "{{client_id}}",
+													"description": "When a client has registerd to use tls_client_auth, the www-form-urlencoded body must contain the OAuth2 client_id as returned from the Dynamic Client Registration request. So that this collection can work with clients that use both private_key_jwt and tls_client_auth as the token_endpoint_auth_method, this key/value pair is added by the pre-request script if required.",
+													"type": "text",
+													"disabled": true
+												}
+											]
+										},
+										"url": {
+											"raw": "{{as_token_endpoint}}",
+											"host": [
+												"{{as_token_endpoint}}"
+											]
+										},
+										"description": "This flow uses the authentication code obtained from the Hybrid flow to obtain an access_token with an authorization_code grant type.  \n  \nThe authentication_code obtained during the hybrid flow needs to be copied from the redirect URL parameters and pasted into the body's 'code' value.\n\n  \nThe 'test' scripts for this request will set the following environment variables, so that the access token may be used to access the resources.\n\n\"access_token_with_account_access_consent\" - will hold the access token.  \n\"refresh_token_with_account_access_consent\" - will hold the refresh token."
+									},
+									"response": []
+								}
+							],
+							"description": "Authorizes the Consent using PAR (OAuth 2.0 Pushed Authorization Requests: [https://www.rfc-editor.org/rfc/rfc9126.html](https://www.rfc-editor.org/rfc/rfc9126.html))\n\nAs we are using confidential clients, then we also need to make use of PKCE (Proof Key for Code Exchange: [https://www.rfc-editor.org/rfc/rfc7636.html](https://www.rfc-editor.org/rfc/rfc7636.html)) when doing PAR."
+						},
+						{
+							"name": "4.1.2c: Authorize with JARM",
+							"item": [
+								{
+									"name": "4.1.2c.1: PSU gives consent",
+									"event": [
+										{
+											"listen": "prerequest",
+											"script": {
+												"exec": [
+													"var navigator = {}; //fake a navigator object for the lib",
+													"var window = {}; //fake a window object for the lib",
+													"eval(pm.environment.get(\"jsrsasign_js\"));",
+													"eval(pm.environment.get(\"client_jws_helpers\"));",
+													"var consent_id = pm.environment.get(\"account_intent_id\")",
+													"console.log(\"Creating authorize request with 'openid accounts' scope and consent_id '\" + consent_id + \"'\")",
+													"var link = client_jws_helpers.createAuthorizeRequestUrlWithJarm(\"openid accounts\", consent_id)",
+													"",
+													"postman.setEnvironmentVariable(\"authorize_url\", link);",
+													"",
+													"pm.visualizer.set(\"<a>\" + link + \"</a>\");"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{authorize_url}}",
+											"host": [
+												"{{authorize_url}}"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "4.1.2c.2: Obtain access_token with authorization_code grant",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"var data = JSON.parse(responseBody);",
+													"",
+													"postman.setEnvironmentVariable(\"access_token_with_account_access_consent\", data.access_token);",
+													"postman.setEnvironmentVariable(\"refresh_token_with_account_access_consent\", data.refresh_token);",
+													"postman.setEnvironmentVariable(\"id_token\", data.id_token);"
+												],
+												"type": "text/javascript"
+											}
+										},
+										{
+											"listen": "prerequest",
+											"script": {
+												"exec": [
+													"var navigator = {}; //fake a navigator object for the lib",
+													"var window = {}; //fake a window object for the lib",
+													"",
+													"eval(pm.environment.get(\"jsrsasign_js\"));",
+													"eval(pm.environment.get(\"client_jws_helpers\"));",
+													"",
+													"var token_endpoint_auth_method = pm.environment.get(\"TOKEN_ENDPOINT_AUTH_METHOD\");",
+													"client_jws_helpers.setClientCredentialRequestHeaders(token_endpoint_auth_method);"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"protocolProfileBehavior": {
+										"disableCookies": true
+									},
+									"request": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/x-www-form-urlencoded"
+											}
+										],
+										"body": {
+											"mode": "urlencoded",
+											"urlencoded": [
+												{
+													"key": "grant_type",
+													"value": "authorization_code",
+													"type": "text"
+												},
+												{
+													"key": "code",
+													"value": "PASTE AUTH CODE HERE",
+													"type": "text"
+												},
+												{
+													"key": "redirect_uri",
+													"value": "{{client_redirect_uri}}",
+													"description": "The redirect URI for the client",
+													"type": "text"
+												},
+												{
+													"key": "client_assertion_type ",
+													"value": "urn:ietf:params:oauth:client-assertion-type:jwt-bearer",
+													"description": "When using private_key_jwt, the www-form-urlencoded body must contain the key client_assertion_type with a value of urn:ietf:params:oauth:client-assertion-type:jwt-bearer. See rfc7523 for further details. So that this collection can work with clients that use both private_key_jwt and tls_client_auth as the token_endpoint_auth_method, this key/value pair is added by the pre-request script if required.",
+													"type": "text",
+													"disabled": true
+												},
+												{
+													"key": "client_assertion",
+													"value": "{{client_credential_jwt}}",
+													"description": "When using private_key_jwt, the www-form-urlencoded body must contain the a client_assertion in the form of a client crendential JWT. See rfc7523 for further details. So that this collection can work with clients that use both private_key_jwt and tls_client_auth as the token_endpoint_auth_method, this key/value pair is added by the pre-request script if required.",
+													"type": "text",
+													"disabled": true
+												},
+												{
+													"key": "client_id",
+													"value": "{{client_id}}",
+													"description": "When a client has registerd to use tls_client_auth, the www-form-urlencoded body must contain the OAuth2 client_id as returned from the Dynamic Client Registration request. So that this collection can work with clients that use both private_key_jwt and tls_client_auth as the token_endpoint_auth_method, this key/value pair is added by the pre-request script if required.",
+													"type": "text",
+													"disabled": true
+												}
+											]
+										},
+										"url": {
+											"raw": "{{as_token_endpoint}}",
+											"host": [
+												"{{as_token_endpoint}}"
+											]
+										},
+										"description": "This flow uses the authentication code obtained from the Hybrid flow to obtain an access_token with an authorization_code grant type.\n\nThe authentication_code obtained during the hybrid flow needs to be extracted from the response JWT found in the redirect URL parameters and pasted into the body's 'code' value.\n\nThe 'test' scripts for this request will set the following environment variables, so that the access token may be used to access the resources.\n\n\"access_token_with_account_access_consent\" - will hold the access token.  \n\"refresh_token_with_account_access_consent\" - will hold the refresh token."
+									},
+									"response": []
+								}
+							],
+							"description": "Authorizes the Consent using the OAuth2.0 /authorize endpoint using JARM"
+						},
+						{
+							"name": "4.1.2d: Authorize with PAR + JARM",
+							"item": [
+								{
+									"name": "4.1.2d.1: Create PAR Authorize Request",
+									"event": [
+										{
+											"listen": "prerequest",
+											"script": {
+												"exec": [
+													"var navigator = {}; //fake a navigator object for the lib",
+													"var window = {}; //fake a window object for the lib",
+													"eval(pm.environment.get(\"jsrsasign_js\"));",
+													"eval(pm.environment.get(\"client_jws_helpers\"));",
+													"var consent_id = pm.environment.get(\"account_intent_id\")",
+													"console.log(\"Creating authorize request with 'openid accounts' scope and consent_id '\" + consent_id + \"'\")",
+													"var scope = \"openid accounts\"",
+													"var signedToken = client_jws_helpers.createAuthorizeJwtWithPkce(scope, consent_id, true)",
+													"",
+													"var token_endpoint_auth_method = pm.environment.get(\"TOKEN_ENDPOINT_AUTH_METHOD\");",
+													"client_jws_helpers.setClientCredentialRequestHeaders(token_endpoint_auth_method);",
+													"postman.setEnvironmentVariable(\"par_accounts_auth_request_jwt\", signedToken)"
+												],
+												"type": "text/javascript"
+											}
+										},
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"pm.test(\"response must be valid and have a json body\", function () {",
+													"    pm.response.to.have.status(200);",
+													"    pm.response.to.be.withBody;",
+													"    pm.response.to.be.json;",
+													"});",
+													"",
+													"var data = JSON.parse(responseBody);",
+													"",
+													"postman.setEnvironmentVariable(\"par_request_uri\", data.request_uri);"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"auth": {
+											"type": "noauth"
+										},
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "urlencoded",
+											"urlencoded": [
+												{
+													"key": "request",
+													"value": "{{par_accounts_auth_request_jwt}}",
+													"description": "request JWT containing authorization parameters as per: https://www.rfc-editor.org/rfc/rfc9126.html#name-the-request-request-paramet",
+													"type": "text"
+												},
+												{
+													"key": "client_id",
+													"value": "{{client_id}}",
+													"description": "When a client has registerd to use tls_client_auth, the www-form-urlencoded body must contain the OAuth2 client_id as returned from the Dynamic Client Registration request. So that this collection can work with clients that use both private_key_jwt and tls_client_auth as the token_endpoint_auth_method, this key/value pair is added by the pre-request script if required.",
+													"type": "text"
+												},
+												{
+													"key": "client_assertion_type",
+													"value": "urn:ietf:params:oauth:client-assertion-type:jwt-bearer",
+													"description": "When using private_key_jwt, the www-form-urlencoded body must contain the key client_assertion_type with a value of urn:ietf:params:oauth:client-assertion-type:jwt-bearer. See rfc7523 for further details. So that this collection can work with clients that use both private_key_jwt and tls_client_auth as the token_endpoint_auth_method, this key/value pair is added by the pre-request script if required.\n",
+													"type": "text",
+													"disabled": true
+												},
+												{
+													"key": "client_assertion",
+													"value": "{{client_credential_jwt}}",
+													"description": "When using private_key_jwt, the www-form-urlencoded body must contain the a client_assertion in the form of a client crendential JWT. See rfc7523 for further details. So that this collection can work with clients that use both private_key_jwt and tls_client_auth as the token_endpoint_auth_method, this key/value pair is added by the pre-request script if required.",
+													"type": "text",
+													"disabled": true
+												}
+											]
+										},
+										"url": {
+											"raw": "{{pushed_authorization_request_endpoint}}",
+											"host": [
+												"{{pushed_authorization_request_endpoint}}"
+											]
+										},
+										"description": "Submits a PAR authorization request as per spec:  \n[https://www.rfc-editor.org/rfc/rfc9126.html#name-pushed-authorization-reques](https://www.rfc-editor.org/rfc/rfc9126.html#name-pushed-authorization-reques)"
+									},
+									"response": []
+								},
+								{
+									"name": "4.1.2d.2: PSU gives consent",
+									"event": [
+										{
+											"listen": "prerequest",
+											"script": {
+												"exec": [
+													"var navigator = {}; //fake a navigator object for the lib",
+													"var window = {}; //fake a window object for the lib",
+													"eval(pm.environment.get(\"jsrsasign_js\"));",
+													"eval(pm.environment.get(\"client_jws_helpers\"));",
+													"",
+													"var link = client_jws_helpers.createAuthorizeRequestUrlForPar(\"openid accounts\", true)",
+													"postman.setEnvironmentVariable(\"authorize_url\", link);",
+													"",
+													"pm.visualizer.set(\"<a>\" + link + \"</a>\");"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{authorize_url}}",
+											"host": [
+												"{{authorize_url}}"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "4.1.2d.3: Obtain access_token with authorization_code grant",
+									"event": [
+										{
+											"listen": "test",
+											"script": {
+												"exec": [
+													"var data = JSON.parse(responseBody);",
+													"",
+													"postman.setEnvironmentVariable(\"access_token_with_account_access_consent\", data.access_token);",
+													"postman.setEnvironmentVariable(\"refresh_token_with_account_access_consent\", data.refresh_token);",
+													"postman.setEnvironmentVariable(\"id_token\", data.id_token);"
+												],
+												"type": "text/javascript"
+											}
+										},
+										{
+											"listen": "prerequest",
+											"script": {
+												"exec": [
+													"var navigator = {}; //fake a navigator object for the lib",
+													"var window = {}; //fake a window object for the lib",
+													"",
+													"eval(pm.environment.get(\"jsrsasign_js\"));",
+													"eval(pm.environment.get(\"client_jws_helpers\"));",
+													"",
+													"var token_endpoint_auth_method = pm.environment.get(\"TOKEN_ENDPOINT_AUTH_METHOD\");",
+													"client_jws_helpers.setClientCredentialRequestHeaders(token_endpoint_auth_method);",
+													"client_jws_helpers.setPkceVerifierInRequestBody()"
+												],
+												"type": "text/javascript"
+											}
+										}
+									],
+									"protocolProfileBehavior": {
+										"disableCookies": true
+									},
+									"request": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/x-www-form-urlencoded"
+											}
+										],
+										"body": {
+											"mode": "urlencoded",
+											"urlencoded": [
+												{
+													"key": "grant_type",
+													"value": "authorization_code",
+													"type": "text"
+												},
+												{
+													"key": "code",
+													"value": "PASTE AUTH CODE HERE",
+													"type": "text"
+												},
+												{
+													"key": "redirect_uri",
+													"value": "{{client_redirect_uri}}",
+													"description": "The redirect URI for the client",
+													"type": "text"
+												},
+												{
+													"key": "code_verifier",
+													"value": "{{pkce_verifier}}",
+													"description": "The code_verifier is the value which was hashed to create the code_challenge value which was submitted in the request JWT to the /par endpoint",
+													"type": "text"
+												},
+												{
+													"key": "client_assertion_type",
+													"value": "urn:ietf:params:oauth:client-assertion-type:jwt-bearer",
+													"description": "When using private_key_jwt, the www-form-urlencoded body must contain the key client_assertion_type with a value of urn:ietf:params:oauth:client-assertion-type:jwt-bearer. See rfc7523 for further details. So that this collection can work with clients that use both private_key_jwt and tls_client_auth as the token_endpoint_auth_method, this key/value pair is added by the pre-request script if required.",
+													"type": "text",
+													"disabled": true
+												},
+												{
+													"key": "client_assertion",
+													"value": "{{client_credential_jwt}}",
+													"description": "When using private_key_jwt, the www-form-urlencoded body must contain the a client_assertion in the form of a client crendential JWT. See rfc7523 for further details. So that this collection can work with clients that use both private_key_jwt and tls_client_auth as the token_endpoint_auth_method, this key/value pair is added by the pre-request script if required.",
+													"type": "text",
+													"disabled": true
+												},
+												{
+													"key": "client_id",
+													"value": "{{client_id}}",
+													"description": "When a client has registerd to use tls_client_auth, the www-form-urlencoded body must contain the OAuth2 client_id as returned from the Dynamic Client Registration request. So that this collection can work with clients that use both private_key_jwt and tls_client_auth as the token_endpoint_auth_method, this key/value pair is added by the pre-request script if required.",
+													"type": "text",
+													"disabled": true
+												}
+											]
+										},
+										"url": {
+											"raw": "{{as_token_endpoint}}",
+											"host": [
+												"{{as_token_endpoint}}"
+											]
+										},
+										"description": "This flow uses the authentication code obtained from the Hybrid flow to obtain an access_token with an authorization_code grant type.\n\nThe authentication_code obtained during the hybrid flow needs to be extracted from the response JWT found in the redirect URL parameters and pasted into the body's 'code' value.\n\nThe 'test' scripts for this request will set the following environment variables, so that the access token may be used to access the resources.\n\n\"access_token_with_account_access_consent\" - will hold the access token.  \n\"refresh_token_with_account_access_consent\" - will hold the refresh token."
+									},
+									"response": []
+								}
+							],
+							"description": "Authorizes the Consent using PAR (OAuth 2.0 Pushed Authorization Requests: [https://www.rfc-editor.org/rfc/rfc9126.html](https://www.rfc-editor.org/rfc/rfc9126.html))\n\nAs we are using confidential clients, then we also need to make use of PKCE (Proof Key for Code Exchange: [https://www.rfc-editor.org/rfc/rfc7636.html](https://www.rfc-editor.org/rfc/rfc7636.html)) when doing PAR."
+						}
+					],
+					"description": "The PSU is directed to the /authorize endpoint and has the ability to accept or reject the consent request made by the TPP."
+				},
+				{
+					"name": "4.2 ApiClient Gets Resource on behalf of PSU",
+					"item": [
+						{
+							"name": "Access Test API",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 204 and return json body\", function () {",
+											"    pm.response.to.have.status(204);",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Authorization",
+										"value": "Bearer {{access_token_with_account_access_consent}}"
+									},
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"url": {
+									"raw": "https://{{MTLS-IG-FQDN}}/rs/fapi/api",
+									"protocol": "https",
+									"host": [
+										"{{MTLS-IG-FQDN}}"
+									],
+									"path": [
+										"rs",
+										"fapi",
+										"api"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"description": "The ApiClient (TPP) retrieves the PSUs data using the access_token they obtained in the previous step.\n\nThe Plain FAPI API is a single protected endpoin which returns some basic data relating to the PSU.\n\nThe API is enforcing FAPI levels of access, it is checking:\n\n- access_token provided is valid\n    \n- mTLS certificate provided is valid\n    \n- mTLS certificate matches the cert bound in the access_token (proof of possession)."
+				}
+			],
+			"description": "This collection allows you perform the flow that allows a TPP to access the plain_fapi Test API on behalf of an end user",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "4: Misc",
+			"item": [
+				{
+					"name": "4.1.1 create access_token with client_credential grant",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"response must be valid and have a json body\", function () {",
+									"    pm.response.to.have.status(200);",
+									"    pm.response.to.be.withBody;",
+									"    pm.response.to.be.json;",
+									"});",
+									"",
+									"var data = JSON.parse(responseBody);",
+									"",
+									"pm.test(\"To have an access token and id token\", function () {",
+									"    pm.expect(data.access_token).to.not.be.null;",
+									"    pm.expect(data.id_token).to.not.be.null;",
+									"});",
+									"",
+									"postman.setEnvironmentVariable(\"client_credential_access_token_with_account_scope\", data.access_token);",
+									"postman.setEnvironmentVariable(\"id_token\", data.id_token);",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"var navigator = {}; //fake a navigator object for the lib",
+									"var window = {}; //fake a window object for the lib",
+									"//eval(pm.environment.get('pmlib_code'))",
+									"eval(pm.environment.get(\"jsrsasign_js\"));",
+									"eval(pm.environment.get(\"client_jws_helpers\"));",
+									"",
+									"var token_endpoint_auth_method = pm.environment.get(\"TOKEN_ENDPOINT_AUTH_METHOD\");",
+									"client_jws_helpers.setClientCredentialRequestHeaders(token_endpoint_auth_method);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableCookies": true
+					},
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/x-www-form-urlencoded"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "grant_type",
+									"value": "client_credentials",
+									"type": "text"
+								},
+								{
+									"key": "scope",
+									"value": "openid accounts",
+									"type": "text"
+								},
+								{
+									"key": "client_assertion_type",
+									"value": "urn:ietf:params:oauth:client-assertion-type:jwt-bearer",
+									"description": "When using private_key_jwt, the www-form-urlencoded body must contain the key client_assertion_type with a value of urn:ietf:params:oauth:client-assertion-type:jwt-bearer. See rfc7523 for further details. So that this collection can work with clients that use both private_key_jwt and tls_client_auth as the token_endpoint_auth_method, this key/value pair is added by the pre-request script if required.",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "client_assertion",
+									"value": "{{client_credential_jwt}}",
+									"description": "When using private_key_jwt, the www-form-urlencoded body must contain the a client_assertion in the form of a client crendential JWT. See rfc7523 for further details. So that this collection can work with clients that use both private_key_jwt and tls_client_auth as the token_endpoint_auth_method, this key/value pair is added by the pre-request script if required.",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "client_id",
+									"value": "{{client_id}}",
+									"description": "When a client has registerd to use tls_client_auth, the www-form-urlencoded body must contain the OAuth2 client_id as returned from the Dynamic Client Registration request. So that this collection can work with clients that use both private_key_jwt and tls_client_auth as the token_endpoint_auth_method, this key/value pair is added by the pre-request script if required.",
+									"type": "text",
+									"disabled": true
+								}
+							]
+						},
+						"url": {
+							"raw": "{{as_token_endpoint}}",
+							"host": [
+								"{{as_token_endpoint}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}
