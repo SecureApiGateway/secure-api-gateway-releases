@@ -130,18 +130,18 @@ client_jws_helpers.createAuthorizeJwtData = function(scope, consentId, jarm) {
     let acr = pm.environment.has("AUTHORIZE_REQUEST_ACR") ? pm.environment.get("AUTHORIZE_REQUEST_ACR") : "urn:openbanking:psd2:ca"
 
     var data = {
-          "aud": audience,
-          "scope": scope,
-          "iss": pm.environment.get("client_id"),
-          "exp": exp,
-          "nbf": nbf,
-          "claims": {
+        "aud": audience,
+        "scope": scope,
+        "iss": pm.environment.get("client_id"),
+        "exp": exp,
+        "nbf": nbf,
+        "claims": {
             "id_token": {
-              "acr": {
-              "value": acr,
-              "essential": true
+                "acr": {
+                    "value": acr,
+                    "essential": true
+                }
             }
-          }
         },
         "response_type": "code id_token",
         "redirect_uri": pm.environment.get("client_redirect_uri"),
@@ -151,7 +151,7 @@ client_jws_helpers.createAuthorizeJwtData = function(scope, consentId, jarm) {
     }
 
     if (acr.includes("openbanking")) {
-        data.claims["openbanking_intent_id"] = {
+        data.claims.id_token["openbanking_intent_id"] = {
             "value": consentId,
             "essential": true
         }
