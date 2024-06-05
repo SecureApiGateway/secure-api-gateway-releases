@@ -13,7 +13,7 @@ dependencies:
     version: 3.0.1
     repository: "@forgerock-helm"
   - name: test-user-account-creator
-    version: 3.0.0
+    version: 3.0.1
     repository: "@forgerock-helm"
   - name: remote-consent-service-user-interface
     version: 3.0.0
