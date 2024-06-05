@@ -1,87 +1,23 @@
-name: create-release
-run-name: Create release '${{ inputs.release_version_number }}'
-# What it does:
-# - Call release-prepare-no-maven
-# - package_and_publish_helm
-# - Call release-publish
+name: Release - Build, Deploy & Create Release
+run-name: "${{ inputs.releaseVersion }}: Release - Build, Deploy & Create Release"
 on:
   workflow_dispatch:
     inputs:
-      notes:
-        type: string
+      releaseNotes:
+        description: "Release Notes - Issues Included in Release"
         required: false
-        description: "Release notes"
-      release_version_number:
         type: string
+      releaseVersion:
+        description: "The version to be Released (#.#.# | #.#.#-rc#)"
         required: true
-        description: "Provide release version number"
-
+        type: string
 jobs:
-  package_and_publish_helm:
-    name: Build and publish helm chart
-    runs-on: ubuntu-22.04
-    steps:
-      # https://github.com/actions/checkout
-      - uses: actions/checkout@v4
-        name: Checkout release tag
-        with:
-          ref: ${{ needs.release_prepare_no_maven.outputs.release_tag_ref }}
-
-      - uses: jfrog/setup-jfrog-cli@v3
-        id: setup_jf_cli
-        name: Setup jfrog CLI
-        env:
-          # JFrog platform url (for example: https://acme.jfrog.io) 
-          JF_URL: ${{ secrets.FR_HELM_REPO }}
-          # JFrog Platform access token
-          JF_ACCESS_TOKEN: ${{ secrets.FR_ARTIFACTORY_USER_ACCESS_TOKEN }}
-          
-      - name: add helm repo to resolve dependencies
-        id: add_helm_repo
-        run: |
-          # Auth to JFrog
-          helm repo add forgerock-helm https://maven.forgerock.org/artifactory/forgerock-helm-virtual/ --username ${{ secrets.FR_ARTIFACTORY_USER }} --password ${{ secrets.FR_ARTIFACTORY_USER_ENCRYPTED_PASSWORD }}
-
-      - id: create_helm_packages
-        name: Create Helm Packages
-        run: |
-          makePackage()
-          {
-            if test -f $1/Chart.yaml; then
-              version=$(docker run --rm -v ${PWD}:/workdir mikefarah/yq:3.4.1 yq r $1/Chart.yaml version)
-              make package_helm name=$1 version=$version
-            else
-              echo "No Chart.yaml file in $1"
-            fi
-          }
-          
-          for d in */ ; do
-            # Remove a trailing / if it exists
-            dir=${d%/}
-            # Dont want Kustomize to run
-            if [ "$dir" != "postman" ]; then
-              if [ "$dir" == "ob" ] || [ "$dir" == "core" ]; then
-                cd $dir
-                for d in */ ; do
-                  # Remove a trailing / if it exists
-                  subdir=${d%/}
-                  if [ "$subdir" != "kustomize" ]; then
-                    helmFile=$subdir
-                  fi
-                done
-                cd ../
-                makePackage "$dir/$helmFile"
-              else
-                makePackage $dir
-              fi
-            fi
-          done
-
-      - name: Publish Helm Package to repository
-        id: publish_helm_package_to_repo
-        run: |
-          # Foreach tgz file in the dir which would have been created above
-          for tgz in $(ls *.tgz) ; do
-            make publish_helm name=$tgz
-          done
-
+  run_release-template:
+    name: Release - Build, Deploy & Create Release
+    uses: SecureApiGateway/secure-api-gateway-ci/.github/workflows/reusable-release.yml@main
+    secrets: inherit
+    with:
+      componentName: secure-api-gateway-releases
+      dockerTag: $(echo ${{ github.sha }} | cut -c1-7)
+      releaseNotes: ${{ inputs.releaseNotes }}
+      releaseVersion: ${{ inputs.releaseVersion }}
