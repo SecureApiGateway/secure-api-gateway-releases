@@ -2,15 +2,15 @@ apiVersion: v2
 name: secure-api-gateway-ob
 description: Helm chart for deploying the secure-api-gateway OB edition to kubernetes cluster
 type: application
-version: 3.0.0
-appVersion: 3.0.0
+version: 3.0.1
+appVersion: 3.0.1
 
 dependencies:
   - name: remote-consent-service
     version: 3.0.0
     repository: "@forgerock-helm"
   - name: test-facility-bank
-    version: 3.0.0
+    version: 3.0.1
     repository: "@forgerock-helm"
   - name: test-user-account-creator
     version: 3.0.0
