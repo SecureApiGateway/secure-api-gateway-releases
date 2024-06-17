@@ -81,7 +81,7 @@
 							}
 						],
 						"url": {
-							"raw": "https://raw.githubusercontent.com/SecureApiGateway/secure-api-gateway-releases/v3.0.1/postman/v3.0/postman_scripts/client_jws_helpers.js",
+							"raw": "https://raw.githubusercontent.com/SecureApiGateway/secure-api-gateway-releases/v3.0.2/postman/v3.0/postman_scripts/client_jws_helpers.js",
 							"protocol": "https",
 							"host": [
 								"raw",
@@ -91,9 +91,9 @@
 							"path": [
 								"SecureApiGateway",
 								"secure-api-gateway-releases",
-								"master",
+								"v3.0.2",
 								"postman",
-								"v2.0",
+								"v3.0",
 								"postman_scripts",
 								"client_jws_helpers.js"
 							]
