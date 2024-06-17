@@ -91,9 +91,9 @@
 							"path": [
 								"SecureApiGateway",
 								"secure-api-gateway-releases",
-								"master",
+								"v3.0.1",
 								"postman",
-								"v2.0",
+								"v3.0",
 								"postman_scripts",
 								"client_jws_helpers.js"
 							]
