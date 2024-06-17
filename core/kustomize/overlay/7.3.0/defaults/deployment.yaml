@@ -9,13 +9,6 @@ spec:
       initContainers:
         # Copies certs from the ig-truststore-pem into the new-truststore volume
         - name: truststore-init
-          image: ig
-          imagePullPolicy: Always
-          volumeMounts:
-            - name: new-truststore
-              mountPath: /truststore
-            - name: ig-truststore-pem
-              mountPath: /var/run/secrets/truststore
           command: [ "/home/forgerock/import-pem-certs.sh" ]
           env:
             # Path of the new truststore to create
@@ -29,6 +22,13 @@ spec:
             # Path to the pem file containing the certs to copy into the new truststore
             - name: IG_PEM_TRUSTSTORE
               value: "/var/run/secrets/truststore/ig-truststore.pem"
+          image: ig
+          imagePullPolicy: Always
+          volumeMounts:
+            - name: new-truststore
+              mountPath: /truststore
+            - name: ig-truststore-pem
+              mountPath: /var/run/secrets/truststore
       containers:
       - name: ig
         envFrom:
@@ -41,18 +41,11 @@ spec:
           - name: new-truststore
             mountPath: /var/ig/secrets/truststore
             readOnly: true
-          - name: test-trusted-dir-keystore
-            mountPath: /var/ig/secrets/test-trusted-directory
-            readOnly: true
       volumes:
         # Empty volume where the igtruststore will be created by the initContainer, it can then be mounted into the ig container
         - name: new-truststore
           emptyDir: { }
         - name: ig-truststore-pem
           secret:
+            optional: false
             secretName: ig-truststore-pem
-            optional: false
-        - name: test-trusted-dir-keystore
-          secret:
-            secretName: test-trusted-dir-keystore
-            optional: false

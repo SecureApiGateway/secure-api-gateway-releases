@@ -1,11 +1,18 @@
+configMapGenerator:
+  - name: core-deployment-config
+generatorOptions:
+  disableNameSuffixHash: true
+labels:
+  - includeSelectors: true
+    pairs:
+      app.kubernetes.io/name: forgerock
 namespace: sandbox
-commonLabels:
-  app.kubernetes.io/name: "forgerock"
 resources:
 # May need a nicer way of doing the release version in future
 - https://github.com/ForgeRock/forgeops/kustomize/base/ig?ref=release/7.5-20240402
-
 secretGenerator:
+  - name: obri-ca
+    files:
+      - ca.crt
   - name: core-secrets
-generatorOptions:
-  disableNameSuffixHash: true
+
