@@ -17,7 +17,6 @@ data:
   # IDENTITY_PLATFORM_FQDN: value_in_overlay
   # IG_FQDN: value_in_overlay
   # MTLS_FQDN: value_in_overlay
-  # OB_ASPSP_ORG_ID: value_in_overlay
   # USER_OBJECT: value_in_overlay
 
   # End of kustomize overlay
