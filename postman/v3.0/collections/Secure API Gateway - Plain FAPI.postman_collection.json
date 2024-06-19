@@ -245,7 +245,7 @@
 									"raw": "https://{{TRUSTEDDIR-FQDN}}/jwkms/apiclient/issuecert",
 									"protocol": "https",
 									"host": [
-										"{{IG-FQDN}}"
+										"{{TRUSTEDDIR-FQDN}}"
 									],
 									"path": [
 										"jwkms",
@@ -286,7 +286,7 @@
 									"raw": "https://{{TRUSTEDDIR-FQDN}}/jwkms/apiclient/gettlscert",
 									"protocol": "https",
 									"host": [
-										"{{IG-FQDN}}"
+										"{{TRUSTEDDIR-FQDN}}"
 									],
 									"path": [
 										"jwkms",
@@ -326,7 +326,7 @@
 									"raw": "https://{{TRUSTEDDIR-FQDN}}/jwkms/apiclient/getsigcert",
 									"protocol": "https",
 									"host": [
-										"{{IG-FQDN}}"
+										"{{TRUSTEDDIR-FQDN}}"
 									],
 									"path": [
 										"jwkms",
@@ -378,7 +378,7 @@
 									"raw": "https://{{TRUSTEDDIR-FQDN}}/jwkms/apiclient/getssa",
 									"protocol": "https",
 									"host": [
-										"{{IG-FQDN}}"
+										"{{TRUSTEDDIR-FQDN}}"
 									],
 									"path": [
 										"jwkms",
