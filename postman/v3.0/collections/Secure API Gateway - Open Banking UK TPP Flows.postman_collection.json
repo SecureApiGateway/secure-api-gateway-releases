@@ -232,7 +232,7 @@
 									}
 								},
 								"url": {
-									"raw": "https://{{IG-FQDN}}/jwkms/apiclient/issuecert",
+									"raw": "https://{{TRUSTEDDIR-FQDN}}/jwkms/apiclient/issuecert",
 									"protocol": "https",
 									"host": [
 										"{{IG-FQDN}}"
@@ -273,7 +273,7 @@
 									}
 								},
 								"url": {
-									"raw": "https://{{IG-FQDN}}/jwkms/apiclient/gettlscert",
+									"raw": "https://{{TRUSTEDDIR-FQDN}}/jwkms/apiclient/gettlscert",
 									"protocol": "https",
 									"host": [
 										"{{IG-FQDN}}"
@@ -313,7 +313,7 @@
 									}
 								},
 								"url": {
-									"raw": "https://{{IG-FQDN}}/jwkms/apiclient/getsigcert",
+									"raw": "https://{{TRUSTEDDIR-FQDN}}/jwkms/apiclient/getsigcert",
 									"protocol": "https",
 									"host": [
 										"{{IG-FQDN}}"
@@ -365,7 +365,7 @@
 									}
 								},
 								"url": {
-									"raw": "https://{{IG-FQDN}}/jwkms/apiclient/getssa",
+									"raw": "https://{{TRUSTEDDIR-FQDN}}/jwkms/apiclient/getssa",
 									"protocol": "https",
 									"host": [
 										"{{IG-FQDN}}"
@@ -423,7 +423,7 @@
 									"raw": "{ \n    \"claims\": { \n        \"iss\": \"softwareid\",\n        \"exp\": {{exp}},\n        \"scope\": \"openid accounts payments\",\n        \"response_types\": [\n            \"code id_token\"\n        ],\n        \"redirect_uris\": [\n            \"https://www.google.com\",\n            \"https://postman-echo.com/get\"\n        ],\n        \"application_type\": \"web\",\n        \"subject_type\": \"pairwise\",\n        \"grant_types\": [\n        \"authorization_code\",\n        \"refresh_token\",\n        \"client_credentials\"\n        ],\n        \"software_statement\": \"{{ssa_jwt}}\",\n        \"token_endpoint_auth_method\": \"private_key_jwt\",\n        \"token_endpoint_auth_signing_alg\": \"PS256\",\n        \"id_token_signed_response_alg\": \"PS256\",\n        \"request_object_signing_alg\": \"PS256\",\n        \"request_object_encryption_alg\": \"RSA-OAEP-256\",\n        \"request_object_encryption_enc\": \"A128CBC-HS256\"\n    },\n  \"jwks\": {{ApiClientJWKs}}\n}"
 								},
 								"url": {
-									"raw": "https://{{IG-FQDN}}/jwkms/apiclient/signclaims",
+									"raw": "https://{{TRUSTEDDIR-FQDN}}/jwkms/apiclient/signclaims",
 									"protocol": "https",
 									"host": [
 										"{{IG-FQDN}}"

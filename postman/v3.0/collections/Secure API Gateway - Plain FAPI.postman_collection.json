@@ -242,7 +242,7 @@
 									}
 								},
 								"url": {
-									"raw": "https://{{IG-FQDN}}/jwkms/apiclient/issuecert",
+									"raw": "https://{{TRUSTEDDIR-FQDN}}/jwkms/apiclient/issuecert",
 									"protocol": "https",
 									"host": [
 										"{{IG-FQDN}}"
@@ -283,7 +283,7 @@
 									}
 								},
 								"url": {
-									"raw": "https://{{IG-FQDN}}/jwkms/apiclient/gettlscert",
+									"raw": "https://{{TRUSTEDDIR-FQDN}}/jwkms/apiclient/gettlscert",
 									"protocol": "https",
 									"host": [
 										"{{IG-FQDN}}"
@@ -323,7 +323,7 @@
 									}
 								},
 								"url": {
-									"raw": "https://{{IG-FQDN}}/jwkms/apiclient/getsigcert",
+									"raw": "https://{{TRUSTEDDIR-FQDN}}/jwkms/apiclient/getsigcert",
 									"protocol": "https",
 									"host": [
 										"{{IG-FQDN}}"
@@ -375,7 +375,7 @@
 									}
 								},
 								"url": {
-									"raw": "https://{{IG-FQDN}}/jwkms/apiclient/getssa",
+									"raw": "https://{{TRUSTEDDIR-FQDN}}/jwkms/apiclient/getssa",
 									"protocol": "https",
 									"host": [
 										"{{IG-FQDN}}"
