@@ -137,10 +137,10 @@ client_jws_helpers.createAuthorizeJwtData = function(scope, consentId, jarm) {
         "nbf": nbf,
         "claims": {
             "id_token": {
-                "acr": {
-                    "value": acr,
-                    "essential": true
-                }
+                // "acr": {
+                //     "value": acr,
+                //     "essential": true
+                // }
             }
         },
         "response_type": "code id_token",
