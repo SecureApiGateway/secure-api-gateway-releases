@@ -1,16 +1,12 @@
-commonLabels:
-  app.kubernetes.io/name: "forgerock"
 #images:
 #- name: ig
 #  newName: repo location
 #  newTag: tag name
 namespace: sandbox
-patchesStrategicMerge:
-  - secret.yaml
-  - configmap.yaml
-  - deployment.yaml
+patches:
+  - path: configmap.yaml
+  - path: deployment.yaml
+  - path: secret.yaml
 resources:
-- securebanking
-- kustomizeConfig
-- ingress.yaml
-
+  - ingress.yaml
+  - securebanking

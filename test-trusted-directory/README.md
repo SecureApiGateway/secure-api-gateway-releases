@@ -1,0 +1,1 @@
+# Test Trusted Directory Templates

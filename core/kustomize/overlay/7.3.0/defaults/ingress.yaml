@@ -6,7 +6,7 @@ metadata:
   annotations:
     kubernetes.io/ingress.class: nginx
     nginx.ingress.kubernetes.io/auth-tls-pass-certificate-to-upstream: "true"
-    nginx.ingress.kubernetes.io/auth-tls-secret: $(NAMESPACE)/obri-ca
+    nginx.ingress.kubernetes.io/auth-tls-secret: NAMESPACE_PLACEHOLDER/obri-ca
     nginx.ingress.kubernetes.io/auth-tls-verify-client: optional_no_ca
     nginx.ingress.kubernetes.io/backend-protocol: “HTTPS"
     nginx.ingress.kubernetes.io/error-log-level: "debug"
@@ -21,7 +21,7 @@ metadata:
   name: mtls
 spec:
   rules:
-    - host: $(MTLS_FQDN)
+    - host: MTLS_FQDN_PLACEHOLDER
       http:
         paths:
           - backend:
@@ -54,7 +54,7 @@ spec:
             pathType: Prefix
   tls:
     - hosts:
-        - $(MTLS_FQDN)
+        - MTLS_FQDN_PLACEHOLDER
       secretName: obwac
 ---
 # Ingress for access to routes protected with TLS by a ForgeRock cert
@@ -76,7 +76,7 @@ metadata:
   name: forgerock
 spec:
   rules:
-    - host: $(FQDN)
+    - host: FQDN_PLACEHOLDER
       http:
         paths:
           - backend:
@@ -88,42 +88,5 @@ spec:
             pathType: Prefix
   tls:
     - hosts:
-        - $(FQDN)
-      secretName: sslcert
----
-# Ingress for the Test Trusted Directory hosted by the gateway.
-apiVersion: networking.k8s.io/v1
-kind: Ingress
-metadata:
-  annotations:
-    kubernetes.io/ingress.class: nginx
-    nginx.ingress.kubernetes.io/auth-tls-pass-certificate-to-upstream: "true"
-    nginx.ingress.kubernetes.io/auth-tls-secret: $(NAMESPACE)/obri-ca
-    nginx.ingress.kubernetes.io/auth-tls-verify-client: optional_no_ca
-    nginx.ingress.kubernetes.io/backend-protocol: “HTTPS"
-    nginx.ingress.kubernetes.io/error-log-level: "debug"
-    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
-    nginx.ingress.kubernetes.io/large-client-header-buffers: "4 128k"
-    nginx.ingress.kubernetes.io/proxy-body-size: 64m
-    nginx.ingress.kubernetes.io/proxy-buffer-size: 128k
-    nginx.ingress.kubernetes.io/proxy-buffering: "on"
-    nginx.ingress.kubernetes.io/proxy-buffers: 4 256k
-    nginx.ingress.kubernetes.io/proxy-busy-buffers_size: 256k
-    nginx.ingress.kubernetes.io/ssl-passthrough: "true"
-  name: test-trusted-directory
-spec:
-  rules:
-    - host: $(FQDN)
-      http:
-        paths:
-          - backend:
-              service:
-                name: ig
-                port:
-                  number: 80
-            path: /jwkms/
-            pathType: Prefix
-  tls:
-    - hosts:
-        - $(FQDN)
+        - FQDN_PLACEHOLDER
       secretName: sslcert

@@ -33,22 +33,8 @@ data:
   CLOUD_TYPE: "FIDC"
   # Connection settings for the IG hosted data repo
   GATEWAY_DATA_REPO_URI: "http://ig:80"
-  # Name of the IG Service
-  IG_INTERNAL_SVC: "ig"
-  # Path to Test Trusted Directory keystore containing the CA cert
-  IG_TEST_DIRECTORY_CA_KEYSTORE_PATH: "/secrets/test-trusted-directory/test-trusted-dir-keystore.p12"
-  # Keystore file type of IG_TEST_DIRECTORY_CA_KEYSTORE_PATH
-  IG_TEST_DIRECTORY_CA_KEYSTORE_TYPE: "PKCS12"
-  # Alias of the Test Trusted Directory's CA cert within the IG_TEST_DIRECTORY_CA_KEYSTORE_PATH keystore
-  IG_TEST_DIRECTORY_CA_KEYSTORE_ALIAS: "ca"
   # Enable Test Trusted Directory
   IG_TEST_DIRECTORY_ENABLED: "true"
-  # Alias of the Test Trusted Directory's signing cert within the IG_TEST_DIRECTORY_SIGNING_KEYSTORE_PATH keystore
-  IG_TEST_DIRECTORY_SIGNING_KEYSTORE_ALIAS: "jwt-signer"
-  # Path to Test Trusted Directory keystore containing the signing key
-  IG_TEST_DIRECTORY_SIGNING_KEYSTORE_PATH: "/secrets/test-trusted-directory/test-trusted-dir-keystore.p12"
-  # Keystore file type of IG_TEST_DIRECTORY_SIGNING_KEYSTORE_PATH
-  IG_TEST_DIRECTORY_SIGNING_KEYSTORE_TYPE: "PKCS12"
   # Path to the IG truststore
   IG_TRUSTSTORE_PATH: "/secrets/truststore/igtruststore"
   # SAPIG
