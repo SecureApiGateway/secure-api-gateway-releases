@@ -81,7 +81,7 @@
 							}
 						],
 						"url": {
-							"raw": "https://raw.githubusercontent.com/SecureApiGateway/secure-api-gateway-releases/v3.0.1/postman/v3.0/postman_scripts/client_jws_helpers.js",
+							"raw": "https://raw.githubusercontent.com/SecureApiGateway/secure-api-gateway-releases/v3.0.2/postman/v3.0/postman_scripts/client_jws_helpers.js",
 							"protocol": "https",
 							"host": [
 								"raw",
@@ -91,9 +91,9 @@
 							"path": [
 								"SecureApiGateway",
 								"secure-api-gateway-releases",
-								"master",
+								"v3.0.2",
 								"postman",
-								"v2.0",
+								"v3.0",
 								"postman_scripts",
 								"client_jws_helpers.js"
 							]
@@ -242,10 +242,10 @@
 									}
 								},
 								"url": {
-									"raw": "https://{{IG-FQDN}}/jwkms/apiclient/issuecert",
+									"raw": "https://{{TRUSTEDDIR-FQDN}}/jwkms/apiclient/issuecert",
 									"protocol": "https",
 									"host": [
-										"{{IG-FQDN}}"
+										"{{TRUSTEDDIR-FQDN}}"
 									],
 									"path": [
 										"jwkms",
@@ -283,10 +283,10 @@
 									}
 								},
 								"url": {
-									"raw": "https://{{IG-FQDN}}/jwkms/apiclient/gettlscert",
+									"raw": "https://{{TRUSTEDDIR-FQDN}}/jwkms/apiclient/gettlscert",
 									"protocol": "https",
 									"host": [
-										"{{IG-FQDN}}"
+										"{{TRUSTEDDIR-FQDN}}"
 									],
 									"path": [
 										"jwkms",
@@ -323,10 +323,10 @@
 									}
 								},
 								"url": {
-									"raw": "https://{{IG-FQDN}}/jwkms/apiclient/getsigcert",
+									"raw": "https://{{TRUSTEDDIR-FQDN}}/jwkms/apiclient/getsigcert",
 									"protocol": "https",
 									"host": [
-										"{{IG-FQDN}}"
+										"{{TRUSTEDDIR-FQDN}}"
 									],
 									"path": [
 										"jwkms",
@@ -375,10 +375,10 @@
 									}
 								},
 								"url": {
-									"raw": "https://{{IG-FQDN}}/jwkms/apiclient/getssa",
+									"raw": "https://{{TRUSTEDDIR-FQDN}}/jwkms/apiclient/getssa",
 									"protocol": "https",
 									"host": [
-										"{{IG-FQDN}}"
+										"{{TRUSTEDDIR-FQDN}}"
 									],
 									"path": [
 										"jwkms",
@@ -606,10 +606,10 @@
 											"    'token_endpoint_auth_signing_alg': \"PS256\",",
 											"    'id_token_signed_response_alg': \"PS256\",",
 											"    'request_object_signing_alg': \"PS256\",",
-											"    'authorization_signing_response_alg': \"PS256\",",
 											"    'request_object_encryption_alg': \"RSA-OAEP-256\",",
 											"    'request_object_encryption_enc': \"A128CBC-HS256\",",
-											"    'subject_type' : 'pairwise'",
+											"    'subject_type' : 'pairwise',",
+											"    'authorization_signed_response_alg': 'PS256'",
 											"}",
 											"",
 											"var token_endpoint_auth_method_requested = pm.environment.get(\"TOKEN_ENDPOINT_AUTH_METHOD\");",
