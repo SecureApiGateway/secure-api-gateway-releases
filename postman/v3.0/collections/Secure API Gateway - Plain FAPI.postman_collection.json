@@ -225,7 +225,21 @@
 											"    }",
 											"}"
 										],
-										"type": "text/javascript"
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"var uuid = require('uuid');",
+											"var software_id = uuid.v4();",
+											"console.log(\"software_id is \" + software_id);",
+											"postman.setEnvironmentVariable('generated_software_id', software_id);"
+										],
+										"type": "text/javascript",
+										"packages": {}
 									}
 								}
 							],
@@ -234,7 +248,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n    \"org_id\": \"PSDGB-FFA-5f563e89742b2800145c7da1\",\n    \"org_name\": \"Acme Fintech\"\n}",
+									"raw": "// Reusing the Open Banking Directory org and software ids for simplicity, any values are accepted by the test trusted directory\n{\n    \"org_id\": \"{{OB-ORGANIZATION-ID}}\",\n    \"org_name\": \"Acme Fintech\",\n    \"software_id\": \"{{generated_software_id}}\"\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -353,10 +367,7 @@
 									"listen": "prerequest",
 									"script": {
 										"exec": [
-											"var uuid = require('uuid');",
-											"var software_id = uuid.v4();",
-											"console.log(\"software_id is \" + software_id);",
-											"postman.setEnvironmentVariable('generated_software_id', software_id);"
+											""
 										],
 										"type": "text/javascript"
 									}
@@ -367,7 +378,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n    \"software_id\": \"{{generated_software_id}}\",\n    \"software_client_name\": \"Secure API Gateway test generated client\",\n    \"software_client_id\": \"{{generated_software_id}}\",\n    \"software_tos_uri\": \"https://github.com/SecureApiGateway\",\n    \"software_client_description\": \"Open Banking UK TPP Flows Postman Client\",\n    \"software_redirect_uris\": [\"https://postman-echo.com/get\", \"https://www.certification.openid.net/test/a/forgerock-plain-fapi/callback\", \"https://www.certification.openid.net/test/a/forgerock-plain-fapi/callback?dummy1=lorem&dummy2=ipsum\"],\n    \"software_policy_uri\": \"https://github.com/SecureApiGateway\",\n    \"software_logo_uri\": \"https://avatars.githubusercontent.com/u/74596995?s=96&v=4\",\n    \"software_roles\": [    \n        \"DATA\",\n        \"AISP\",\n        \"CBPII\",\n        \"PISP\"],\n    \"software_jwks\": {{ApiClientJWKs}}\n}",
+									"raw": "{\n    \"software_id\": \"{{generated_software_id}}\",\n    \"software_client_name\": \"Secure API Gateway test generated client\",\n    \"software_client_id\": \"{{generated_software_id}}\",\n    \"software_tos_uri\": \"https://github.com/SecureApiGateway\",\n    \"software_client_description\": \"Open Banking UK TPP Flows Postman Client\",\n    \"software_redirect_uris\": [\"https://postman-echo.com/get\", \"https://www.certification.openid.net/test/a/forgerock-plain-fapi/callback\", \"https://www.certification.openid.net/test/a/forgerock-plain-fapi/callback?dummy1=lorem&dummy2=ipsum\"],\n    \"software_policy_uri\": \"https://github.com/SecureApiGateway\",\n    \"software_logo_uri\": \"https://avatars.githubusercontent.com/u/74596995?s=96&v=4\",\n    \"software_roles\": [    \n        \"DATA\",\n        \"AISP\",\n        \"CBPII\",\n        \"PISP\"]\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -1737,104 +1748,255 @@
 			"name": "4: Misc",
 			"item": [
 				{
-					"name": "4.1.1 create access_token with client_credential grant",
-					"event": [
+					"name": "Test Trusted Directory",
+					"item": [
 						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"pm.test(\"response must be valid and have a json body\", function () {",
-									"    pm.response.to.have.status(200);",
-									"    pm.response.to.be.withBody;",
-									"    pm.response.to.be.json;",
-									"});",
-									"",
-									"var data = JSON.parse(responseBody);",
-									"",
-									"pm.test(\"To have an access token and id token\", function () {",
-									"    pm.expect(data.access_token).to.not.be.null;",
-									"    pm.expect(data.id_token).to.not.be.null;",
-									"});",
-									"",
-									"postman.setEnvironmentVariable(\"client_credential_access_token_with_account_scope\", data.access_token);",
-									"postman.setEnvironmentVariable(\"id_token\", data.id_token);",
-									""
-								],
-								"type": "text/javascript"
-							}
+							"name": "Issue Certs",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"packages": {},
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "// Reusing the Open Banking Directory org and software ids for simplicity, any values are accepted by the test trusted directory\n{\n    \"org_id\": \"{{OB-ORGANIZATION-ID}}\",\n    \"org_name\": \"Acme Fintech\",\n    \"software_id\": \"{{OB-SOFTWARE-ID}}\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://{{IG-FQDN}}/jwkms/apiclient/issuecert",
+									"protocol": "https",
+									"host": [
+										"{{IG-FQDN}}"
+									],
+									"path": [
+										"jwkms",
+										"apiclient",
+										"issuecert"
+									]
+								},
+								"description": "This is a copy of 2.1a.1\n\nThis version does not make any changes to the postman environment, which makes it useful for testing / demonstrating the test trusted directory."
+							},
+							"response": []
 						},
 						{
-							"listen": "prerequest",
-							"script": {
-								"exec": [
-									"var navigator = {}; //fake a navigator object for the lib",
-									"var window = {}; //fake a window object for the lib",
-									"//eval(pm.environment.get('pmlib_code'))",
-									"eval(pm.environment.get(\"jsrsasign_js\"));",
-									"eval(pm.environment.get(\"client_jws_helpers\"));",
-									"",
-									"var token_endpoint_auth_method = pm.environment.get(\"TOKEN_ENDPOINT_AUTH_METHOD\");",
-									"client_jws_helpers.setClientCredentialRequestHeaders(token_endpoint_auth_method);"
-								],
-								"type": "text/javascript"
-							}
+							"name": "Revoke Cert",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"org_id\": \"{{OB-ORGANIZATION-ID}}\",\n    \"software_id\": \"{{OB-SOFTWARE-ID}}\",\n    // Replace this value with if a kid from the JWKS\n    \"key_id\": \"505ed9dd-768c-476e-b02d-9d60547a8f5e\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://{{IG-FQDN}}/jwkms/apiclient/jwks/revokecert",
+									"protocol": "https",
+									"host": [
+										"{{IG-FQDN}}"
+									],
+									"path": [
+										"jwkms",
+										"apiclient",
+										"jwks",
+										"revokecert"
+									]
+								},
+								"description": "This request removes a JWK from the JWKS for a particular ApiClient."
+							},
+							"response": []
+						},
+						{
+							"name": "Get JWKS",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "https://{{IG-FQDN}}/jwkms/apiclient/jwks/{{OB-ORGANIZATION-ID}}/{{OB-SOFTWARE-ID}}",
+									"protocol": "https",
+									"host": [
+										"{{IG-FQDN}}"
+									],
+									"path": [
+										"jwkms",
+										"apiclient",
+										"jwks",
+										"{{OB-ORGANIZATION-ID}}",
+										"{{OB-SOFTWARE-ID}}"
+									]
+								},
+								"description": "This request retrieves the JWKS for a particular ApiClient"
+							},
+							"response": []
 						}
 					],
-					"protocolProfileBehavior": {
-						"disableCookies": true
-					},
-					"request": {
-						"method": "POST",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/x-www-form-urlencoded"
-							}
-						],
-						"body": {
-							"mode": "urlencoded",
-							"urlencoded": [
+					"description": "Additional Test Trusted Directory API endpoints which are not required for DCR."
+				},
+				{
+					"name": "OAuth 2.0",
+					"item": [
+						{
+							"name": "Get client_credential access_token",
+							"event": [
 								{
-									"key": "grant_type",
-									"value": "client_credentials",
-									"type": "text"
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"response must be valid and have a json body\", function () {",
+											"    pm.response.to.have.status(200);",
+											"    pm.response.to.be.withBody;",
+											"    pm.response.to.be.json;",
+											"});",
+											"",
+											"var data = JSON.parse(responseBody);",
+											"",
+											"pm.test(\"To have an access token and id token\", function () {",
+											"    pm.expect(data.access_token).to.not.be.null;",
+											"    pm.expect(data.id_token).to.not.be.null;",
+											"});",
+											"",
+											"postman.setEnvironmentVariable(\"client_credential_access_token_with_account_scope\", data.access_token);",
+											"postman.setEnvironmentVariable(\"id_token\", data.id_token);",
+											""
+										],
+										"type": "text/javascript"
+									}
 								},
 								{
-									"key": "scope",
-									"value": "openid accounts",
-									"type": "text"
-								},
-								{
-									"key": "client_assertion_type",
-									"value": "urn:ietf:params:oauth:client-assertion-type:jwt-bearer",
-									"description": "When using private_key_jwt, the www-form-urlencoded body must contain the key client_assertion_type with a value of urn:ietf:params:oauth:client-assertion-type:jwt-bearer. See rfc7523 for further details. So that this collection can work with clients that use both private_key_jwt and tls_client_auth as the token_endpoint_auth_method, this key/value pair is added by the pre-request script if required.",
-									"type": "text",
-									"disabled": true
-								},
-								{
-									"key": "client_assertion",
-									"value": "{{client_credential_jwt}}",
-									"description": "When using private_key_jwt, the www-form-urlencoded body must contain the a client_assertion in the form of a client crendential JWT. See rfc7523 for further details. So that this collection can work with clients that use both private_key_jwt and tls_client_auth as the token_endpoint_auth_method, this key/value pair is added by the pre-request script if required.",
-									"type": "text",
-									"disabled": true
-								},
-								{
-									"key": "client_id",
-									"value": "{{client_id}}",
-									"description": "When a client has registerd to use tls_client_auth, the www-form-urlencoded body must contain the OAuth2 client_id as returned from the Dynamic Client Registration request. So that this collection can work with clients that use both private_key_jwt and tls_client_auth as the token_endpoint_auth_method, this key/value pair is added by the pre-request script if required.",
-									"type": "text",
-									"disabled": true
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"var navigator = {}; //fake a navigator object for the lib",
+											"var window = {}; //fake a window object for the lib",
+											"//eval(pm.environment.get('pmlib_code'))",
+											"eval(pm.environment.get(\"jsrsasign_js\"));",
+											"eval(pm.environment.get(\"client_jws_helpers\"));",
+											"",
+											"var token_endpoint_auth_method = pm.environment.get(\"TOKEN_ENDPOINT_AUTH_METHOD\");",
+											"client_jws_helpers.setClientCredentialRequestHeaders(token_endpoint_auth_method);"
+										],
+										"type": "text/javascript"
+									}
 								}
-							]
-						},
-						"url": {
-							"raw": "{{as_token_endpoint}}",
-							"host": [
-								"{{as_token_endpoint}}"
-							]
+							],
+							"protocolProfileBehavior": {
+								"disableCookies": true
+							},
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/x-www-form-urlencoded"
+									}
+								],
+								"body": {
+									"mode": "urlencoded",
+									"urlencoded": [
+										{
+											"key": "grant_type",
+											"value": "client_credentials",
+											"type": "text"
+										},
+										{
+											"key": "scope",
+											"value": "openid accounts",
+											"type": "text"
+										},
+										{
+											"key": "client_assertion_type",
+											"value": "urn:ietf:params:oauth:client-assertion-type:jwt-bearer",
+											"description": "When using private_key_jwt, the www-form-urlencoded body must contain the key client_assertion_type with a value of urn:ietf:params:oauth:client-assertion-type:jwt-bearer. See rfc7523 for further details. So that this collection can work with clients that use both private_key_jwt and tls_client_auth as the token_endpoint_auth_method, this key/value pair is added by the pre-request script if required.",
+											"type": "text",
+											"disabled": true
+										},
+										{
+											"key": "client_assertion",
+											"value": "{{client_credential_jwt}}",
+											"description": "When using private_key_jwt, the www-form-urlencoded body must contain the a client_assertion in the form of a client crendential JWT. See rfc7523 for further details. So that this collection can work with clients that use both private_key_jwt and tls_client_auth as the token_endpoint_auth_method, this key/value pair is added by the pre-request script if required.",
+											"type": "text",
+											"disabled": true
+										},
+										{
+											"key": "client_id",
+											"value": "{{client_id}}",
+											"description": "When a client has registerd to use tls_client_auth, the www-form-urlencoded body must contain the OAuth2 client_id as returned from the Dynamic Client Registration request. So that this collection can work with clients that use both private_key_jwt and tls_client_auth as the token_endpoint_auth_method, this key/value pair is added by the pre-request script if required.",
+											"type": "text",
+											"disabled": true
+										}
+									]
+								},
+								"url": {
+									"raw": "{{as_token_endpoint}}",
+									"host": [
+										"{{as_token_endpoint}}"
+									]
+								},
+								"description": "Obtains an access_token with client_credentials grant.\n\nThis uses the ApiClient's credentials to get a token. No Plain FAPI flows currently require this functionality, which is why it is in the misc section.\n\nclient_credentials is useful when the ApiClient is making calls to manage data that it owns within the system."
+							},
+							"response": []
 						}
-					},
-					"response": []
+					]
 				}
 			]
 		}
