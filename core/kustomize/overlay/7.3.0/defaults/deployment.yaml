@@ -47,5 +47,5 @@ spec:
           emptyDir: { }
         - name: ig-truststore-pem
           secret:
-            optional: false
+            optional: true
             secretName: ig-truststore-pem
