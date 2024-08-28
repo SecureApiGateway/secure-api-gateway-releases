@@ -4,17 +4,17 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   annotations:
-    ingress.kubernetes.io/auth-tls-pass-certificate-to-upstream: "true"
-    ingress.kubernetes.io/auth-tls-secret: NAMESPACE_PLACEHOLDER/obri-ca
-    ingress.kubernetes.io/auth-tls-verify-client: optional_no_ca
-    ingress.kubernetes.io/error-log-level: "debug"
-    ingress.kubernetes.io/force-ssl-redirect: "true"
-    ingress.kubernetes.io/large-client-header-buffers: "4 128k"
-    ingress.kubernetes.io/proxy-body-size: 64m
-    ingress.kubernetes.io/proxy-buffer-size: 128k
-    ingress.kubernetes.io/proxy-buffering: "on"
-    ingress.kubernetes.io/proxy-buffers: 4 256k
-    ingress.kubernetes.io/proxy-busy-buffers_size: 256k
+    nginx.ingress.kubernetes.io/auth-tls-pass-certificate-to-upstream: "true"
+    nginx.ingress.kubernetes.io/auth-tls-secret: NAMESPACE_PLACEHOLDER/obri-ca
+    nginx.ingress.kubernetes.io/auth-tls-verify-client: optional_no_ca
+    nginx.ingress.kubernetes.io/error-log-level: "debug"
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/large-client-header-buffers: "4 128k"
+    nginx.ingress.kubernetes.io/proxy-body-size: 64m
+    nginx.ingress.kubernetes.io/proxy-buffer-size: 128k
+    nginx.ingress.kubernetes.io/proxy-buffering: "on"
+    nginx.ingress.kubernetes.io/proxy-buffers: 4 256k
+    nginx.ingress.kubernetes.io/proxy-busy-buffers_size: 256k
   name: mtls
 spec:
   ingressClassName: nginx
@@ -60,14 +60,14 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   annotations:
-    ingress.kubernetes.io/force-ssl-redirect: "true"
-    ingress.kubernetes.io/error-log-level: "debug"
-    ingress.kubernetes.io/large-client-header-buffers: "4 128k"
-    ingress.kubernetes.io/proxy-body-size: 64m
-    ingress.kubernetes.io/proxy-buffer-size: 128k
-    ingress.kubernetes.io/proxy-buffering: "on"
-    ingress.kubernetes.io/proxy-buffers: 4 256k
-    ingress.kubernetes.io/proxy-busy-buffers_size: 256k
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/error-log-level: "debug"
+    nginx.ingress.kubernetes.io/large-client-header-buffers: "4 128k"
+    nginx.ingress.kubernetes.io/proxy-body-size: 64m
+    nginx.ingress.kubernetes.io/proxy-buffer-size: 128k
+    nginx.ingress.kubernetes.io/proxy-buffering: "on"
+    nginx.ingress.kubernetes.io/proxy-buffers: 4 256k
+    nginx.ingress.kubernetes.io/proxy-busy-buffers_size: 256k
   name: forgerock
 spec:
   ingressClassName: nginx
