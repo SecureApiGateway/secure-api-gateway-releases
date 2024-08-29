@@ -3,7 +3,7 @@ kind: Kustomization
 labels:
   - includeSelectors: true
     pairs:
-      app.kubernetes.io/name: forgerock
+      app.kubernetes.io/name: sapig
 resources:
   - configmap.yaml
   - deployment.yaml

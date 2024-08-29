@@ -53,7 +53,7 @@ spec:
   tls:
     - hosts:
         - MTLS_FQDN_PLACEHOLDER
-      secretName: obwac
+      secretName: mtls-sslcert
 ---
 # Ingress for access to routes protected with TLS by a ForgeRock cert
 apiVersion: networking.k8s.io/v1
@@ -68,7 +68,7 @@ metadata:
     nginx.ingress.kubernetes.io/proxy-buffering: "on"
     nginx.ingress.kubernetes.io/proxy-buffers: 4 256k
     nginx.ingress.kubernetes.io/proxy-busy-buffers_size: 256k
-  name: forgerock
+  name: sapig
 spec:
   ingressClassName: nginx
   rules:
@@ -85,4 +85,4 @@ spec:
   tls:
     - hosts:
         - FQDN_PLACEHOLDER
-      secretName: sslcert
+      secretName: sapig-sslcert

@@ -32,4 +32,4 @@ spec:
   tls:
     - hosts:
         - FQDN_PLACEHOLDER
-      secretName: sslcert
+      secretName: ttd-sslcert
