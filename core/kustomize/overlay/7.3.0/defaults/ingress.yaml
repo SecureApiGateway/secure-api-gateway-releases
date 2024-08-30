@@ -80,7 +80,7 @@ spec:
                 name: ig
                 port:
                   number: 80
-            path: /am/
+            path: /
             pathType: Prefix
   tls:
     - hosts:
