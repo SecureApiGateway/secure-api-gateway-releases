@@ -2,10 +2,10 @@ apiVersion: v2
 name: secure-api-gateway-helpers
 description: Helm chart for deploying optional third party sources for secure-api-gateway to kubernetes cluster
 type: application
-version: 3.0.1
-appVersion: 3.0.1
+version: 3.1.2
+appVersion: 3.1.2
 
 dependencies:
   - name: external-secrets-gsm
-    version: 3.0.1
+    version: 3.1.2
     repository: "@forgerock-helm"
