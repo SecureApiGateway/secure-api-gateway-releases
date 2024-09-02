@@ -36,8 +36,7 @@ patches:
       metadata:
         name: openig-secrets-env
 resources:
-  - https://github.com/SecureApiGateway/secure-api-gateway-releases/core/kustomize/base?ref=1511-template-improvements
-  #- https://github.com/SecureApiGateway/secure-api-gateway-releases/core/kustomize/overlay/7.3.0/defaults?ref=v3.1.2
+  - https://github.com/SecureApiGateway/secure-api-gateway-releases/core/kustomize/overlay/defaults?ref=v3.2.0
   - ingress.yaml
 secretGenerator:
   - name: ob-secrets
