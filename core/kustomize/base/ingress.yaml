@@ -5,7 +5,7 @@ kind: Ingress
 metadata:
   annotations:
     nginx.ingress.kubernetes.io/auth-tls-pass-certificate-to-upstream: "true"
-    nginx.ingress.kubernetes.io/auth-tls-secret: NAMESPACE_PLACEHOLDER/obri-ca
+    nginx.ingress.kubernetes.io/auth-tls-secret: NAMESPACE_PLACEHOLDER/mtls-ca-certs
     nginx.ingress.kubernetes.io/auth-tls-verify-client: optional_no_ca
     nginx.ingress.kubernetes.io/error-log-level: "debug"
     nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
@@ -53,7 +53,7 @@ spec:
   tls:
     - hosts:
         - MTLS_FQDN_PLACEHOLDER
-      secretName: mtls-sslcert
+      secretName: mtls-tls-cert
 ---
 # Ingress for access to routes protected with TLS by a ForgeRock cert
 apiVersion: networking.k8s.io/v1
@@ -85,4 +85,4 @@ spec:
   tls:
     - hosts:
         - FQDN_PLACEHOLDER
-      secretName: sapig-sslcert
+      secretName: sapig-tls-cert
