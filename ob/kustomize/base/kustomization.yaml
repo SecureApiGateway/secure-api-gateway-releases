@@ -16,8 +16,8 @@ patches:
       group: networking.k8s.io
       version: v1
       kind: Ingress
-      name: forgerock
-    path: patch/ingress/forgerock-ingress-patch.yaml
+      name: sapig
+    path: patch/ingress/sapig-ingress-patch.yaml
   - target:
       group: apps
       version: v1
@@ -36,7 +36,7 @@ patches:
       metadata:
         name: openig-secrets-env
 resources:
-  - https://github.com/SecureApiGateway/secure-api-gateway-releases/core/kustomize/overlay/7.3.0/defaults?ref=v3.1.0
+  - https://github.com/SecureApiGateway/secure-api-gateway-releases/core/kustomize/base/defaults?ref=v3.2.0
   - ingress.yaml
 secretGenerator:
   - name: ob-secrets

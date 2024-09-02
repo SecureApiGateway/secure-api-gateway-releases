@@ -5,7 +5,7 @@ generatorOptions:
 labels:
   - includeSelectors: true
     pairs:
-      app.kubernetes.io/name: forgerock
+      app.kubernetes.io/name: sapig
 namespace: sandbox
 resources:
 # May need a nicer way of doing the release version in future

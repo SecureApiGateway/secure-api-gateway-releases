@@ -1,0 +1,25 @@
+# Application CRD that describes the ForgeRock Platform.
+# Note that you must have an Application Controller to deploy this CRD
+apiVersion: app.k8s.io/v1beta1
+kind: Application
+metadata:
+  name: "sapig"
+  labels:
+    app.kubernetes.io/name: "sapig"
+spec:
+  selector:
+    matchLabels:
+     app.kubernetes.io/name: "sapig"
+  componentKinds:
+    - group: v1
+      kind: Service
+    - group: apps
+      kind: StatefulSet
+    - group: networking.k8s.io/v1
+      kind: Ingress
+    - group: v1
+      kind: Deployment
+    - group: v1
+      kind: Job
+  addOwnerRef: true
+
