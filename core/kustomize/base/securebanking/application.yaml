@@ -22,4 +22,17 @@ spec:
     - group: v1
       kind: Job
   addOwnerRef: true
-
+  descriptor:
+    type: "sapig"
+    keywords:
+      - "openbanking"
+      - "securebanking"
+      - "iam"
+      - "sapig"
+    links:
+      - description: About PingIdentity
+        url: "https://www.pingidentity.com/en.html"
+      - description: Documentation
+        url: https://backstage.forgerock.com/docs/forgeops/7.5
+    version: "7.5"
+    description: "Ping Identity and Access Management"
