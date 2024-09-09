@@ -7,6 +7,12 @@ patches:
   - path: configmap.yaml
   - path: deployment.yaml
   - path: secret.yaml
+  - patch: |-
+      $patch: delete
+      apiVersion: v1
+      kind: Secret
+      metadata:
+        name: openig-secrets-env
 resources:
   - ingress.yaml
   - securebanking
