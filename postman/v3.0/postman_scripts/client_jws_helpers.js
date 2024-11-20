@@ -92,9 +92,9 @@ client_jws_helpers.createAuthorizeRequestUrlForPar = function(scope, jarm) {
 
     var link = pm.environment.get("as_authorization_endpoint") + 
         "?client_id=" + pm.environment.get("client_id") + 
-        "&response_type=" + responseType +
-        "&redirect_uri=" + pm.environment.get("client_redirect_uri") + 
-        "&scope=" + scope + "&state=10d260bf-a7d9-444a-92d9-7b7a5f088208&nonce=10d260bf-a7d9-444a-92d9-7b7a5f088208" + 
+//        "&response_type=" + responseType +
+//        "&redirect_uri=" + pm.environment.get("client_redirect_uri") + 
+//        "&scope=" + scope + "&state=10d260bf-a7d9-444a-92d9-7b7a5f088208&nonce=10d260bf-a7d9-444a-92d9-7b7a5f088208" + 
         "&request_uri=" + pm.environment.get("par_request_uri")
 
     if (responseMode) {
