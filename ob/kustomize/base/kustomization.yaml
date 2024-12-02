@@ -24,7 +24,7 @@ patches:
       name: core-deployment-config
     path: patch/configmap/core-configmap-patch.yaml
 resources:
-  - https://github.com/SecureApiGateway/secure-api-gateway-releases/core/kustomize/base?ref=v3.2.0
+  - https://github.com/SecureApiGateway/secure-api-gateway-releases/core/kustomize/base?ref=v4.0.0
   - ingress.yaml
 secretGenerator:
   - name: ob-secrets
