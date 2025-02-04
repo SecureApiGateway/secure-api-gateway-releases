@@ -23,18 +23,6 @@ data:
   IG_OB_ASPSP_SIGNING_KEYSTORE_PATH: "/secrets/open-banking/ig-ob-signing-key.p12"
   # Keystore file type of IG_OB_ASPSP_SIGNING_KEYSTORE_PATH
   IG_OB_ASPSP_SIGNING_KEYSTORE_TYPE: "PKCS12"
-  # Path to Test Trusted Directory keystore containing the CA cert
-  IG_TEST_DIRECTORY_CA_KEYSTORE_PATH: "/secrets/test-trusted-directory/test-trusted-dir-keystore.p12"
-  # Keystore file type of IG_TEST_DIRECTORY_CA_KEYSTORE_PATH
-  IG_TEST_DIRECTORY_CA_KEYSTORE_TYPE: "PKCS12"
-  # Alias of the Test Trusted Directory's CA cert within the IG_TEST_DIRECTORY_CA_KEYSTORE_PATH keystore
-  IG_TEST_DIRECTORY_CA_KEYSTORE_ALIAS: "ca"
-  # Alias of the Test Trusted Directory's signing cert within the IG_TEST_DIRECTORY_SIGNING_KEYSTORE_PATH keystore
-  IG_TEST_DIRECTORY_SIGNING_KEYSTORE_ALIAS: "jwt-signer"
-  # Path to Test Trusted Directory keystore containing the signing key
-  IG_TEST_DIRECTORY_SIGNING_KEYSTORE_PATH: "/secrets/test-trusted-directory/test-trusted-dir-keystore.p12"
-  # Keystore file type of IG_TEST_DIRECTORY_SIGNING_KEYSTORE_PATH
-  IG_TEST_DIRECTORY_SIGNING_KEYSTORE_TYPE: "PKCS12"
   # Name of the RCS Service
   RCS_API_INTERNAL_SVC: "remote-consent-service"
   # iss claim value set by RCS in Consent Response JWTs
