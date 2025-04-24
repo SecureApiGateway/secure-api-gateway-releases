@@ -1,5 +1,5 @@
 apiVersion: v2
-name: secure-api-gateway-ob
+name: secure-api-gateway-core
 description: Helm chart for deploying the secure-api-gateway CORE edition to kubernetes cluster
 type: application
 version: 4.9.0
