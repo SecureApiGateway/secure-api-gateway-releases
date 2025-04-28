@@ -2,11 +2,11 @@ apiVersion: v2
 name: third-party
 description: Helm chart for deploying the third party sources required for the secure-api-gateway to kubernetes cluster
 type: application
-version: 3.0.0
-appVersion: 3.0.0
+version: 5.0.0
+appVersion: 5.0.0
 
 dependencies:
   - name: mongodb
-    version: 15.6.22
+    version: 16.4.11
     repository: "https://charts.bitnami.com/bitnami"
   
