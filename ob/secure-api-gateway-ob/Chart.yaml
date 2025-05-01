@@ -13,16 +13,16 @@ dependencies:
     version: 4.9.0
     repository: "@forgerock-helm"
   - name: remote-consent-service
-    version: 4.9.0
+    version: 4.0.4
     repository: "@forgerock-helm"
   - name: test-facility-bank
-    version: 4.9.0
+    version: 4.0.5
     repository: "@forgerock-helm"
   - name: test-user-account-creator
     version: 4.9.0
     repository: "@forgerock-helm"
   - name: remote-consent-service-user-interface
-    version: 4.9.0
+    version: 4.0.5
     repository: "@forgerock-helm"
   - name: test-trusted-directory
     version: 4.9.0
