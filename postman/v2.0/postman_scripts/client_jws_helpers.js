@@ -169,7 +169,7 @@ client_jws_helpers.createSignedJwt = function(data, additional_headers = {}) {
     var kid = pm.environment.get('OB-SIGNING-KEY-ID')
     console.log("kid is " + kid)
     var headers = {
-        'typ': 'JWT',
+        'typ': 'application/oauth-authz-req+jwt',
         'kid': kid,
         'alg': 'PS256'
     };
