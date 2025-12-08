@@ -2,16 +2,16 @@ apiVersion: v2
 name: secure-api-gateway-core
 description: Helm chart for deploying the secure-api-gateway CORE edition to kubernetes cluster
 type: application
-version: 5.0.4
-appVersion: 5.0.4
+version: 5.0.6
+appVersion: 5.0.6
 
 dependencies:
   - name: fapi-pep-as
-    version: 5.0.5
+    version: 5.0.6
     repository: "@forgerock-helm"
   - name: fapi-pep-rs-core
-    version: 5.0.4
+    version: 5.0.6
     repository: "@forgerock-helm"
   - name: test-trusted-directory
-    version: 5.0.4
+    version: 5.0.6
     repository: "@forgerock-helm"
