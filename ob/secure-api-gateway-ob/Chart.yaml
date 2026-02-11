@@ -2,30 +2,30 @@ apiVersion: v2
 name: secure-api-gateway-ob
 description: Helm chart for deploying the secure-api-gateway OB edition to kubernetes cluster
 type: application
-version: 5.0.6
-appVersion: 5.0.6
+version: 5.1.1
+appVersion: 5.1.1
 
 dependencies:
   - name: fapi-pep-as
-    version: 5.0.6
+    version: 5.1.1
     repository: "@forgerock-helm"
   - name: fapi-pep-rs-ob
-    version: 5.0.6
+    version: 5.1.1
     repository: "@forgerock-helm"
   - name: remote-consent-service
-    version: 5.0.6
+    version: 5.1.1
     repository: "@forgerock-helm"
   - name: test-facility-bank
-    version: 5.0.6
+    version: 5.1.1
     repository: "@forgerock-helm"
   - name: test-user-account-creator
-    version: 5.0.6
+    version: 5.1.1
     repository: "@forgerock-helm"
     condition: test-user-account-creator.enabled
   - name: remote-consent-service-user-interface
     version: 5.0.6
     repository: "@forgerock-helm"
   - name: test-trusted-directory
-    version: 5.0.6
+    version: 5.1.1
     repository: "@forgerock-helm"
     condition: test-trusted-directory.enabled
