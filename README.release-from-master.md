@@ -32,7 +32,9 @@ The repos should be released in the following order (details per repo to follow)
 * secure-api-gateway-ob-uk-test-data-initializer - Test data Initializer
 * fr-platform-config - Platform Config
 * secure-api-gateway-ob-uk-functional-tests - OB UK functional tests
-* secure-api-gateway-functional-test-framework - Core functional tests
+* openig-fapi-tests - Core functional tests
+  * previously: secure-api-gateway-functional-test-framework - Core functional tests
+  * migrated to [openig repo](https://github.com/ping-rocks/openig/tree/master/openig-fapi-tests)
 * secure-api-gateway-releases - Release
 
 ## Release Process
@@ -61,59 +63,59 @@ Note that the secure-api-gateway-parent repo is _special_ in that this repo is t
 org, providing a central location for declaration of dependencies and versions.
 
 1. Prepare new sustaining branch for the release
-    * checkout secure-api-gateway-parent master branch and ensure up-to-date:
-   ```
-     cd secure-api-gateway-parent
-     git checkout master
-     git pull
-   ```
-    * create new sustaining branch corresponding to the release (in this case, release 5.2.0):
-   ```
-     git checkout -b sustaining/5.2.x
-   ```
+   * checkout secure-api-gateway-parent master branch and ensure up-to-date:
+      ```
+      cd secure-api-gateway-parent
+      git checkout master
+      git pull
+      ```
+   * create new sustaining branch corresponding to the release (in this case, release 5.2.0):
+      ```
+      git checkout -b sustaining/5.2.x
+      ```
 2. Update to prepare for release of sustaining branch:
-    * from the sustaining branch, update the root pom.xml to release the given version:
-        * update `project.version` to the release version snapshot - `5.2.0-SNAPSHOT`
-            * this is updated to the final release version as part of the release github action
-        * update property `openig.version` to reflect the release IG version - `2026.3.0`
-        * if required: update property `copyright-current-year` for the current year - 2026
-        * if required: update the pom header comment end date for the current year - 2026
-        * if required: update `scm.tag` to `HEAD`
-    * commit: "OPENIG-10328 Prepare SAPIG 5.2.0 release (IG 2026.3.0)"
-    * push to sustaining branch: `git push origin sustaining/5.2.x`
+   * from the sustaining branch, update the root pom.xml to release the given version:
+       * update `project.version` to the release version snapshot - `5.2.0-SNAPSHOT`
+           * this is updated to the final release version as part of the release github action
+       * update property `openig.version` to reflect the release IG version - `2026.3.0`
+       * if required: update property `copyright-current-year` for the current year - 2026
+       * if required: update the pom header comment end date for the current year - 2026
+       * if required: update `scm.tag` to `HEAD`
+   * commit: "OPENIG-10328 Prepare SAPIG 5.2.0 release (IG 2026.3.0)"
+   * push to sustaining branch: `git push origin sustaining/5.2.x`
 3. Launch release build with parameters for new release - 5.2.0, from above branch:
-* run ["release" github action](https://github.com/SecureApiGateway/secure-api-gateway-parent/actions/workflows/release.yml) with parameters:
-    * branch: `sustaining/5.2.x`
-    * version `5.2.0`
-    * release notes: `Release SAPIG 5.2.0 (IG 2026.3.0)`
-* check:
-    * presence of new tag: `v5.2.0` in [secure-api-gateway-parent repo tags](https://github.com/SecureApiGateway/secure-api-gateway-parent/tags)
-    * that secure-api-gateway-parent tag 5.2.0 root pom.xml has `project.version` of `5.2.0` (not snapshot)
-    * that secure-api-gateway-parent master branch root pom.xml has `project.version` updated for next development cycle - `5.3.0-SNAPSHOT`
+   * run ["release" github action](https://github.com/SecureApiGateway/secure-api-gateway-parent/actions/workflows/release.yml) with parameters:
+       * branch: `sustaining/5.2.x`
+       * version `5.2.0`
+       * release notes: `Release SAPIG 5.2.0 (IG 2026.3.0)`
+   * check:
+       * presence of new tag: `v5.2.0` in [secure-api-gateway-parent repo tags](https://github.com/SecureApiGateway/secure-api-gateway-parent/tags)
+       * that secure-api-gateway-parent tag 5.2.0 root pom.xml has `project.version` of `5.2.0` (not snapshot)
+       * that secure-api-gateway-parent master branch root pom.xml has `project.version` updated for next development cycle - `5.3.0-SNAPSHOT`
 4. Change sustaining branch to update for (potential) next dev cycle - version 5.2.1-SNAPSHOT:
-* refresh sustaining branch `sustaining/5.2.x` for changes that incurred by branch release in step (3): `git pull`
-* if required: update the root pom.xml `version` to the next snapshot: `5.2.1-SNAPSHOT`
-* commit: "OPENIG-10328 Bump versions for dev after release of SAPIG 5.2.0"
-* push to sustaining branch: `git push origin sustaining/5.2.x`
-* await completion of PR build:
-    * ["pr - build and deploy" github action](https://github.com/SecureApiGateway/secure-api-gateway-parent/actions/workflows/pr.yml)
+   * refresh sustaining branch `sustaining/5.2.x` for changes that incurred by branch release in step (3): `git pull`
+   * if required: update the root pom.xml `version` to the next snapshot: `5.2.1-SNAPSHOT`
+   * commit: "OPENIG-10328 Bump versions for dev after release of SAPIG 5.2.0"
+   * push to sustaining branch: `git push origin sustaining/5.2.x`
+   * await completion of PR build:
+       * ["pr - build and deploy" github action](https://github.com/SecureApiGateway/secure-api-gateway-parent/actions/workflows/pr.yml)
 5. Upload new sustaining artifacts:
-* note that the PR build does not upload the new sustaining artifacts
-* run ["merge - build and deploy" github action](https://github.com/SecureApiGateway/secure-api-gateway-parent/actions/workflows/merge.yml) with parameters:
-    * branch: `sustaining/5.2.x`
-* the deployed artifacts appear in:
-    * [maven](https://maven.forgerock.org/ui/repos/tree/General/community/com/forgerock/sapi/gateway/secure-api-gateway-parent)
-    * [helm](https://maven.forgerock.org/ui/repos/tree/General/forgerock-helm) but this needs fropenbanking user credentials
-    * [docker](https://console.cloud.google.com/artifacts/docker/sbat-gcr-develop/europe-west4/sapig-docker-artifact)
+   * note that the PR build does not upload the new sustaining artifacts
+   * run ["merge - build and deploy" github action](https://github.com/SecureApiGateway/secure-api-gateway-parent/actions/workflows/merge.yml) with parameters:
+       * branch: `sustaining/5.2.x`
+   * the deployed artifacts appear in:
+       * [maven](https://maven.forgerock.org/ui/repos/tree/General/community/com/forgerock/sapi/gateway/secure-api-gateway-parent)
+       * [helm](https://maven.forgerock.org/ui/repos/tree/General/forgerock-helm) but this needs fropenbanking user credentials
+       * [docker](https://console.cloud.google.com/artifacts/docker/sbat-gcr-develop/europe-west4/sapig-docker-artifact)
 6. Change master branch to update for next dev cycle - version 5.3.0-SNAPSHOT, based on IG 2026.6.0:
-* on master branch, create new branch: `git checkout -b openig-10328-post-sapig-520-release`
-* update the root pom.xml to update the IG version to the next snapshot:
-    * if required: update property `openig.version` to next IG snapshot version - `2026.6.0-SNAPSHOT`
-    * if required: update `project.version` to the release version snapshot - `5.3.0-SNAPSHOT`
-* commit: "OPENIG-10328 Bump SAPIG versions for dev after release of SAPIG 5.2.0"
-* push to master: `git push origin openig-10328-post-sapig-520-release`
-    * raise PR for review and merge - reviewers are listed in section _FAPI/ OpenBanking developers_
-    * on PR merge, the build will run automatically
+   * on master branch, create new branch: `git checkout -b openig-10328-post-sapig-520-release`
+   * update the root pom.xml to update the IG version to the next snapshot:
+       * if required: update property `openig.version` to next IG snapshot version - `2026.6.0-SNAPSHOT`
+       * if required: update `project.version` to the release version snapshot - `5.3.0-SNAPSHOT`
+   * commit: "OPENIG-10328 Bump SAPIG versions for dev after release of SAPIG 5.2.0"
+   * push to master: `git push origin openig-10328-post-sapig-520-release`
+       * raise PR for review and merge - reviewers are listed in section _FAPI/ OpenBanking developers_
+       * on PR merge, the build will run automatically
 
 ### Repo: secure-api-gateway-ob-uk-common
 1. Prepare new sustaining branch for the release:
@@ -140,9 +142,6 @@ org, providing a central location for declaration of dependencies and versions.
             * update `parent.version` to the release version snapshot - `5.2.0-SNAPSHOT`
             * if required: update the pom header comment end date for the current year - 2026
         * secure-api-gateway-ob-uk-common-obie-datamodel/pom.xml
-            * update `parent.version` to the release version snapshot - `5.2.0-SNAPSHOT`
-            * if required: update the pom header comment end date for the current year - 2026
-        * secure-api-gateway-ob-uk-common-shared/pom.xml
             * update `parent.version` to the release version snapshot - `5.2.0-SNAPSHOT`
             * if required: update the pom header comment end date for the current year - 2026
         * secure-api-gateway-ob-uk-common-shared/pom.xml
@@ -247,6 +246,7 @@ Similar - but not the exact same - instructions as secure-api-gateway-fapi-pep-a
 secure-api-gateway-ob-uk-test-data-initializer. Some steps are omitted, see _Delta_ below.
 
 Delta:
+* Same instructions as secure-api-gateway-ob-uk-common repo step (1), secure-api-gateway-ob-uk-test-data-initializer
 * Delta for step (2):
     * update `_infra/helm/securebanking-test-data-initializer/Chart.yaml` `version` and `appVersion` to release version - `5.2.0`
 * Delta for step (3): ["release" github action](https://github.com/SecureApiGateway/secure-api-gateway-ob-uk-test-data-initializer/actions/workflows/release.yml)
@@ -258,6 +258,7 @@ Delta:
 This repo does not follow the pattern established so far. This repo is released only through execution of the release
 workflow. Some steps are omitted, see _Delta_ below.
 
+* Same instructions as secure-api-gateway-ob-uk-common repo step (1), secure-api-gateway-ob-uk-test-data-initializer
 * Delta for step (2): Step (2) is excluded
 * Delta for step (3): ["release" github action](https://github.com/SecureApiGateway/fr-platform-config/actions/workflows/release.yml)
 * Delta for step (4): Step (4) is excluded
@@ -281,18 +282,52 @@ Delta:
         * update plugin implementation `com.forgerock.sapi.gateway:secure-api-gateway-ob-uk-common-bom` to next release snapshot `5.3.0-SNAPSHOT`:
             * e.g. `implementation(platform("com.forgerock.sapi.gateway:secure-api-gateway-ob-uk-common-bom:5.3.0-SNAPSHOT"))`
 
-### Repo: secure-api-gateway-functional-test-framework
-Mostly the same instructions as secure-api-gateway-fapi-pep-as repo (above), but for repo
-secure-api-gateway-functional-test-framework. See _Delta_ section to understand differences.
+### Repo: openig-fapi-tests
+Important notes:
+- This replaces original SAPIG repo `secure-api-gateway-functional-test-framework`
+- This repo is located in the [openig repo](https://github.com/ping-rocks/openig/tree/master/openig-fapi-tests)
+- This therefore follows similar instructions, as IG will already have been released, but not the `openig-fapi-tests`
+  artifacts. These must be released in isolation (not part of core IG).
 
-Delta:
-* Note that this repo is gradle built, not maven, so there are no pom.xml files to update, only gradle build files.
-* Delta for step (2):
+The full instructions are as follows:
+
+1. Prepare _existing_ sustaining branch for the release:
+    * checkout openig sustaining/2026.3.x branch and ensure up-to-date:
+   ```
+     cd openig
+     git checkout sustaining/2026.3.x
+     git pull
+   ```
+    * create new branch from sustaining branch to make the change:
+   ```
+     git checkout -b openig-10328-release-openig-fapi-tests
+   ```
+2. Update to prepare for release of sustaining branch:
+   * From new branch off sustaining branch (`openig-10328-release-openig-fapi-tests`) 
+     * update build.gradle.kts:
+       * update `version` to release version `2026.3.0`
+     * commit: "OPENIG-10328 Prepare release of openig-fapi-tests (IG 2026.3.0)"
+     * push to sustaining branch: `git push origin sustaining/2026.3.x`
+         * raise PR for review and merge - reviewers are listed in section _FAPI/ OpenBanking developers_
+3. Launch release build with parameters for new openig-fapi-tests release - 2026.3.0, from above branch:
+   * run ["release" github action](https://github.com/ping-rocks/openig/actions/workflows/fapi-ft-release.yml) with parameters:
+       * branch: `sustaining/2026.3.x`
+       * version `2026.3.0`
+       * release notes: `Release IG 2026.3.0 openig-fapi-tests`
+   * check:
+       * TBD
+4. Change sustaining branch to update for (potential) next IG dev cycle:
+    * Excluded - no action required
+5. Upload new sustaining artifacts:
+    * Excluded for now - no action required
+6. Change master branch to update for next dev cycle - version 2026.6.0-SNAPSHOT, based on IG 2026.6.0:
+    * on master branch, create new branch: `git checkout -b openig-10328-post-release-openig-fapi-tests`
     * update build.gradle.kts:
-        * update `version` to release version `5.2.0`
-* Delta for step (6):
-    * update build.gradle.kts:
-        * update `version` to next release snapshot `5.3.0-SNAPSHOT`
+        * update `version` to release version `2026.6.0`
+    * commit: "OPENIG-10328 Bump openig-fapi-tests IG version for dev after release of 2026.3.0 openig-fapi-tests"
+    * push to master: `git push origin openig-10328-post-release-openig-fapi-tests`
+        * raise PR for review and merge - reviewers are listed in section _FAPI/ OpenBanking developers_
+        * on PR merge, the build will run automatically
 
 ### Repo: secure-api-gateway-releases
 This repo does not follow the pattern established so far at all.
