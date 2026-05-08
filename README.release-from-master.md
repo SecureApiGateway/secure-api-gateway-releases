@@ -262,7 +262,7 @@ workflow. Some steps are omitted, see _Delta_ below.
 * Delta for step (2): Step (2) is excluded
 * Delta for step (3): ["release" github action](https://github.com/SecureApiGateway/fr-platform-config/actions/workflows/release.yml)
 * Delta for step (4): Step (4) is excluded
-* Delta for step (5):  Step (5) is excluded
+* Delta for step (5): Step (5) is excluded
 * Delta for step (6): Step (6) is excluded
 
 ### Repo: secure-api-gateway-ob-uk-functional-tests
@@ -307,7 +307,7 @@ The full instructions are as follows:
      * update build.gradle.kts:
        * update `version` to release version `2026.3.0`
      * commit: "OPENIG-10328 Prepare release of openig-fapi-tests (IG 2026.3.0)"
-     * push to sustaining branch: `git push origin sustaining/2026.3.x`
+     * push to sustaining branch: `git push sustaining/2026.3.x openig-10328-release-openig-fapi-tests`
          * raise PR for review and merge - reviewers are listed in section _FAPI/ OpenBanking developers_
 3. Launch release build with parameters for new openig-fapi-tests release - 2026.3.0, from above branch:
    * run ["release" github action](https://github.com/ping-rocks/openig/actions/workflows/fapi-ft-release.yml) with parameters:
@@ -323,30 +323,54 @@ The full instructions are as follows:
 6. Change master branch to update for next dev cycle - version 2026.6.0-SNAPSHOT, based on IG 2026.6.0:
     * on master branch, create new branch: `git checkout -b openig-10328-post-release-openig-fapi-tests`
     * update build.gradle.kts:
-        * update `version` to release version `2026.6.0`
+        * update `version` to release version `2026.6.0-SNAPSHOT`
     * commit: "OPENIG-10328 Bump openig-fapi-tests IG version for dev after release of 2026.3.0 openig-fapi-tests"
     * push to master: `git push origin openig-10328-post-release-openig-fapi-tests`
         * raise PR for review and merge - reviewers are listed in section _FAPI/ OpenBanking developers_
         * on PR merge, the build will run automatically
 
 ### Repo: secure-api-gateway-releases
-This repo does not follow the pattern established so far at all.
+This repo does not follow the pattern established so far. This repo is released only through execution of the release
+workflow. Note that no sustaining branch (e.g. `sustaining/5.2/x`) is created for this release. It is just tagged
+by the release process (step (3)).
 
 Instead, follow instructions as below:
-* updates to apply to `sustaining/5.2.x` branch:
-    * `core/secure-api-gateway-core/Chart.yaml`:
-        * update `version` and `appVersion` to release version `5.2.0`
-        * update dependencies versions to release version `5.2.0`
-    * `ob/secure-api-gateway-ob/Chart.yaml`:
-        * update `version` and `appVersion` to release version `5.2.0`
-        * update dependencies versions to release version `5.2.0` - except name `remote-consent-service-user-interface`
-            * this component is not released and should be left on current version (`5.0.6`)
-    * `secure-api-gateway-helpers/Chart.yaml`:
-        * update `version` and `appVersion` to release version `5.2.0`
-        * update dependencies versions to release version `5.2.0`
-    * `third-party/Chart.yaml`:
-        * update `version` and `appVersion` to release version `5.2.0`
-* Push to sustaining branch:
-    * commit: "OPENIG-10328 Bump versions for SAPIG 5.2.0 release (IG 2026.3.0)"
-    * push to sustaining branch: `git push origin sustaining/5.2.x`
-* Do not update master branch version. This does not need to be updated for the snapshot version.
+1. Prepare _master_ branch for the release:
+   * Note: updates to apply to `master` branch only
+   * checkout secure-api-gateway-releases master branch and ensure up-to-date:
+     ```
+     cd secure-api-gateway-releases
+     git checkout master
+     git pull
+     ```
+   * create new dev branch corresponding to the release (in this case, release 5.2.0):
+      ```
+      `git checkout -b openig-10328-post-sapig-520-release`
+      ```
+2. Update to prepare for release of _master_ branch:
+   * update yaml chart versions:
+     * `core/secure-api-gateway-core/Chart.yaml`:
+         * update `version` and `appVersion` to release version `5.2.0`
+         * update dependencies versions to release version `5.2.0`
+     * `ob/secure-api-gateway-ob/Chart.yaml`:
+         * update `version` and `appVersion` to release version `5.2.0`
+         * update dependencies versions to release version `5.2.0` - except name `remote-consent-service-user-interface`
+             * this component is not released and should be left on current version (`5.0.6`)
+     * `secure-api-gateway-helpers/Chart.yaml`:
+         * update `version` and `appVersion` to release version `5.2.0`
+         * update dependencies versions to release version `5.2.0`
+     * `third-party/Chart.yaml`:
+         * update `version` and `appVersion` to release version `5.2.0`
+     * push to dev branch:
+         * commit: "OPENIG-10328 Bump versions for SAPIG 5.2.0 release (IG 2026.3.0)"
+         * push to sustaining branch: `git push origin openig-10328-post-sapig-520-release`
+             * raise PR for review and merge - reviewers are listed in section _FAPI/ OpenBanking developers_
+3. Launch release build with parameters for new release - 5.2.0, from above branch:
+   * run ["release" github action](https://github.com/SecureApiGateway/secure-api-gateway-parent/actions/workflows/release.yml) with parameters:
+       * branch: `master`
+       * version `5.2.0`
+       * release notes: `Release SAPIG 5.2.0 (IG 2026.3.0)`
+     * check:
+         * presence of new tag: `v5.2.0` in [secure-api-gateway-releases repo tags](https://github.com/SecureApiGateway/secure-api-gateway-releases/tags)
+4. Merge/notification pipeline is run automatically from the push to master:
+   * ["merge - notification" github action](https://github.com/SecureApiGateway/secure-api-gateway-releases/actions/workflows/slackNotification.yml)
