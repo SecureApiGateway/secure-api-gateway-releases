@@ -149,6 +149,43 @@ These lists are fixed — always include all three regardless of who is running 
 
 ---
 
+## Artifactory Polling
+
+After each repo's merge build completes, its snapshot is published to the ForgeRock community Artifactory. Downstream repos cannot build until their upstream's snapshot is available. Use this to confirm publication before proceeding:
+
+```bash
+# Wait until a snapshot artifact appears (or is updated) in Artifactory
+# Usage: wait_for_artifact <groupPath> <artifactId> <version>
+# Example: wait_for_artifact "com/forgerock/sapi/gateway" "secure-api-gateway-parent" "5.3.0-SNAPSHOT"
+wait_for_artifact() {
+  local GROUP_PATH=$1 ARTIFACT=$2 VERSION=$3
+  local URL="https://maven.forgerock.org/artifactory/community/${GROUP_PATH}/${ARTIFACT}/${VERSION}/maven-metadata.xml"
+  echo "Waiting for ${ARTIFACT}:${VERSION} in Artifactory..."
+  while true; do
+    HTTP=$(curl -s -o /dev/null -w "%{http_code}" "$URL")
+    if [ "$HTTP" = "200" ]; then
+      UPDATED=$(curl -s "$URL" | grep -o '<lastUpdated>[^<]*</lastUpdated>' | grep -o '[0-9]*')
+      echo "${ARTIFACT}:${VERSION} available — lastUpdated: ${UPDATED}"
+      break
+    fi
+    echo "Not yet available (HTTP ${HTTP}) — waiting 30s..."; sleep 30
+  done
+}
+```
+
+The artifact group path for all SAPIG repos is `com/forgerock/sapi/gateway`. Call this after each merge build before triggering the next downstream step. Example usage for the step 6 dependency chain:
+
+```bash
+wait_for_artifact "com/forgerock/sapi/gateway" "secure-api-gateway-parent" "${NEXT_SAPIG_SNAPSHOT}"
+# then merge ob-uk-common PR and wait...
+wait_for_artifact "com/forgerock/sapi/gateway" "secure-api-gateway-ob-uk-common" "${NEXT_SAPIG_SNAPSHOT}"
+# then trigger fapi-pep-as, rs-core, rs-ob, rcs PR builds...
+```
+
+> **Note:** The community repo (`artifactory/community`) is publicly accessible without credentials. Snapshot artifacts are published there by merge builds. If an artifact does not appear within ~10 minutes of a merge build completing, the build may have failed — check the Actions tab.
+
+---
+
 ## Setup — Locate or Clone Repos
 
 Before starting, resolve the local path for each repo. For each repo in the release order:
