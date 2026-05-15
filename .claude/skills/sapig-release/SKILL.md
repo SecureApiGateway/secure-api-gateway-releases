@@ -532,15 +532,30 @@ Same as `secure-api-gateway-fapi-pep-as`. Substitutions:
 
 ### secure-api-gateway-ob-uk-fidc-initializer
 
-**TAG ONLY** — no release workflow, no sustaining branch, no steps 2–6.
+**Steps 1 and 3 only** — no file changes, no sustaining branch for a minor release from master.
+
+> **For a sustaining/patch release:** master will have moved on, so you must create a `${SUSTAINING_BRANCH}` branch first and run `release.yml` from that branch — the same pattern used for 5.1.x. For a minor (master) release, run directly from `master`.
+
+**Step 1:** Not required for a minor release from master — no sustaining branch needed.
+
+**Step 3:** Trigger `release.yml` from `master`. The workflow creates the `v${RELEASE_VERSION}` tag, builds and pushes the docker image, publishes the Helm chart, and creates a GitHub release.
+
+> **Do NOT manually create a git tag before running this workflow.** The workflow creates the tag itself (`STEPS_RELEASE_PREPARE_TAG_MANUALLY=true`). If a tag already exists, the workflow will fail. If you accidentally created one, delete it first:
+> ```bash
+> gh api repos/SecureApiGateway/secure-api-gateway-ob-uk-fidc-initializer/git/refs/tags/v${RELEASE_VERSION} --method DELETE
+> ```
 
 ```bash
-cd <FAPI_ROOT>/secure-api-gateway-ob-uk-fidc-initializer
-git checkout master
-git pull
-git tag v${RELEASE_VERSION}
-git push origin v${RELEASE_VERSION}
+gh workflow run release.yml \
+  --repo SecureApiGateway/secure-api-gateway-ob-uk-fidc-initializer \
+  --ref master \
+  --field releaseVersion=${RELEASE_VERSION} \
+  --field releaseNotes="Release SAPIG ${RELEASE_VERSION} (IG ${IG_RELEASE_VERSION})"
 ```
+
+Verify: docker image at [sbat-gcr-release/sapig-docker-artifact/securebanking/secureopenbanking-uk-iam-initializer](https://console.cloud.google.com/artifacts/docker/sbat-gcr-release/europe-west4/sapig-docker-artifact/securebanking%2Fsecureopenbanking-uk-iam-initializer?project=sbat-gcr-release) with tag `${RELEASE_VERSION}`.
+
+**Steps 2, 4, 5, 6:** Excluded.
 
 ---
 
