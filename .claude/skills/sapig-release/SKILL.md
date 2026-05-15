@@ -613,6 +613,18 @@ IG itself is already released before this step runs. The openig repo is at `OPEN
 
 The `build.gradle.kts` is at: `openig-fapi-tests/functional/build.gradle.kts`
 
+> **Merging ping-rocks/openig PRs:** `gh pr merge` returns "base branch policy prohibits the merge" immediately even when all checks are green — auto-merge is also disabled on this repo. After creating each PR, poll until `mergeStateStatus` is `MERGEABLE` then retry:
+> ```bash
+> PR_NUMBER=<pr number>
+> gh auth switch --user ${RUNNER_PING_ROCKS_ACCOUNT}
+> while true; do
+>   STATUS=$(gh pr view ${PR_NUMBER} --repo ping-rocks/openig --json mergeStateStatus -q .mergeStateStatus)
+>   [ "$STATUS" = "MERGEABLE" ] && gh pr merge ${PR_NUMBER} --repo ping-rocks/openig --squash --delete-branch && break
+>   echo "Status: $STATUS — waiting 30s..."; sleep 30
+> done
+> gh auth switch --user ${RUNNER_SAPIG_ACCOUNT}
+> ```
+
 **Step 1 — Prepare existing sustaining branch:**
 
 The sustaining branch (`${IG_SUSTAINING_BRANCH}`) already exists in the openig repo — do not create it.
