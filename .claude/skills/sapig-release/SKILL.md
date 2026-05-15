@@ -619,7 +619,7 @@ The `build.gradle.kts` is at: `openig-fapi-tests/functional/build.gradle.kts`
 > gh auth switch --user ${RUNNER_PING_ROCKS_ACCOUNT}
 > while true; do
 >   STATUS=$(gh pr view ${PR_NUMBER} --repo ping-rocks/openig --json mergeStateStatus -q .mergeStateStatus)
->   [ "$STATUS" = "MERGEABLE" ] && gh pr merge ${PR_NUMBER} --repo ping-rocks/openig --squash --delete-branch && break
+>   [ "$STATUS" = "CLEAN" ] && gh pr merge ${PR_NUMBER} --repo ping-rocks/openig --squash --delete-branch && break
 >   echo "Status: $STATUS — waiting 30s..."; sleep 30
 > done
 > gh auth switch --user ${RUNNER_SAPIG_ACCOUNT}
