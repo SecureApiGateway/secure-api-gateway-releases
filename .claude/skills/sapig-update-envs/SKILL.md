@@ -44,7 +44,7 @@ gh repo view ForgeCloud/secure-api-gateway-relenv-deployer 2>&1 | head -3
 
 Steps 4 and 5 require the `codefresh` CLI and a personal API key.
 
-**One-time setup:** generate a Codefresh API key at [https://g.codefresh.io/user/settings](https://g.codefresh.io/user/settings) (scopes needed: `pipeline:read`, `pipeline:write`). Add to your shell profile:
+**One-time setup:** generate a Codefresh API key at [https://g.codefresh.io/user/settings](https://g.codefresh.io/user/settings) (scopes needed: `pipeline:read`, `pipeline:write`, `pipeline:run`). Add to your shell profile:
 
 ```bash
 export CF_API_KEY=<your-api-key>
