@@ -660,23 +660,28 @@ gh auth switch --user ${RUNNER_SAPIG_ACCOUNT}
 
 Wait for the PR to be merged before proceeding to step 3.
 
-**Step 3:** [fapi-ft-release.yml](https://github.com/ping-rocks/openig/actions/workflows/fapi-ft-release.yml)
-- branch: `${IG_SUSTAINING_BRANCH}`
-- releaseVersion: **`${RELEASE_VERSION}` (SAPIG version — e.g. `5.2.0`)** — NOT the IG version
-- releaseNotes: `Release IG ${IG_RELEASE_VERSION} openig-fapi-tests (SAPIG release ${RELEASE_VERSION})`
+**Step 3 — Build and push docker image manually**
+
+> **TEMPORARY — remove for IG 2026.6.0:** The `fapi-ft-release.yml` workflow cannot be used here because the reusable release workflow assumes a git tag exists in `ping-rocks/openig`, which is not created for this component. Once the openig-fapi-tests migration is complete (targeted for IG 2026.6.0), this entire repo entry should be removed from the release process.
+
+Build locally from `${IG_SUSTAINING_BRANCH}` (which has `version = "${IG_RELEASE_VERSION}"`) and push both tags to `sbat-gcr-release`:
 
 ```bash
-gh workflow run fapi-ft-release.yml \
-  --repo ping-rocks/openig \
-  --ref ${IG_SUSTAINING_BRANCH} \
-  --field releaseVersion=${RELEASE_VERSION} \
-  --field releaseNotes="Release IG ${IG_RELEASE_VERSION} openig-fapi-tests (SAPIG release ${RELEASE_VERSION})"
+cd <OPENIG_ROOT>/openig-fapi-tests/functional
+docker build \
+  -t europe-west4-docker.pkg.dev/sbat-gcr-release/sapig-docker-artifact/securebanking/uk-core-functional-tests:${IG_RELEASE_VERSION} \
+  -t europe-west4-docker.pkg.dev/sbat-gcr-release/sapig-docker-artifact/securebanking/uk-core-functional-tests:${RELEASE_VERSION} \
+  .
+docker push europe-west4-docker.pkg.dev/sbat-gcr-release/sapig-docker-artifact/securebanking/uk-core-functional-tests:${IG_RELEASE_VERSION}
+docker push europe-west4-docker.pkg.dev/sbat-gcr-release/sapig-docker-artifact/securebanking/uk-core-functional-tests:${RELEASE_VERSION}
 ```
 
+Prerequisites: Docker daemon running; gcloud authenticated with access to `sbat-gcr-release`; docker configured for `europe-west4-docker.pkg.dev` (`gcloud auth configure-docker europe-west4-docker.pkg.dev`).
+
 Post-release verification:
-- Docker image published at `sbat-gcr-release` (NOT develop) with tag `${RELEASE_VERSION}` (e.g. `5.2.0`)
-- There is NO git tag created in the ping-rocks/openig repo — the docker tag is the release artefact
-- Sustaining branch `build.gradle.kts` version stays at `${IG_RELEASE_VERSION}` (no auto-bump by the release workflow)
+- Both tags (`${IG_RELEASE_VERSION}` and `${RELEASE_VERSION}`) visible at [sbat-gcr-release/sapig-docker-artifact/securebanking/uk-core-functional-tests](https://console.cloud.google.com/artifacts/docker/sbat-gcr-release/europe-west4/sapig-docker-artifact/securebanking%2Fuk-core-functional-tests?project=sbat-gcr-release)
+- There is NO git tag in `ping-rocks/openig` — the docker image is the release artefact
+- Sustaining branch `build.gradle.kts` version stays at `${IG_RELEASE_VERSION}` (no auto-bump)
 
 **Step 4 — Bump sustaining branch to next IG sustaining snapshot:**
 
