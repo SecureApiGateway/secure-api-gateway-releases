@@ -45,8 +45,8 @@ gh repo view ForgeCloud/secure-api-gateway-relenv-deployer 2>&1 | head -3
 | 1 | Release `secure-api-gateway-relenv-deployer` | Yes — `gh workflow run` |
 | 2 | Update `secure-api-gateway-relenv-deployments` files and PR | Yes |
 | 3 | Release `secure-api-gateway-relenv-deployments` | Yes — `gh workflow run` |
-| 4 | Update Codefresh release env pipeline variables | Manual — Codefresh UI (cf CLI automation TBD) |
-| 5 | Update Codefresh testing pipeline variables | Manual — Codefresh UI (cf CLI automation TBD) |
+| 4 | Update Codefresh release env pipeline variables | Yes — `codefresh` CLI |
+| 5 | Update Codefresh testing pipeline variables | Yes — `codefresh` CLI |
 
 ---
 
@@ -148,60 +148,80 @@ Verify: tag `v${RELEASE_VERSION}` appears at `https://github.com/ForgeCloud/secu
 
 ## Step 4 — Update Codefresh release env pipeline variables
 
-> **Manual step — Codefresh UI.** Navigate to each pipeline link below, go to **Variables**, and update the values shown.
+Use the `codefresh` CLI (must be installed and authenticated). Define this helper in your shell session:
+
+```bash
+update_cf_pipeline() {
+  local PIPELINE="$1"
+  shift
+  local TMP
+  TMP=$(mktemp /tmp/cf-pipeline-XXXXXX.json)
+  codefresh get pipeline --name "${PIPELINE}" --output json > "${TMP}"
+  python3 - "${TMP}" "$@" << 'PYEOF'
+import json, sys
+path = sys.argv[1]
+updates = dict(arg.split('=', 1) for arg in sys.argv[2:])
+with open(path) as f:
+    data = json.load(f)
+p = data[0] if isinstance(data, list) else data
+for v in p['spec']['variables']:
+    if v['key'] in updates:
+        old = v['value']
+        v['value'] = updates[v['key']]
+        print(f"  {v['key']}: {old} -> {v['value']}")
+with open(path, 'w') as f:
+    json.dump(p, f, indent=2)
+PYEOF
+  codefresh replace pipeline -f "${TMP}"
+  rm -f "${TMP}"
+  echo "Updated ${PIPELINE}"
+}
+```
 
 ### core-sandbox-v5
 
-Pipeline: [core-sandbox-v5](https://g.codefresh.io/build/6936ba99a6b44af55d9f8ddd?activeAccountId=5bc76f3a8249cc15fa883acb)
-
-| Variable | New value |
-|----------|-----------|
-| `REPO_RELENVS_DEPLOYER_TAG` | `${RELEASE_TAG}` |
-| `REPO_RELENVS_DEPLOYMENTS_TAG` | `${RELEASE_TAG}` |
+```bash
+update_cf_pipeline "core-sandbox-v5-deploy-secure-api-gateway" \
+  "REPO_RELENVS_DEPLOYER_TAG=${RELEASE_TAG}" \
+  "REPO_RELENVS_DEPLOYMENTS_TAG=${RELEASE_TAG}"
+```
 
 ### ob-sandbox-v5
 
 > **Note:** Before running this pipeline, manually delete `test-user-account-creator` first.
 
-Pipeline: [ob-sandbox-v5](https://g.codefresh.io/build/6936bc9138f60fb50e1346e2?activeAccountId=5bc76f3a8249cc15fa883acb)
-
-| Variable | New value |
-|----------|-----------|
-| `REPO_RELENVS_DEPLOYER_TAG` | `${RELEASE_TAG}` |
-| `REPO_RELENVS_DEPLOYMENTS_TAG` | `${RELEASE_TAG}` |
+```bash
+update_cf_pipeline "ob-sandbox-v5-deploy-secure-api-gateway" \
+  "REPO_RELENVS_DEPLOYER_TAG=${RELEASE_TAG}" \
+  "REPO_RELENVS_DEPLOYMENTS_TAG=${RELEASE_TAG}"
+```
 
 ---
 
 ## Step 5 — Update Codefresh testing pipeline variables
 
-> **Manual step — Codefresh UI.** Navigate to each pipeline link below, go to **Variables**, and update the values shown.
+Use the same `update_cf_pipeline` function (define it in the shell session if not already done).
+
+> **Note:** `FUNCTIONAL_TESTS_IMAGE_TAG` uses the plain version (no `v` prefix); `REPO_RELENVS_DEPLOYMENTS_TAG` uses the `v`-prefixed tag.
 
 ### core-sandbox-v5 testing pipelines
 
-**[core-sandbox-v5-conformance-dcr-tests](https://g.codefresh.io/pipelines/edit/workflow?activeAccountId=5bc76f3a8249cc15fa883acb&id=6811dbdf239deb5cbccd1993&pipeline=core-sandbox-v5-conformance-dcr-tests&projects=ForgeCloud%2Fsecure-api-gateway-release&projectId=63d3f10000817d1143958f87&rightbar=variables&context=github-bot)**
+```bash
+update_cf_pipeline "core-sandbox-v5-conformance-dcr-tests" \
+  "REPO_RELENVS_DEPLOYMENTS_TAG=${RELEASE_TAG}"
 
-| Variable | New value |
-|----------|-----------|
-| `REPO_RELENVS_DEPLOYMENTS_TAG` | `${RELEASE_TAG}` |
-
-**[core-sandbox-v5-functional-tests](https://g.codefresh.io/pipelines/edit/workflow?activeAccountId=5bc76f3a8249cc15fa883acb&id=6811dbdb7d7f6ca7f41e3c0a&pipeline=core-sandbox-v5-functional-tests&projects=ForgeCloud%2Fsecure-api-gateway-release&projectId=63d3f10000817d1143958f87&rightbar=variables&context=github-bot)**
-
-| Variable | New value |
-|----------|-----------|
-| `FUNCTIONAL_TESTS_IMAGE_TAG` | `${RELEASE_TAG}` |
-| `REPO_RELENVS_DEPLOYMENTS_TAG` | `${RELEASE_TAG}` |
+update_cf_pipeline "core-sandbox-v5-functional-tests" \
+  "FUNCTIONAL_TESTS_IMAGE_TAG=${RELEASE_VERSION}" \
+  "REPO_RELENVS_DEPLOYMENTS_TAG=${RELEASE_TAG}"
+```
 
 ### ob-sandbox-v5 testing pipelines
 
-**[ob-sandbox-v5-conformance-dcr-tests](https://g.codefresh.io/pipelines/edit/workflow?activeAccountId=5bc76f3a8249cc15fa883acb&id=6811dc107d7f6ca7f41e3c0b&pipeline=ob-sandbox-v5-conformance-dcr-tests&projects=ForgeCloud%2Fsecure-api-gateway-release&projectId=63d3f10000817d1143958f87&rightbar=variables&context=github-bot)**
+```bash
+update_cf_pipeline "ob-sandbox-v5-conformance-dcr-tests" \
+  "REPO_RELENVS_DEPLOYMENTS_TAG=${RELEASE_TAG}"
 
-| Variable | New value |
-|----------|-----------|
-| `REPO_RELENVS_DEPLOYMENTS_TAG` | `${RELEASE_TAG}` |
-
-**[ob-sandbox-v5-functional-tests](https://g.codefresh.io/pipelines/edit/workflow?activeAccountId=5bc76f3a8249cc15fa883acb&id=6811dc0c59a911d152ecef76&pipeline=ob-sandbox-v5-functional-tests&projects=ForgeCloud%2Fsecure-api-gateway-release&projectId=63d3f10000817d1143958f87&rightbar=variables&context=github-bot)**
-
-| Variable | New value |
-|----------|-----------|
-| `FUNCTIONAL_TESTS_IMAGE_TAG` | `${RELEASE_TAG}` |
-| `REPO_RELENVS_DEPLOYMENTS_TAG` | `${RELEASE_TAG}` |
+update_cf_pipeline "ob-sandbox-v5-functional-tests" \
+  "FUNCTIONAL_TESTS_IMAGE_TAG=${RELEASE_VERSION}" \
+  "REPO_RELENVS_DEPLOYMENTS_TAG=${RELEASE_TAG}"
+```
