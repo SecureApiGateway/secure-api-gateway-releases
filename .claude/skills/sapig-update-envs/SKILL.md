@@ -28,14 +28,32 @@ From these arguments, derive:
 | `JIRA_ID_LOWER` | `openig-10328` | arg 2 lower-cased |
 | `BRANCH_NAME` | `openig-10328-create-sapig-520` | jira lower-case + `-create-sapig-` + version digits only |
 
-## GitHub Account
+## Prerequisites
 
-The `ForgeCloud` org repos are accessible via the same SecureApiGateway account (`RUNNER_SAPIG_ACCOUNT`). No account switching is needed for this skill.
+### GitHub access
+
+The `ForgeCloud` org repos are accessible via the SecureApiGateway account (`RUNNER_SAPIG_ACCOUNT`). No account switching is needed for this skill.
 
 Verify access before starting:
 
 ```bash
 gh repo view ForgeCloud/secure-api-gateway-relenv-deployer 2>&1 | head -3
+```
+
+### Codefresh CLI
+
+Steps 4 and 5 require the `codefresh` CLI and a personal API key.
+
+**One-time setup:** generate a Codefresh API key at [https://g.codefresh.io/user/settings](https://g.codefresh.io/user/settings) (scopes needed: `pipeline:read`, `pipeline:write`). Add to your shell profile:
+
+```bash
+export CF_API_KEY=<your-api-key>
+```
+
+**Guard — add this before steps 4 and 5:**
+
+```bash
+[ -z "${CF_API_KEY}" ] && echo "ERROR: CF_API_KEY is not set — export it before proceeding" && exit 1
 ```
 
 ## Steps Overview
