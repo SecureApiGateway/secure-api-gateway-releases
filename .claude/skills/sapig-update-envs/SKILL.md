@@ -42,7 +42,7 @@ gh repo view ForgeCloud/secure-api-gateway-relenv-deployer 2>&1 | head -3
 
 ### Codefresh CLI
 
-Steps 4 and 5 require the `codefresh` CLI and a personal API key.
+Steps 4–7 require the `codefresh` CLI and a personal API key.
 
 **One-time setup:** generate a Codefresh API key at [https://g.codefresh.io/user/settings](https://g.codefresh.io/user/settings) (scopes needed: `pipeline:read`, `pipeline:write`, `pipeline:run`). Add to your shell profile:
 
@@ -50,7 +50,7 @@ Steps 4 and 5 require the `codefresh` CLI and a personal API key.
 export CF_API_KEY=<your-api-key>
 ```
 
-**Guard — add this before steps 4 and 5:**
+**Guard — add this before steps 4–7:**
 
 ```bash
 [ -z "${CF_API_KEY}" ] && echo "ERROR: CF_API_KEY is not set — export it before proceeding" && exit 1
@@ -65,6 +65,8 @@ export CF_API_KEY=<your-api-key>
 | 3 | Release `secure-api-gateway-relenv-deployments` | Yes — `gh workflow run` |
 | 4 | Update Codefresh release env pipeline variables | Yes — `codefresh` CLI |
 | 5 | Update Codefresh testing pipeline variables | Yes — `codefresh` CLI |
+| 6 | Run release env deploy pipelines | Yes — `codefresh run` |
+| 7 | Run release env test pipelines | Yes — `codefresh run` |
 
 ---
 
@@ -248,3 +250,60 @@ update_cf_pipeline "ob-sandbox-v5-functional-tests" \
   "FUNCTIONAL_TESTS_IMAGE_TAG=${RELEASE_VERSION}" \
   "REPO_RELENVS_DEPLOYMENTS_TAG=${RELEASE_TAG}"
 ```
+
+---
+
+## Step 6 — Run release env deploy pipelines
+
+> **Note:** `codefresh run` requires the fully qualified pipeline name (`ForgeCloud/secure-api-gateway-release/<name>`), not the short name.
+
+Run both deploy pipelines and wait for them to complete:
+
+```bash
+CORE_BUILD=$(codefresh run "ForgeCloud/secure-api-gateway-release/core-sandbox-v5-deploy-secure-api-gateway" --detach 2>&1)
+echo "core-sandbox-v5 build: ${CORE_BUILD}"
+
+OB_BUILD=$(codefresh run "ForgeCloud/secure-api-gateway-release/ob-sandbox-v5-deploy-secure-api-gateway" --detach 2>&1)
+echo "ob-sandbox-v5 build: ${OB_BUILD}"
+```
+
+Poll until both complete:
+
+```bash
+for BUILD_ID in ${CORE_BUILD} ${OB_BUILD}; do
+  while true; do
+    STATUS=$(codefresh get build "${BUILD_ID}" --output json 2>&1 | python3 -c "import json,sys; data=json.load(sys.stdin); p=data[0] if isinstance(data,list) else data; print(p['status'])")
+    echo "$(date '+%H:%M:%S') ${BUILD_ID}: ${STATUS}"
+    [[ "$STATUS" == "success" || "$STATUS" == "error" || "$STATUS" == "terminated" ]] && break
+    sleep 30
+  done
+  echo "Final: ${BUILD_ID} = ${STATUS}"
+done
+```
+
+Both must reach `success` before proceeding to step 7.
+
+---
+
+## Step 7 — Run release env test pipelines
+
+Run all four test pipelines:
+
+```bash
+for PIPELINE in \
+  "ForgeCloud/secure-api-gateway-release/core-sandbox-v5-conformance-dcr-tests" \
+  "ForgeCloud/secure-api-gateway-release/core-sandbox-v5-functional-tests" \
+  "ForgeCloud/secure-api-gateway-release/ob-sandbox-v5-conformance-dcr-tests" \
+  "ForgeCloud/secure-api-gateway-release/ob-sandbox-v5-functional-tests"; do
+  BUILD=$(codefresh run "${PIPELINE}" --detach 2>&1)
+  echo "${PIPELINE##*/}: ${BUILD}"
+done
+```
+
+Poll each build ID for completion and check results. A `success` status means all tests passed. An `error` status means tests failed — the pipeline sends a Slack notification and the test report is available in GCS:
+
+```
+gsutil -m cp -r gs://sapig-functional-test-reports/<env>/<YYYYMMDD>/<BUILD_ID> .
+```
+
+where `<env>` is `core-sandbox-v5` or `ob-sandbox-v5`.
