@@ -76,7 +76,7 @@ Trigger the GitHub Actions release workflow from `main`:
 gh workflow run release.yml \
   --repo ForgeCloud/secure-api-gateway-relenv-deployer \
   --ref main \
-  --field version=${RELEASE_VERSION} \
+  --field releaseVersion=${RELEASE_VERSION} \
   --field releaseNotes="Deploy SAPIG ${RELEASE_VERSION}"
 ```
 
@@ -150,7 +150,7 @@ After the step 2 PR is merged, trigger the release workflow from `main`:
 gh workflow run release.yml \
   --repo ForgeCloud/secure-api-gateway-relenv-deployments \
   --ref main \
-  --field version=${RELEASE_VERSION} \
+  --field releaseVersion=${RELEASE_VERSION} \
   --field releaseNotes="Deploy SAPIG ${RELEASE_VERSION}"
 ```
 
