@@ -384,7 +384,7 @@ gh pr create \
 
 **Variant:** parent repo — no `<parent>` block (this IS the parent).
 
-Steps 1–6 all apply. Step 5 required.
+Steps 1–6 all apply.
 
 **Step 2 — `pom.xml` (root):**
 - `project.version` → `RELEASE_SNAPSHOT` (e.g. `5.2.0-SNAPSHOT`)
@@ -414,7 +414,7 @@ Deployed artifacts:
 
 **Variant:** child repo, multi-module.
 
-Steps 1–6 all apply. Step 5 required.
+Steps 1–6 all apply.
 
 **Step 2 — pom.xml files:**
 
@@ -447,7 +447,7 @@ Each sub-module `pom.xml`:
 
 **Variant:** child repo with Docker sub-module.
 
-Steps 1–6 all apply. Step 5 required.
+Steps 1–6 all apply.
 
 **Step 2 — files:**
 
