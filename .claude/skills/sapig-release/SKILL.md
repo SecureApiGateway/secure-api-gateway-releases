@@ -244,7 +244,7 @@ Most repos follow this pattern. Per-repo sections below call out all variations.
 cd <FAPI_ROOT>/<REPO>
 git checkout master
 git pull
-git checkout -b sustaining/5.2.x
+git checkout -b ${SUSTAINING_BRANCH}
 ```
 
 ### Step 2 — Prepare files for release and push
@@ -273,7 +273,7 @@ git push origin ${SUSTAINING_BRANCH}
 > **Docker sub-module repos only** (fapi-pep-as, fapi-pep-rs-core, fapi-pep-rs-ob, test-trusted-directory, rcs, rs): run a `pr.yml` build **before** triggering the release. The release workflow's `mvn release:prepare` resolves dependencies remotely from Artifactory — it cannot use local disk. The `RELEASE_SNAPSHOT` must already be published there. The `pr.yml` build publishes it as a side effect of the Deploy step.
 >
 > ```bash
-> gh workflow run pr.yml --repo SecureApiGateway/<REPO> --ref sustaining/5.2.x
+> gh workflow run pr.yml --repo SecureApiGateway/<REPO> --ref ${SUSTAINING_BRANCH}
 > gh run watch <run-id> --repo SecureApiGateway/<REPO> --exit-status
 > ```
 
@@ -728,16 +728,19 @@ Wait for the PR to be merged before proceeding to step 3.
 
 > **TEMPORARY — remove for IG 2026.6.0:** The `fapi-ft-release.yml` workflow cannot be used here because the reusable release workflow assumes a git tag exists in `ping-rocks/openig`, which is not created for this component. Once the openig-fapi-tests migration is complete (targeted for IG 2026.6.0), this entire repo entry should be removed from the release process.
 
-Build locally from `${IG_SUSTAINING_BRANCH}` (which has `version = "${IG_RELEASE_VERSION}"`) and push both tags to `sbat-gcr-release`:
+Build locally from `${IG_SUSTAINING_BRANCH}` (which has `version = "${IG_RELEASE_VERSION}"`) and push both tags to `sbat-gcr-release`.
+
+> **Important:** Use `docker buildx build` with `--platform linux/amd64,linux/arm64` so the image runs on both the Codefresh amd64 runners and local arm64 (Apple Silicon) machines. The `--push` flag is required for multi-platform builds (cannot `--load` a multi-arch image locally). Use the `maven` buildx builder which supports both platforms.
 
 ```bash
 cd <OPENIG_ROOT>/openig-fapi-tests/functional
-docker build \
+docker buildx build \
+  --platform linux/amd64,linux/arm64 \
+  --builder maven \
   -t europe-west4-docker.pkg.dev/sbat-gcr-release/sapig-docker-artifact/securebanking/uk-core-functional-tests:${IG_RELEASE_VERSION} \
   -t europe-west4-docker.pkg.dev/sbat-gcr-release/sapig-docker-artifact/securebanking/uk-core-functional-tests:${RELEASE_VERSION} \
+  --push \
   .
-docker push europe-west4-docker.pkg.dev/sbat-gcr-release/sapig-docker-artifact/securebanking/uk-core-functional-tests:${IG_RELEASE_VERSION}
-docker push europe-west4-docker.pkg.dev/sbat-gcr-release/sapig-docker-artifact/securebanking/uk-core-functional-tests:${RELEASE_VERSION}
 ```
 
 Prerequisites: Docker daemon running; gcloud authenticated with access to `sbat-gcr-release`; docker configured for `europe-west4-docker.pkg.dev` (`gcloud auth configure-docker europe-west4-docker.pkg.dev`).
