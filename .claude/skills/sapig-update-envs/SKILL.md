@@ -213,7 +213,7 @@ update_cf_pipeline "core-sandbox-v5-deploy-secure-api-gateway" \
 > Go to the GKE workload console, select the `ob-sandbox-v5` namespace, find `test-user-account-creator`, and delete it:
 > https://console.cloud.google.com/kubernetes/workload/overview?project=sbat-dev&pageState=(%22savedViews%22:(%22n%22:%5B%22ob-sandbox-v5%22%5D))
 >
-> **Note:** GKE access requires being on the office network or an IP-whitelisted connection — VPN alone may not be sufficient.
+> **Note:** GKE access requires being on the office network or an IP-whitelisted connection — VPN alone may not be sufficient. If not in the office, delete the job manually via the GCP console link above.
 
 ```bash
 update_cf_pipeline "ob-sandbox-v5-deploy-secure-api-gateway" \
