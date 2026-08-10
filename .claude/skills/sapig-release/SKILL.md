@@ -71,9 +71,7 @@ From these arguments, derive the following variables and use them throughout:
 Steps have dependencies that prevent full parallelism. The dependency graph is:
 
 ```
-parent → ob-uk-common → fapi-pep-as ─────────────────────┐
-                      → fapi-pep-rs-core                  ↓
-                      → fapi-pep-rs-ob           test-trusted-directory
+parent → ob-uk-common → fapi-pep-rs-ob
                       → rcs → rs
                       → functional-tests
 ```
@@ -83,7 +81,7 @@ Use this to maximise parallelism per step:
 | Step | Parallelism |
 |------|-------------|
 | **Step 1** | All repos in parallel — branch creation has no inter-repo dependencies |
-| **Step 2** | parent first; then ob-uk-common; then fapi-pep-as, rs-core, rs-ob, rcs in parallel; then test-trusted-directory and rs in parallel; then functional-tests |
+| **Step 2** | parent first; then ob-uk-common; then fapi-pep-rs-ob and rcs in parallel; then rs; then functional-tests |
 | **Step 3 (pr.yml + release.yml)** | Same order as Step 2 — each repo's release must complete before downstream repos can reference the published artifact |
 | **Step 4** | Batch all repos in parallel once step 3 is done |
 | **Step 5** | Batch all repos in parallel once step 4 builds are green |
@@ -94,10 +92,7 @@ Use this to maximise parallelism per step:
 ## Default Branch Names
 
 Most repos use `master`. The following use `main` instead:
-- `secure-api-gateway-fapi-pep-as`
-- `secure-api-gateway-fapi-pep-rs-core`
 - `secure-api-gateway-fapi-pep-rs-ob`
-- `secure-api-gateway-test-trusted-directory`
 
 Substitute `main` for `master` in all steps for those repos.
 
@@ -218,10 +213,10 @@ Process repos in this exact order:
 
 1. `secure-api-gateway-parent`
 2. `secure-api-gateway-ob-uk-common`
-3. `secure-api-gateway-fapi-pep-as`
-4. `secure-api-gateway-fapi-pep-rs-core`
+3. `secure-api-gateway-fapi-pep-as` — **SKIP** (no longer released)
+4. `secure-api-gateway-fapi-pep-rs-core` — **SKIP** (no longer released)
 5. `secure-api-gateway-fapi-pep-rs-ob`
-6. `secure-api-gateway-test-trusted-directory`
+6. `secure-api-gateway-test-trusted-directory` — **SKIP** (no longer released)
 7. `secure-api-gateway-ob-uk-rcs`
 8. `secure-api-gateway-ob-uk-rs`
 9. `secure-api-gateway-ob-uk-ui` — **SKIP** (sample app, stays on `5.0.6`)
@@ -270,7 +265,7 @@ git push origin ${SUSTAINING_BRANCH}
 
 ### Step 3 — Trigger release GitHub Action
 
-> **Docker sub-module repos only** (fapi-pep-as, fapi-pep-rs-core, fapi-pep-rs-ob, test-trusted-directory, rcs, rs): run a `pr.yml` build **before** triggering the release. The release workflow's `mvn release:prepare` resolves dependencies remotely from Artifactory — it cannot use local disk. The `RELEASE_SNAPSHOT` must already be published there. The `pr.yml` build publishes it as a side effect of the Deploy step.
+> **Docker sub-module repos only** (fapi-pep-rs-ob, rcs, rs): run a `pr.yml` build **before** triggering the release. The release workflow's `mvn release:prepare` resolves dependencies remotely from Artifactory — it cannot use local disk. The `RELEASE_SNAPSHOT` must already be published there. The `pr.yml` build publishes it as a side effect of the Deploy step.
 >
 > ```bash
 > gh workflow run pr.yml --repo SecureApiGateway/<REPO> --ref ${SUSTAINING_BRANCH}
@@ -370,8 +365,8 @@ gh pr create \
 > **Merge in dependency order:** Each repo's merge build publishes its snapshot to Artifactory. A downstream repo's PR build will fail with "Non-resolvable parent POM" if it runs before its upstream's merge build has completed. Do NOT trigger or merge a downstream PR until its upstream repo's PR is merged AND its merge build (merge.yml) has succeeded. Follow this order:
 > 1. parent → merge, wait for merge build to pass
 > 2. ob-uk-common → merge, wait for merge build to pass
-> 3. fapi-pep-as, rs-core, rs-ob, rcs — trigger PR builds in parallel, but only after step 2 is complete; merge all, wait for merge builds to pass
-> 4. test-trusted-directory (needs fapi-pep-as merge build), rs (needs rcs merge build) — trigger PR builds only after their respective upstreams' merge builds pass
+> 3. fapi-pep-rs-ob, rcs — trigger PR builds in parallel, but only after step 2 is complete; merge all, wait for merge builds to pass
+> 4. rs (needs rcs merge build) — trigger PR build only after rcs merge build passes
 > 5. functional-tests (needs ob-uk-common merge build — already done by this point)
 
 ---
@@ -445,6 +440,8 @@ Each sub-module `pom.xml`:
 
 ### secure-api-gateway-fapi-pep-as
 
+**SKIP — no longer released.** This repo is kept here as a **reference pattern** for all repos described as "Same as `secure-api-gateway-fapi-pep-as`" below. The procedure documented here applies to those repos verbatim (with the substitutions noted in each section).
+
 **Variant:** child repo with Docker sub-module.
 
 Steps 1–6 all apply.
@@ -456,17 +453,15 @@ Steps 1–6 all apply.
 - `parent.version` → `RELEASE_VERSION` (references the released `secure-api-gateway-parent`)
 - If required: pom header comment end date → `CURRENT_YEAR`
 
-`secure-api-gateway-fapi-pep-as-docker/pom.xml`:
+`<repo>-docker/pom.xml`:
 - `parent.version` → `RELEASE_SNAPSHOT` (references this repo's root pom, still at snapshot)
 - If required: pom header comment end date → `CURRENT_YEAR`
 
-`secure-api-gateway-fapi-pep-as-docker/src/main/docker/Dockerfile`:
+`<repo>-docker/src/main/docker/Dockerfile`:
 - If required: Dockerfile header comment end date → `CURRENT_YEAR`
 - Note: the IG base image version is controlled by the Maven property `docker.openig-image` (set in the parent pom via `openig.version`), not an `ARG` in the Dockerfile. No Dockerfile version change is needed here.
 
 **Step 4:** If required: `project.version` → `SUSTAINING_SNAPSHOT`
-
-**Step 5:** [merge.yml](https://github.com/SecureApiGateway/secure-api-gateway-fapi-pep-as/actions/workflows/merge.yml)
 
 **Step 6 — files:**
 
@@ -474,7 +469,7 @@ Steps 1–6 all apply.
 - If required: `parent.version` → `NEXT_SAPIG_SNAPSHOT`
 - If required: `project.version` → `NEXT_SAPIG_SNAPSHOT`
 
-`secure-api-gateway-fapi-pep-as-docker/pom.xml`:
+`<repo>-docker/pom.xml`:
 - If required: `parent.version` → `NEXT_SAPIG_SNAPSHOT`
 
 No Dockerfile changes needed in step 6 — the IG base image version flows through the parent pom.
@@ -483,11 +478,7 @@ No Dockerfile changes needed in step 6 — the IG base image version flows throu
 
 ### secure-api-gateway-fapi-pep-rs-core
 
-Same as `secure-api-gateway-fapi-pep-as`. Substitutions:
-- Repo: `secure-api-gateway-fapi-pep-rs-core`
-- Docker sub-module: `secure-api-gateway-fapi-pep-rs-core-docker`
-- [release.yml](https://github.com/SecureApiGateway/secure-api-gateway-fapi-pep-rs-core/actions/workflows/release.yml)
-- [merge.yml](https://github.com/SecureApiGateway/secure-api-gateway-fapi-pep-rs-core/actions/workflows/merge.yml)
+**SKIP — no longer released.**
 
 ---
 
@@ -505,16 +496,7 @@ Same as `secure-api-gateway-fapi-pep-as`. Substitutions:
 
 ### secure-api-gateway-test-trusted-directory
 
-Same as `secure-api-gateway-fapi-pep-as`, with one extra change in Step 2. Substitutions:
-- Repo: `secure-api-gateway-test-trusted-directory`
-- Docker sub-module: `secure-api-gateway-test-trusted-directory-docker`
-- [release.yml](https://github.com/SecureApiGateway/secure-api-gateway-test-trusted-directory/actions/workflows/release.yml)
-- [merge.yml](https://github.com/SecureApiGateway/secure-api-gateway-test-trusted-directory/actions/workflows/merge.yml)
-
-**Additional Step 2 change — `pom.xml` (root):**
-- Set property `secure-api-gateway.fapi-pep-as.version` → `RELEASE_VERSION` (e.g. `5.2.0`)
-
-**Additional sub-module for step 6:** `secure-api-gateway-test-trusted-directory-ig-extensions/pom.xml` — `parent.version` → `NEXT_SAPIG_SNAPSHOT`
+**SKIP — no longer released.**
 
 ---
 
