@@ -219,7 +219,7 @@ Process repos in this exact order:
 6. `secure-api-gateway-test-trusted-directory` — **SKIP** (no longer released)
 7. `secure-api-gateway-ob-uk-rcs`
 8. `secure-api-gateway-ob-uk-rs`
-9. `secure-api-gateway-ob-uk-ui` — **SKIP** (sample app, stays on `5.0.6`)
+9. `secure-api-gateway-ob-uk-ui`
 10. `secure-api-gateway-ob-uk-fidc-initializer` — **TAG ONLY** (no release workflow)
 11. `secure-api-gateway-ob-uk-test-data-initializer`
 12. `fr-platform-config` — **BRANCH + RELEASE WORKFLOW ONLY**
@@ -545,7 +545,34 @@ Same as `secure-api-gateway-fapi-pep-as`. Substitutions:
 
 ### secure-api-gateway-ob-uk-ui
 
-**SKIP** — sample application on outdated technology. Remains on version `5.0.6`. No action required.
+**Variant:** Node/Angular repo with Helm chart. Steps 1–3 and 5 apply. **Steps 4 and 6 are excluded.**
+
+**Step 1:** Standard (creates `sustaining/${SUSTAINING_BRANCH}` from master).
+
+**Step 2 — files:**
+
+`secure-api-gateway-ob-uk-ui-rcs/package.json`:
+- `version` → `RELEASE_VERSION` (e.g. `5.3.0`)
+
+`_infra/helm/securebanking-ui/Chart.yaml`:
+- `version` → `RELEASE_VERSION`
+- `appVersion` → `RELEASE_VERSION`
+
+**Step 3:** [release-rcs.yml](https://github.com/SecureApiGateway/secure-api-gateway-ob-uk-ui/actions/workflows/release-rcs.yml)
+
+```bash
+gh workflow run release-rcs.yml \
+  --repo SecureApiGateway/secure-api-gateway-ob-uk-ui \
+  --ref ${SUSTAINING_BRANCH} \
+  --field releaseVersion=${RELEASE_VERSION} \
+  --field releaseNotes="Release SAPIG ${RELEASE_VERSION} (IG ${IG_RELEASE_VERSION})"
+```
+
+**Step 4:** Excluded — no Maven bump.
+
+**Step 5:** [merge.yml](https://github.com/SecureApiGateway/secure-api-gateway-ob-uk-ui/actions/workflows/merge.yml)
+
+**Step 6:** Excluded.
 
 ---
 
