@@ -64,6 +64,8 @@ From these arguments, derive the following variables and use them throughout:
 | `RUNNER_SAPIG_ACCOUNT` | `wmorrison365fr` | discovered from `gh auth status` — see GitHub Accounts section |
 | `RUNNER_PING_ROCKS_ACCOUNT` | `wayne-morrison_pingcorp` | discovered from `gh auth status` — see GitHub Accounts section |
 
+> **IG Helm chart versions:** The actual `IG_RELEASE_VERSION` passed as arg 3 may be a full build-qualified version string (e.g. `2026.6.0-20260629092452-2e6cded9f7e232b3a2762b2ac844c9f81df6e98f`). Use this full string wherever IG artifact/Helm chart versions are needed (parent pom `openig.version`, IG Helm dependency versions in `secure-api-gateway-releases`). The short form (e.g. `2026.6.0`) is only used for branch names (`IG_SUSTAINING_BRANCH`) and display labels.
+
 **This is a minor (master) release.** For sustaining/patch releases, a separate skill handles that.
 
 ## Execution Strategy
@@ -400,8 +402,20 @@ Deployed artifacts:
 - [Docker](https://console.cloud.google.com/artifacts/docker/sbat-gcr-develop/europe-west4/sapig-docker-artifact)
 
 **Step 6 — `pom.xml` (root):**
-- If required: `openig.version` → `NEXT_IG_SNAPSHOT` (e.g. `2026.6.0-SNAPSHOT`)
-- If required: `project.version` → `NEXT_SAPIG_SNAPSHOT` (e.g. `5.3.0-SNAPSHOT`)
+- If required: `openig.version` → next IG staging version (full build-qualified string, e.g. `2026.9.0-20260811205209-30f39b6c3cb30ef8d5a831a338c6ade37ef07317`) — ask the team for the exact value; do NOT use a `-SNAPSHOT` version here
+- If required: `project.version` → `NEXT_SAPIG_SNAPSHOT` (e.g. `5.4.0-SNAPSHOT`)
+- If required: add `forgerock-internal-staging` repository (if not already present):
+  ```xml
+  <repository>
+      <id>forgerock-internal-staging</id>
+      <name>ForgeRock Internal Staging Repository</name>
+      <url>https://maven.forgerock.org/artifactory/internal-staging</url>
+      <snapshots><enabled>false</enabled></snapshots>
+      <releases><enabled>true</enabled></releases>
+  </repository>
+  ```
+
+> **IG version policy (as of SAPIG 5.3.0):** IG artifacts are no longer published as `-SNAPSHOT` builds. They are published to `internal-staging` with a full build-qualified version string (e.g. `2026.9.0-20260811205209-30f39b6c3cb30ef8d5a831a338c6ade37ef07317`). Always use the full string — never a bare `MAJOR.MINOR.PATCH-SNAPSHOT` — for `openig.version` and any IG Helm chart dependency versions.
 
 ---
 
@@ -872,17 +886,29 @@ git checkout -b openig-10328-post-sapig-520-release
 `core/secure-api-gateway-core/Chart.yaml`:
 - `version` → `RELEASE_VERSION`
 - `appVersion` → `RELEASE_VERSION`
-- All dependency `version` values → `RELEASE_VERSION`
+- Dependencies and their versions:
+  - `ig-fapi-pep-as` → `IG_RELEASE_VERSION` (full build-qualified string)
+  - `ig-fapi-pep-rs` → `IG_RELEASE_VERSION` (full build-qualified string)
+  - `sample-trusted-directory` → `IG_RELEASE_VERSION` (full build-qualified string), condition: `test-trusted-directory.enabled`
+
+> **Note:** These chart names changed from previous releases: `fapi-pep-as` → `ig-fapi-pep-as`, `fapi-pep-rs-core` → `ig-fapi-pep-rs`, `test-trusted-directory` → `sample-trusted-directory`. Their versions now track IG, not SAPIG.
 
 `ob/secure-api-gateway-ob/Chart.yaml`:
 - `version` → `RELEASE_VERSION`
 - `appVersion` → `RELEASE_VERSION`
-- All dependency `version` values → `RELEASE_VERSION` — **except** `remote-consent-service-user-interface`, which stays on `5.0.6`
+- Dependencies and their versions:
+  - `ig-fapi-pep-as` → `IG_RELEASE_VERSION` (full build-qualified string)
+  - `fapi-pep-rs-ob` → `RELEASE_VERSION`
+  - `remote-consent-service` → `RELEASE_VERSION`
+  - `test-facility-bank` → `RELEASE_VERSION`
+  - `test-user-account-creator` → `RELEASE_VERSION`, condition: `test-user-account-creator.enabled`
+  - `remote-consent-service-user-interface` → stays on `5.0.6` (do not update)
+  - `sample-trusted-directory` → `IG_RELEASE_VERSION` (full build-qualified string), condition: `test-trusted-directory.enabled`
 
 `secure-api-gateway-helpers/Chart.yaml`:
 - `version` → `RELEASE_VERSION`
 - `appVersion` → `RELEASE_VERSION`
-- All dependency `version` values → `RELEASE_VERSION`
+- `external-secrets-gsm` dependency `version` → `RELEASE_VERSION`
 
 `third-party/Chart.yaml`:
 - `version` → `RELEASE_VERSION`
