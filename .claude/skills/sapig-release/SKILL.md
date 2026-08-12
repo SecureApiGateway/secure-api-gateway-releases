@@ -402,8 +402,20 @@ Deployed artifacts:
 - [Docker](https://console.cloud.google.com/artifacts/docker/sbat-gcr-develop/europe-west4/sapig-docker-artifact)
 
 **Step 6 — `pom.xml` (root):**
-- If required: `openig.version` → `NEXT_IG_SNAPSHOT` (e.g. `2026.6.0-SNAPSHOT`)
-- If required: `project.version` → `NEXT_SAPIG_SNAPSHOT` (e.g. `5.3.0-SNAPSHOT`)
+- If required: `openig.version` → next IG staging version (full build-qualified string, e.g. `2026.9.0-20260811205209-30f39b6c3cb30ef8d5a831a338c6ade37ef07317`) — ask the team for the exact value; do NOT use a `-SNAPSHOT` version here
+- If required: `project.version` → `NEXT_SAPIG_SNAPSHOT` (e.g. `5.4.0-SNAPSHOT`)
+- If required: add `forgerock-internal-staging` repository (if not already present):
+  ```xml
+  <repository>
+      <id>forgerock-internal-staging</id>
+      <name>ForgeRock Internal Staging Repository</name>
+      <url>https://maven.forgerock.org/artifactory/internal-staging</url>
+      <snapshots><enabled>false</enabled></snapshots>
+      <releases><enabled>true</enabled></releases>
+  </repository>
+  ```
+
+> **IG version policy (as of SAPIG 5.3.0):** IG artifacts are no longer published as `-SNAPSHOT` builds. They are published to `internal-staging` with a full build-qualified version string (e.g. `2026.9.0-20260811205209-30f39b6c3cb30ef8d5a831a338c6ade37ef07317`). Always use the full string — never a bare `MAJOR.MINOR.PATCH-SNAPSHOT` — for `openig.version` and any IG Helm chart dependency versions.
 
 ---
 
