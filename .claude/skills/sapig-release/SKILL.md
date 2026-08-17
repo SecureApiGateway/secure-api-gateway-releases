@@ -15,7 +15,7 @@ Perform a minor release of SAPIG components across the SecureApiGateway GitHub o
 
 Example:
 ```
-/sapig-release 5.2.0 OPENIG-10328 2026.3.0 2026.6.0
+/sapig-release 5.3.0 OPENIG-10658 2026.6.0-20260629092452-2e6cded9f7e232b3a2762b2ac844c9f81df6e98f 2026.9.0
 ```
 
 The last two arguments are optional and default to `~/dev/fapi` and `~/dev/openig` if not provided.
@@ -49,13 +49,13 @@ From these arguments, derive the following variables and use them throughout:
 |----------|---------|------------|
 | `RELEASE_VERSION` | `5.2.0` | arg 1 |
 | `JIRA_ID` | `OPENIG-10328` | arg 2 |
-| `IG_RELEASE_VERSION` | `2026.3.0` | arg 3 |
+| `IG_RELEASE_VERSION` | `2026.6.0-20260629092452-2e6cded9f7e232b3a2762b2ac844c9f81df6e98f` | arg 3 (full build-qualified string — never a bare `MAJOR.MINOR.PATCH`) |
 | `NEXT_IG_SNAPSHOT` | `2026.6.0-SNAPSHOT` | arg 4 + `-SNAPSHOT` |
 | `FAPI_ROOT` | `~/dev/fapi` | arg 5, or `~/dev/fapi` if omitted |
 | `OPENIG_ROOT` | `~/dev/openig` | arg 6, or `~/dev/openig` if omitted |
 | `RELEASE_SNAPSHOT` | `5.2.0-SNAPSHOT` | arg 1 + `-SNAPSHOT` |
 | `SUSTAINING_BRANCH` | `sustaining/5.2.x` | arg 1, replace patch digit with `x` |
-| `IG_SUSTAINING_BRANCH` | `sustaining/2026.3.x` | arg 3, replace patch digit with `x` |
+| `IG_SUSTAINING_BRANCH` | `sustaining/2026.6.x` | extract `MAJOR.MINOR.PATCH` from arg 3 (i.e. take only the `2026.6.0` prefix), then replace patch digit with `x` |
 | `JIRA_ID_LOWER` | `openig-10328` | arg 2 lower-cased |
 | `POST_RELEASE_BRANCH` | `openig-10328-post-sapig-520-release` | jira lower-case + `-post-sapig-` + version digits only + `-release` |
 | `NEXT_SAPIG_SNAPSHOT` | `5.3.0-SNAPSHOT` | increment minor of arg 1, reset patch to 0, + `-SNAPSHOT` |

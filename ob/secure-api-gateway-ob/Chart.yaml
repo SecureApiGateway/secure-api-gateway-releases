@@ -7,7 +7,7 @@ appVersion: 5.3.0
 
 dependencies:
   - name: ig-fapi-pep-as
-    version: 2026.6.0-2e6cded9f7e232b3a2762b2ac844c9f81df6e98f
+    version: 2026.6.0-20260629092452-2e6cded9f7e232b3a2762b2ac844c9f81df6e98f
     repository: "@forgerock-helm"
   - name: fapi-pep-rs-ob
     version: 5.3.0
@@ -26,6 +26,6 @@ dependencies:
     version: 5.0.6
     repository: "@forgerock-helm"
   - name: sample-trusted-directory
-    version: 2026.6.0-2e6cded9f7e232b3a2762b2ac844c9f81df6e98f
+    version: 2026.6.0-20260629092452-2e6cded9f7e232b3a2762b2ac844c9f81df6e98f
     repository: "@forgerock-helm"
     condition: test-trusted-directory.enabled
