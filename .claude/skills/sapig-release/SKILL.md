@@ -227,7 +227,8 @@ Process repos in this exact order:
 12. `fr-platform-config` — **BRANCH + RELEASE WORKFLOW ONLY**
 13. `secure-api-gateway-ob-uk-functional-tests`
 14. `openig-fapi-tests` — **NEW PROCESS** (in ping-rocks/openig, treat with care)
-15. `secure-api-gateway-releases` — **HELM ONLY, NO SUSTAINING BRANCH**
+15. `secure-api-gateway-releases-helpers` — **HELM ONLY, NO SUSTAINING BRANCH** (must be released before `secure-api-gateway-releases`)
+16. `secure-api-gateway-releases` — **HELM ONLY, NO SUSTAINING BRANCH**
 
 ---
 
@@ -868,6 +869,54 @@ gh auth switch --user ${RUNNER_SAPIG_ACCOUNT}
 
 ---
 
+### secure-api-gateway-releases-helpers
+
+**HELM ONLY** — no sustaining branch, no Maven/Gradle. Must be released **before** `secure-api-gateway-releases` — the `secure-api-gateway-helpers` chart in that repo depends on `external-secrets-gsm:${RELEASE_VERSION}`.
+
+**Step 1 — Prepare master:**
+
+```bash
+cd <FAPI_ROOT>/secure-api-gateway-releases-helpers
+git checkout master
+git pull
+git checkout -b ${POST_RELEASE_BRANCH}
+```
+
+**Step 2 — Helm chart update:**
+
+`external-secrets-gsm/Chart.yaml`:
+- `version` → `RELEASE_VERSION`
+- `appVersion` → `RELEASE_VERSION`
+
+```bash
+git add external-secrets-gsm/Chart.yaml
+git commit -m "${JIRA_ID} Bump versions for SAPIG ${RELEASE_VERSION} release (IG ${IG_RELEASE_VERSION})"
+git push origin ${POST_RELEASE_BRANCH}
+```
+
+Raise PR against `master` for review and merge.
+
+**Step 3 — Release workflow (run from master after PR merges):**
+
+[release.yml](https://github.com/SecureApiGateway/secure-api-gateway-releases-helpers/actions/workflows/release.yml)
+- branch: `master`
+- version: `${RELEASE_VERSION}`
+- release notes: `Release SAPIG ${RELEASE_VERSION} (IG ${IG_RELEASE_VERSION})`
+
+```bash
+gh workflow run release.yml \
+  --repo SecureApiGateway/secure-api-gateway-releases-helpers \
+  --ref master \
+  --field releaseVersion=${RELEASE_VERSION} \
+  --field "releaseNotes=Release SAPIG ${RELEASE_VERSION} (IG ${IG_RELEASE_VERSION})"
+```
+
+Verify: new tag `v${RELEASE_VERSION}` at [secure-api-gateway-releases-helpers tags](https://github.com/SecureApiGateway/secure-api-gateway-releases-helpers/tags).
+
+**Steps 4, 5, 6:** Excluded.
+
+---
+
 ### secure-api-gateway-releases
 
 **HELM ONLY** — no sustaining branch, no Maven/Gradle. Uses a dev branch off master; the release workflow tags master directly.
@@ -878,7 +927,7 @@ gh auth switch --user ${RUNNER_SAPIG_ACCOUNT}
 cd <FAPI_ROOT>/secure-api-gateway-releases
 git checkout master
 git pull
-git checkout -b openig-10328-post-sapig-520-release
+git checkout -b ${POST_RELEASE_BRANCH}
 ```
 
 **Step 2 — Helm chart updates:**
