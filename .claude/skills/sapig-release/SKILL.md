@@ -524,6 +524,9 @@ Same as `secure-api-gateway-fapi-pep-as`. Substitutions:
 - [release.yml](https://github.com/SecureApiGateway/secure-api-gateway-ob-uk-rcs/actions/workflows/release.yml)
 - [merge.yml](https://github.com/SecureApiGateway/secure-api-gateway-ob-uk-rcs/actions/workflows/merge.yml)
 
+**Root `pom.xml` dependency management:**
+- `secure-api-gateway-ob-uk-common-bom` must use the **release version** `${RELEASE_VERSION}` (e.g. `5.3.0`), not `${RELEASE_SNAPSHOT}`. The `secure-api-gateway-ob-uk-common` project has already been released and all `secure-api-gateway-ob-uk-common-*` dependencies must therefore resolve to that release version before running `mvn release:prepare`.
+
 **Additional sub-modules for step 6** — `parent.version` → `NEXT_SAPIG_SNAPSHOT` in each:
 - `secure-api-gateway-ob-uk-rcs-api/pom.xml`
 - `secure-api-gateway-ob-uk-rcs-cloud-client/pom.xml`
