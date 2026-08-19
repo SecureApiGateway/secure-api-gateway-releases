@@ -524,6 +524,9 @@ Same as `secure-api-gateway-fapi-pep-as`. Substitutions:
 - [release.yml](https://github.com/SecureApiGateway/secure-api-gateway-ob-uk-rcs/actions/workflows/release.yml)
 - [merge.yml](https://github.com/SecureApiGateway/secure-api-gateway-ob-uk-rcs/actions/workflows/merge.yml)
 
+**Root `pom.xml` dependency management:**
+- `secure-api-gateway-ob-uk-common-bom` must use the **release version** `${RELEASE_VERSION}` (e.g. `5.3.0`), not `${RELEASE_SNAPSHOT}`. The `secure-api-gateway-ob-uk-common` project has already been released and all `secure-api-gateway-ob-uk-common-*` dependencies must therefore resolve to that release version before running `mvn release:prepare`.
+
 **Additional sub-modules for step 6** — `parent.version` → `NEXT_SAPIG_SNAPSHOT` in each:
 - `secure-api-gateway-ob-uk-rcs-api/pom.xml`
 - `secure-api-gateway-ob-uk-rcs-cloud-client/pom.xml`
@@ -543,6 +546,10 @@ Same as `secure-api-gateway-fapi-pep-as`. Substitutions:
 - Dockerfile path: `secure-api-gateway-ob-uk-rs-server/docker/Dockerfile`
 - [release.yml](https://github.com/SecureApiGateway/secure-api-gateway-ob-uk-rs/actions/workflows/release.yml)
 - [merge.yml](https://github.com/SecureApiGateway/secure-api-gateway-ob-uk-rs/actions/workflows/merge.yml)
+
+**Step 2 — root `pom.xml` release dependency versions:**
+- `uk.bom.version` → `${RELEASE_VERSION}` (e.g. `5.3.0`), so `secure-api-gateway-ob-uk-common-bom` uses the released UK Common version.
+- `consent.api.version` → `${RELEASE_VERSION}` (e.g. `5.3.0`), so `secure-api-gateway-ob-uk-rcs-consent-store-client` uses the released RCS version. RCS must have been released successfully before starting the RS release.
 
 **Additional sub-modules for step 6** — also has `uk.bom.version` and `consent.api.version` in root pom → `NEXT_SAPIG_SNAPSHOT`. Sub-modules with `parent.version` → `NEXT_SAPIG_SNAPSHOT`:
 - `secure-api-gateway-ob-uk-rs-obie-api/pom.xml`
