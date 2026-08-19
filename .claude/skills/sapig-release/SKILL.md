@@ -547,6 +547,10 @@ Same as `secure-api-gateway-fapi-pep-as`. Substitutions:
 - [release.yml](https://github.com/SecureApiGateway/secure-api-gateway-ob-uk-rs/actions/workflows/release.yml)
 - [merge.yml](https://github.com/SecureApiGateway/secure-api-gateway-ob-uk-rs/actions/workflows/merge.yml)
 
+**Step 2 — root `pom.xml` release dependency versions:**
+- `uk.bom.version` → `${RELEASE_VERSION}` (e.g. `5.3.0`), so `secure-api-gateway-ob-uk-common-bom` uses the released UK Common version.
+- `consent.api.version` → `${RELEASE_VERSION}` (e.g. `5.3.0`), so `secure-api-gateway-ob-uk-rcs-consent-store-client` uses the released RCS version. RCS must have been released successfully before starting the RS release.
+
 **Additional sub-modules for step 6** — also has `uk.bom.version` and `consent.api.version` in root pom → `NEXT_SAPIG_SNAPSHOT`. Sub-modules with `parent.version` → `NEXT_SAPIG_SNAPSHOT`:
 - `secure-api-gateway-ob-uk-rs-obie-api/pom.xml`
 - `secure-api-gateway-ob-uk-rs-backoffice-api/pom.xml`
