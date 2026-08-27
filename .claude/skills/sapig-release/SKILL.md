@@ -958,7 +958,7 @@ git checkout -b ${POST_RELEASE_BRANCH}
   - `remote-consent-service` → `RELEASE_VERSION`
   - `test-facility-bank` → `RELEASE_VERSION`
   - `test-user-account-creator` → `RELEASE_VERSION`, condition: `test-user-account-creator.enabled`
-  - `remote-consent-service-user-interface` → stays on `5.0.6` (do not update)
+  - `remote-consent-service-user-interface` → `RELEASE_VERSION`
   - `sample-trusted-directory` → `IG_RELEASE_VERSION` (full build-qualified string), condition: `test-trusted-directory.enabled`
 
 `secure-api-gateway-helpers/Chart.yaml`:
